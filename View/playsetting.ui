@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PlaySetting</class>
+ <widget class="QWidget" name="PlaySetting">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>628</width>
+    <height>329</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,11">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widget" native="true">
+     <property name="styleSheet">
+      <string notr="true">#listWidget_toolbar{
+background:rgb(56,59,78);
+ border: none;
+}
+
+#widget_connect,
+#widget_version,
+#widget{
+background:rgb(56,59,78);
+ border: none;
+}
+</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="2,8,2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="widget_version" native="true"/>
+      </item>
+      <item>
+       <widget class="QListWidget" name="listWidget_toolbar"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_connect" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_2" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="widget_scanCodeSetting" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_reminderSetting" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_cashRegisterSetting" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_commonSetting" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_miscellaneousFunction" native="true"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_advancedFunction" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

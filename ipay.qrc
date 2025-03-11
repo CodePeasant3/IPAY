@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/image/MainPlay.png</file>
+        <file>Resources/image/exitAction.png</file>
+        <file>Resources/image/settingAction.png</file>
+        <file>Resources/image/refundActuin.png</file>
+        <file>Resources/image/detailAction.png</file>
+        <file>Resources/image/receiptAction.png</file>
+        <file>Resources/image/commonSetting.png</file>
+        <file>Resources/image/miscellaneousFunction.png</file>
+        <file>Resources/image/scanCodeSetting.png</file>
+        <file>Resources/image/reminderSetting.png</file>
+        <file>Resources/image/cashRegisterSetting.png</file>
+        <file>Resources/image/advancedFunction.png</file>
+    </qresource>
+</RCC>
