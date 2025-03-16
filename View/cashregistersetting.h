@@ -1,4 +1,4 @@
-#ifndef CASHREGISTERSETTING_H
+﻿#ifndef CASHREGISTERSETTING_H
 #define CASHREGISTERSETTING_H
 
 #include <QWidget>
@@ -14,6 +14,12 @@ class CashRegisterSetting : public QWidget
 public:
     explicit CashRegisterSetting(QWidget *parent = nullptr);
     ~CashRegisterSetting();
+    void Init();
+
+private slots:
+    void on_pushButton_6_clicked();
+
+    void on_pushButton_3_clicked();
 
 private:
     Ui::CashRegisterSetting *ui;

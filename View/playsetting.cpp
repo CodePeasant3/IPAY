@@ -48,6 +48,7 @@ void PlaySetting::init()
     mapWidgetItem_.insert(4,ui ->widget_miscellaneousFunction);
     mapWidgetItem_.insert(5,ui ->widget_advancedFunction);
 
+    ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
     connect(ui ->listWidget_toolbar, &QListWidget::itemSelectionChanged, this, &PlaySetting::onItemSelectionChanged);
 
 }

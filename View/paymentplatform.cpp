@@ -18,7 +18,7 @@ PaymentPlatform::~PaymentPlatform()
 void PaymentPlatform::init()
 {
     ui ->MainPushButton->setIcon(QIcon(":/Resources/image/MainPlay.png"));
-    ui ->MainPushButton->setText("0");
+    ui ->MainPushButton->setStyleSheet("QPushButton {  border: none; } QPushButton::menu-indicator { image: none; }");
     receiptAction_ = new QAction(QIcon(":/Resources/image/receiptAction.png"),"收款");
     refundActuin_ = new QAction(QIcon(":/Resources/image/refundActuin.png"),"退款");
     detailAction_ = new QAction(QIcon(":/Resources/image/detailAction.png"),"明细");
@@ -32,6 +32,13 @@ void PaymentPlatform::init()
     pushMenu_->addAction(exitAction_);
     ui ->MainPushButton->setMenu(pushMenu_);
 
+    connect(ui->label_money,&ClickableLabel::doubleClicked,this,&PaymentPlatform::ShowCashKeyboard);
+    connect(receiptAction_, &QAction::triggered, this, [=]() {  });
+    connect(refundActuin_, &QAction::triggered, this, [=]() {  });
+    connect(detailAction_, &QAction::triggered, this, [=]() {emit ShowDetails(); });
+    connect(settingAction_, &QAction::triggered, this, [=]() { emit ShowSetting(); });
+    connect(exitAction_, &QAction::triggered, this, [=]() { emit ClickExit(); });
+
 }
 
 void PaymentPlatform::exit()
@@ -43,4 +50,35 @@ void PaymentPlatform::exit()
     delete exitAction_;
     delete pushMenu_;
 }
+
+void PaymentPlatform::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        // 记录鼠标按下时相对于组件的位置
+        offset = event->pos();
+        mousePressed = true;
+    }
+    QWidget::mousePressEvent(event);
+}
+
+void PaymentPlatform::mouseMoveEvent(QMouseEvent *event)
+{
+    if (mousePressed && (event->buttons() & Qt::LeftButton)) {
+        // 计算鼠标移动的偏移量
+        QPoint newPos = event->globalPos() - offset;
+        // 更新组件的位置
+        move(newPos);
+    }
+    QWidget::mouseMoveEvent(event);
+}
+
+void PaymentPlatform::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        mousePressed = false;
+    }
+    QWidget::mouseReleaseEvent(event);
+
+}
+
 

@@ -19,6 +19,19 @@ public:
     ~PaymentPlatform();
     void init();
     void exit();
+signals:
+    void ShowCashKeyboard();
+    void ShowSetting();
+    void ClickExit();
+    void ShowDetails();
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
+
+
 
 
 private:
@@ -29,5 +42,7 @@ private:
     QAction * settingAction_ = nullptr;
     QAction * exitAction_ = nullptr;
     QMenu * pushMenu_ = nullptr;
+    QPoint offset;
+    bool mousePressed;
 };
 #endif // PAYMENTPLATFORM_H

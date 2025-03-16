@@ -13,9 +13,12 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,11">
+  <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,12">
    <property name="spacing">
     <number>0</number>
+   </property>
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -49,6 +52,9 @@ background:rgb(56,59,78);
       <property name="spacing">
        <number>0</number>
       </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMinimumSize</enum>
+      </property>
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -62,7 +68,20 @@ background:rgb(56,59,78);
        <number>0</number>
       </property>
       <item>
-       <widget class="QWidget" name="widget_version" native="true"/>
+       <widget class="QWidget" name="widget_version" native="true">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>收银系统</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <widget class="QListWidget" name="listWidget_toolbar"/>
@@ -92,28 +111,66 @@ background:rgb(56,59,78);
        <number>0</number>
       </property>
       <item>
-       <widget class="QWidget" name="widget_scanCodeSetting" native="true"/>
+       <widget class="ScanCodeSetting" name="widget_scanCodeSetting" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="widget_reminderSetting" native="true"/>
+       <widget class="ReminderSetting" name="widget_reminderSetting" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="widget_cashRegisterSetting" native="true"/>
+       <widget class="CashRegisterSetting" name="widget_cashRegisterSetting" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="widget_commonSetting" native="true"/>
+       <widget class="CommonSetting" name="widget_commonSetting" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="widget_miscellaneousFunction" native="true"/>
+       <widget class="MiscellaneousFunction" name="widget_miscellaneousFunction" native="true"/>
       </item>
       <item>
-       <widget class="QWidget" name="widget_advancedFunction" native="true"/>
+       <widget class="AdvancedFunction" name="widget_advancedFunction" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CashRegisterSetting</class>
+   <extends>QWidget</extends>
+   <header>cashregistersetting.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CommonSetting</class>
+   <extends>QWidget</extends>
+   <header>commonsetting.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AdvancedFunction</class>
+   <extends>QWidget</extends>
+   <header>advancedfunction.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MiscellaneousFunction</class>
+   <extends>QWidget</extends>
+   <header>miscellaneousfunction.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReminderSetting</class>
+   <extends>QWidget</extends>
+   <header>remindersetting.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ScanCodeSetting</class>
+   <extends>QWidget</extends>
+   <header>scancodesetting.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

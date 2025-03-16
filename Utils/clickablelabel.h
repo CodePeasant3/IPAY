@@ -11,8 +11,10 @@ public:
     ClickableLabel(QWidget *parent = nullptr);
 signals:
     void clicked();
+    void doubleClicked();
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 };
 
 

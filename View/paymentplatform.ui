@@ -13,15 +13,25 @@
   <property name="windowTitle">
    <string>PaymentPlatform</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">#MainPushButton,
+#label_money,
+#PaymentPlatform{
+	background-color: rgb(100,149,237);
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">#MainPushButton{
+    <string notr="true">#MainPushButton,
+#label_money{
 	background-color: rgb(100,149,237);
-	padding-right: 10px;
-	text-align: right;
+ border: 0px;
 }</string>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -35,7 +45,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QPushButton" name="MainPushButton">
+     <widget class="RightClickButton" name="MainPushButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Ignored">
         <horstretch>0</horstretch>
@@ -44,6 +54,21 @@
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="ClickableLabel" name="label_money">
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>￥1</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
@@ -60,6 +85,18 @@
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">clickablelabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RightClickButton</class>
+   <extends>QPushButton</extends>
+   <header>rightclickbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

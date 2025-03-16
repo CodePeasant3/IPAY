@@ -2,11 +2,21 @@
 
 ClickableLabel::ClickableLabel(QWidget *parent) : QLabel(parent) {}
 
-void ClickableLabel::mousePressEvent(QMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
+    void ClickableLabel::mousePressEvent(QMouseEvent *event)
     {
-        emit clicked();
+        if (event->button() == Qt::LeftButton)
+        {
+            emit clicked();
+        }
+        QLabel::mousePressEvent(event);
     }
-    QLabel::mousePressEvent(event);
-}
+
+    void ClickableLabel::mouseDoubleClickEvent(QMouseEvent *event)
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            emit doubleClicked();
+        }
+        QLabel::mouseDoubleClickEvent(event);
+
+    }
