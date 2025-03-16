@@ -81,4 +81,9 @@ void PaymentPlatform::mouseReleaseEvent(QMouseEvent *event)
 
 }
 
+void PaymentPlatform::ReceiveMoney(std::string moneyNumber)
+{
+    ui->label_money->setText(QString::fromStdString("¥" + moneyNumber));
+}
+
 

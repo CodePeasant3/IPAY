@@ -33,7 +33,7 @@ public:
     void exit();
 
 private slots:
-    void onItemSelectionChanged();
+    void OnItemSelectionChanged();
 
 
 private:

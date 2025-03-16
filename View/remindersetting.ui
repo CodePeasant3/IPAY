@@ -25,6 +25,11 @@ border-top: 1px solid rgba(243, 243, 243, 1);;
 border-bottom: 1px solid rgba(243, 243, 243, 1);;
 background-color: white;
 
+}
+
+#widget_15{
+border-top: 1px solid rgba(243, 243, 243, 1);
+
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="9,1">
@@ -202,6 +207,19 @@ background-color: white;
    </item>
    <item>
     <widget class="QWidget" name="widget_15" native="true">
+     <property name="styleSheet">
+      <string notr="true">#pushButton_save{
+color: white;
+background-color: #4B7BF7;
+
+}
+
+#pushButton_save:pressed{
+color: black;
+background-color: white;
+border: 1px solid #dbdbdb;
+}</string>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <property name="spacing">
        <number>0</number>

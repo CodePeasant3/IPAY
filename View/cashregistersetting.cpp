@@ -17,6 +17,7 @@ CashRegisterSetting::~CashRegisterSetting()
 void CashRegisterSetting::Init()
 {
 
+//ui ->pushButton_save ->setStyleSheet("QPushButton {border-radius: 3%;}");
 
 }
 //开始录制

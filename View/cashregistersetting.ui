@@ -196,7 +196,7 @@ background-color: white;
              <item>
               <widget class="QPushButton" name="pushButton_2">
                <property name="text">
-                <string>确认</string>
+                <string>自动</string>
                </property>
               </widget>
              </item>
@@ -303,7 +303,7 @@ background-color: white;
              <item row="1" column="0" colspan="2">
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>请截取需识别的区域,并调整大小,鼠标双击选中区域,正确请点击“保存”完成设置.</string>
+                <string>请截取需识别的区域,并调整大小,鼠标双击选中区域,点击“保存”完成设置.</string>
                </property>
               </widget>
              </item>
@@ -473,7 +473,7 @@ background-color: white;
              <item>
               <widget class="QPushButton" name="pushButton_5">
                <property name="text">
-                <string>确认</string>
+                <string>自动</string>
                </property>
               </widget>
              </item>
@@ -692,6 +692,19 @@ background-color: white;
    </item>
    <item>
     <widget class="QWidget" name="widget_15" native="true">
+     <property name="styleSheet">
+      <string notr="true">#pushButton_save{
+color: white;
+background-color: #4B7BF7;
+
+}
+
+#pushButton_save:pressed{
+color: black;
+background-color: white;
+border: 1px solid #dbdbdb;
+}</string>
+     </property>
      <layout class="QHBoxLayout" name="horizontalLayout_7">
       <property name="spacing">
        <number>0</number>

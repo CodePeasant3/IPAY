@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPixmap>
 #include <QAction>
+#include <string>
 
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +31,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
+ public slots:
+    void ReceiveMoney(std::string moneyNumber);
 
 
 

@@ -31,8 +31,8 @@ void PlaySetting::init()
     ui ->listWidget_toolbar ->addItem(advancedFunction_);
     ui ->listWidget_toolbar ->setSpacing(20);
 
-    CustomDelegate* delegate = new CustomDelegate(ui->listWidget_toolbar);
-    ui->listWidget_toolbar->setItemDelegate(delegate);
+//    CustomDelegate* delegate = new CustomDelegate(ui->listWidget_toolbar);
+//    ui->listWidget_toolbar->setItemDelegate(delegate);
 
     ui ->widget_cashRegisterSetting ->show();
     ui ->widget_reminderSetting->hide();
@@ -49,11 +49,11 @@ void PlaySetting::init()
     mapWidgetItem_.insert(5,ui ->widget_advancedFunction);
 
     ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
-    connect(ui ->listWidget_toolbar, &QListWidget::itemSelectionChanged, this, &PlaySetting::onItemSelectionChanged);
+    connect(ui ->listWidget_toolbar, &QListWidget::itemSelectionChanged, this, &PlaySetting::OnItemSelectionChanged);
 
 }
 
-void PlaySetting::onItemSelectionChanged()
+void PlaySetting::OnItemSelectionChanged()
 {
     QListWidgetItem *selectedItem = ui ->listWidget_toolbar ->currentItem();
     if (!selectedItem)
@@ -72,3 +72,4 @@ void PlaySetting::onItemSelectionChanged()
 
 
 }
+
