@@ -1,8 +1,7 @@
 ﻿#include "View/paymentplatform.h"
-#include "Utils/clickablelabel.h"
 #include <QApplication>
 #include "View/PlaySetting.h"
-#include "View/cashregisterkeyboard.h""
+#include "View/cashregisterkeyboard.h"
 #include "View/orderdetails.h"
 int main(int argc, char *argv[])
 {
