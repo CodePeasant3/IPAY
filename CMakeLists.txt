@@ -2,6 +2,8 @@
 
 project(IPAY VERSION 0.1 LANGUAGES CXX)
 
+include(cmake/CPM.cmake)
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
