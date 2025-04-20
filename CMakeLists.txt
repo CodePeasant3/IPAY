@@ -2,6 +2,10 @@
 
 project(IPAY VERSION 0.1 LANGUAGES CXX)
 
+set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/cache/CPM)
+include(cmake/CPM.cmake)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -68,4 +72,8 @@ install(TARGETS IPAY
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(IPAY)
+endif()
+
+if (${CMAKE_BUILD_TYPE} STREQUAL Release)
+    add_subdirectory(test)
 endif()
