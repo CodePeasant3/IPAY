@@ -139,7 +139,7 @@ border-top: 1px solid rgba(243, 243, 243, 1);
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="pushButton_enable_voice">
               <property name="text">
                <string>开启</string>
               </property>

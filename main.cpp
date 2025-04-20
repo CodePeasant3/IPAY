@@ -4,10 +4,34 @@
 #include "View/cashregisterkeyboard.h"
 #include "View/orderdetails.h"
 #include "Common/primaryscreen.h"
+#include <QThread>
+#include "Common/globalstatuscommon.h"
+#include <QProcess>
+#include <QMessageBox>
+#include <windows.h>
+#include <Shlobj.h>
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    PrimaryScreen primaryScreen;
+    if (!IsUserAnAdmin()) {
+        QString executable_path = QCoreApplication::applicationFilePath();
+        // 以管理员权限重新启动程序
+        SHELLEXECUTEINFOW sei = { sizeof(sei) };
+        sei.lpVerb = L"runas";
+        sei.lpFile = reinterpret_cast<LPCWSTR>(executable_path.utf16());
+        sei.nShow = SW_SHOWNORMAL;
+
+        if (!ShellExecuteExW(&sei)) {
+            QMessageBox::critical(nullptr, "Error", "Failed to relaunch as administrator.");
+            return 1;
+        }
+        return 0;
+    }
+
+    ipay::GlobalStatusCommon::instance()->ConfigInit();
+    ipay::PrimaryScreen primaryScreen;
     QRect rect = primaryScreen.GetGeometryScreen();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;

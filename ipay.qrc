@@ -13,5 +13,7 @@
         <file>Resources/image/cashRegisterSetting.png</file>
         <file>Resources/image/advancedFunction.png</file>
         <file>Resources/image/CashDetail.png</file>
+        <file>Resources/image/screen_error.png</file>
+        <file>Resources/image/screen_right.png</file>
     </qresource>
 </RCC>

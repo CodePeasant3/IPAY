@@ -2,7 +2,11 @@
 #define PRIMARYSCREEN_H
 #include <QGuiApplication>
 #include <QScreen>
-
+#include <atlbase.h>
+#include <gdiplus.h>
+#include <QImage>
+#include <QString>
+namespace ipay{
 class PrimaryScreen
 {
 public:
@@ -15,5 +19,7 @@ public:
 
 
 };
+
+}
 
 #endif // PRIMARYSCREEN_H

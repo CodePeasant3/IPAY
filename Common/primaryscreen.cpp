@@ -1,6 +1,9 @@
-#include "primaryscreen.h"
+﻿#include "primaryscreen.h"
 
+namespace ipay {
 PrimaryScreen::PrimaryScreen()
 {
 
 }
+}
+

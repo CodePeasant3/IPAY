@@ -116,6 +116,24 @@ background-color: white;
              <property name="bottomMargin">
               <number>0</number>
              </property>
+             <item row="0" column="0" colspan="2">
+              <widget class="QLabel" name="label">
+               <property name="font">
+                <font>
+                 <pointsize>15</pointsize>
+                </font>
+               </property>
+               <property name="lineWidth">
+                <number>1</number>
+               </property>
+               <property name="text">
+                <string>自动输入收银金额</string>
+               </property>
+               <property name="margin">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="1">
               <widget class="QLabel" name="label_2">
                <property name="font">
@@ -138,24 +156,6 @@ background-color: white;
                </property>
                <property name="text">
                 <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0" colspan="2">
-              <widget class="QLabel" name="label">
-               <property name="font">
-                <font>
-                 <pointsize>15</pointsize>
-                </font>
-               </property>
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="text">
-                <string>自动输入收银金额</string>
-               </property>
-               <property name="margin">
-                <number>0</number>
                </property>
               </widget>
              </item>
@@ -194,7 +194,7 @@ background-color: white;
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="pushButton_auto_input">
                <property name="text">
                 <string>自动</string>
                </property>
@@ -243,14 +243,14 @@ background-color: white;
               <number>0</number>
              </property>
              <item>
-              <widget class="QRadioButton" name="radioButton">
+              <widget class="QRadioButton" name="radioButton_cycle">
                <property name="text">
                 <string>实时识别</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton_2">
+              <widget class="QRadioButton" name="radioButton_once">
                <property name="text">
                 <string>扫码后识别(一次支付识别一次)</string>
                </property>
@@ -281,7 +281,7 @@ background-color: white;
               <number>8</number>
              </property>
              <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton_3">
+              <widget class="QPushButton" name="pushButton_recognition">
                <property name="text">
                 <string>设置识别区域</string>
                </property>
@@ -471,7 +471,7 @@ background-color: white;
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="pushButton_auto_clean">
                <property name="text">
                 <string>自动</string>
                </property>
@@ -533,7 +533,7 @@ background-color: white;
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_6">
+              <widget class="QPushButton" name="pushButton_record">
                <property name="text">
                 <string>开始录制</string>
                </property>
@@ -617,7 +617,7 @@ background-color: white;
               </spacer>
              </item>
              <item row="1" column="0">
-              <widget class="QRadioButton" name="radioButton_3">
+              <widget class="QRadioButton" name="radioButton_money_back">
                <property name="text">
                 <string>支付金额回填</string>
                </property>

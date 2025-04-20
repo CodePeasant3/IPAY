@@ -1,4 +1,4 @@
-#ifndef ADVANCEDFUNCTION_H
+﻿#ifndef ADVANCEDFUNCTION_H
 #define ADVANCEDFUNCTION_H
 
 #include <QWidget>

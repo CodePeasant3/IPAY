@@ -1,4 +1,4 @@
-﻿#include "cashregisterkeyboard.h"
+﻿    #include "cashregisterkeyboard.h"
 #include "qdebug.h"
 #include "ui_cashregisterkeyboard.h"
 std::vector<std::string> CashRegisterKeyboard::money_vector_;
