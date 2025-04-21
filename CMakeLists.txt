@@ -55,7 +55,13 @@ else()
         )
     endif()
 endif()
-include_directories(${CMAKE_SOURCE_DIR}/Utils)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/Utils
+    ${CMAKE_SOURCE_DIR}/Algo/PredictionClient
+    ${CMAKE_SOURCE_DIR}/Algo/proto
+)
+
+add_subdirectory(Algo)
 
 target_link_libraries(IPAY PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
