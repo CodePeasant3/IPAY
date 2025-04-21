@@ -3,7 +3,8 @@
 project(IPAY VERSION 0.1 LANGUAGES CXX)
 
 set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/cache/CPM)
-include(cmake/CPM.cmake)
+include(cmake/extern_dep.cmake)
+
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CMAKE_AUTOUIC ON)
