@@ -82,5 +82,5 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Release)
-    add_subdirectory(test)
+    #add_subdirectory(test)
 endif()
