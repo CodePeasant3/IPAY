@@ -1,0 +1,1 @@
+ D:/softWare/QT/5.15.2/msvc2019_64/lib/Qt5Widgetsd.lib D:/softWare/QT/5.15.2/msvc2019_64/lib/Qt5Guid.lib D:/softWare/QT/5.15.2/msvc2019_64/lib/Qt5Cored.lib D:/softWare/QT/5.15.2/msvc2019_64/lib/qtmaind.lib -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

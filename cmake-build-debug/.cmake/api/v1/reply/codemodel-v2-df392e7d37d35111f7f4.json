@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-bf0352e13a1b8dd2a73a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "IPAY",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "IPAY::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-IPAY-Debug-8d67efb39f1aecc76feb.json",
+					"name" : "IPAY",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "IPAY_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-IPAY_autogen-Debug-dddf1c39a41bd4f1e836.json",
+					"name" : "IPAY_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "IPAY_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-IPAY_autogen_timestamp_deps-Debug-7feeaf510eb0d81af7f9.json",
+					"name" : "IPAY_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/code/IPAY/cmake-build-debug",
+		"source" : "C:/code/IPAY"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
