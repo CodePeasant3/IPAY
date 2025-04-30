@@ -3,7 +3,8 @@
 project(IPAY VERSION 0.1 LANGUAGES CXX)
 
 set(CPM_SOURCE_CACHE ${CMAKE_SOURCE_DIR}/cache/CPM)
-include(cmake/CPM.cmake)
+include(cmake/extern_dep.cmake)
+
 set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
 
 set(CMAKE_AUTOUIC ON)
@@ -54,7 +55,13 @@ else()
         )
     endif()
 endif()
-include_directories(${CMAKE_SOURCE_DIR}/Utils)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/Utils
+    ${CMAKE_SOURCE_DIR}/Algo/PredictionClient
+    ${CMAKE_SOURCE_DIR}/Algo/proto
+)
+
+add_subdirectory(Algo)
 
 target_link_libraries(IPAY PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
@@ -75,5 +82,5 @@ if(QT_VERSION_MAJOR EQUAL 6)
 endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Release)
-    add_subdirectory(test)
+    #add_subdirectory(test)
 endif()
