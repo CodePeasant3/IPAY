@@ -18,6 +18,7 @@ public:
     ~CashRegisterSetting();
     void Init();
     void UIStatus();
+    void CreateWidgetItem();
 
 private slots:
     void on_pushButton_6_clicked();

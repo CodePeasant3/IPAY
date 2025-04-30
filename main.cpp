@@ -15,21 +15,20 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    if (!IsUserAnAdmin()) {
-        QString executable_path = QCoreApplication::applicationFilePath();
-        // 以管理员权限重新启动程序
-        SHELLEXECUTEINFOW sei = { sizeof(sei) };
-        sei.lpVerb = L"runas";
-        sei.lpFile = reinterpret_cast<LPCWSTR>(executable_path.utf16());
-        sei.nShow = SW_SHOWNORMAL;
+//    if (!IsUserAnAdmin()) {
+//        QString executable_path = QCoreApplication::applicationFilePath();
+//        // 以管理员权限重新启动程序
+//        SHELLEXECUTEINFOW sei = { sizeof(sei) };
+//        sei.lpVerb = L"runas";
+//        sei.lpFile = reinterpret_cast<LPCWSTR>(executable_path.utf16());
+//        sei.nShow = SW_SHOWNORMAL;
 
-        if (!ShellExecuteExW(&sei)) {
-            QMessageBox::critical(nullptr, "Error", "Failed to relaunch as administrator.");
-            return 1;
-        }
-        return 0;
-    }
-
+//        if (!ShellExecuteExW(&sei)) {
+//            QMessageBox::critical(nullptr, "Error", "Failed to relaunch as administrator.");
+//            return 1;
+//        }
+//        return 0;
+//    }
     ipay::GlobalStatusCommon::instance()->ConfigInit();
     ipay::PrimaryScreen primaryScreen;
     QRect rect = primaryScreen.GetGeometryScreen();

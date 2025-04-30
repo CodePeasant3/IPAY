@@ -3,7 +3,13 @@
 namespace ipay{
 
 GlobalStatusCommon::GlobalStatusCommon(){}
-GlobalStatusCommon::~GlobalStatusCommon(){}
+GlobalStatusCommon::~GlobalStatusCommon(){
+    if(process_timer_){
+        process_timer_->stop();
+        delete process_timer_;
+        process_timer_ = nullptr;
+    }
+}
 void GlobalStatusCommon::ConfigInit()
 {
 
@@ -23,6 +29,17 @@ void GlobalStatusCommon::ConfigInit()
     if(!file_picture.isNull()){
         all_setting_config_->cash_register_setting.screen_pixmap = file_picture;
     }
+    if(process_timer_){
+        process_timer_ = new QTimer();
+        process_timer_->setInterval(1000);
+        QObject::connect(process_timer_, &QTimer::timeout, [this]() {
+            if(all_setting_config_->cash_register_setting.recognition_type == 1){
+                return;
+            }
+            PictureProcess();
+        });
+    }
+
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
@@ -43,6 +60,14 @@ void GlobalStatusCommon::FinshConfig()
     json_common_.WirteLocalConfig(*all_setting_config_,config_josn_path);
     QString config_picture_path =  generic_util_.GetCurrentWorkDir() + "/config/screen_picture.jpg";
     all_setting_config_->cash_register_setting.screen_pixmap.save(config_picture_path,"jpg");
+}
+
+void GlobalStatusCommon::PictureProcess()
+{
+    qDebug() << "One second has passed.";
+
+
+
 }
 
 std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetAllSettingConfig()

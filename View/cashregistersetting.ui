@@ -42,7 +42,7 @@ background-color: white;
     <widget class="QTabWidget" name="tabWidget">
      <property name="styleSheet">
       <string notr="true"> #tabWidget,
-#textEdit_location,
+#listWidget_keyboard,
 #widget_15,
 #widget_11,
 #widget_8,
@@ -61,7 +61,7 @@ background-color: white;
 }</string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="clear_widget">
       <attribute name="title">
@@ -678,7 +678,7 @@ background-color: white;
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <widget class="QTextEdit" name="textEdit_location"/>
+              <widget class="QListWidget" name="listWidget_keyboard"/>
              </item>
             </layout>
            </widget>

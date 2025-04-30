@@ -44,6 +44,15 @@ void CashRegisterSetting::UIStatus()
     }
 
 }
+
+void CashRegisterSetting::CreateWidgetItem()
+{
+    QListWidgetItem *KM_EVENT = new QListWidgetItem(ui->listWidget_keyboard);
+
+
+
+}
+
 //开始录制
 void CashRegisterSetting::on_pushButton_6_clicked()
 {
