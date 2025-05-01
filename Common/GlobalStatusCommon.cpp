@@ -29,7 +29,7 @@ void GlobalStatusCommon::ConfigInit()
     if(!file_picture.isNull()){
         all_setting_config_->cash_register_setting.screen_pixmap = file_picture;
     }
-    if(process_timer_){
+    if(!process_timer_){
         process_timer_ = new QTimer();
         process_timer_->setInterval(1000);
         QObject::connect(process_timer_, &QTimer::timeout, [this]() {
@@ -38,6 +38,7 @@ void GlobalStatusCommon::ConfigInit()
             }
             PictureProcess();
         });
+        process_timer_->start();
     }
 
 }
