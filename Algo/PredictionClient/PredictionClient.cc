@@ -60,12 +60,6 @@ int PredictionClient::GetModelMetadata(GetModelMetadataResponse *response) {
     return -1;
   }
 
-  // Step.3: 输出模型信息
-  std::cout << "model.name: " << response->model_spec().name() << std::endl
-            << "model.version: " << response->model_spec().version().value()
-            << std::endl
-            << "model.signature_name: "
-            << response->model_spec().signature_name() << std::endl;
   return 0;
 }
 

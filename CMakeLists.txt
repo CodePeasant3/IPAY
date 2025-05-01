@@ -19,11 +19,9 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-
 file(GLOB VIEW_SOURCES ./View/*.cpp ./View/*.h ./View/*.ui)
 file(GLOB COMMON_SOURCES ./Common/*.cpp ./Common/*.h)
 file(GLOB UTILS_SOURCES ./Utils/*.cpp ./Utils/*.h)
-
 
 set(PROJECT_SOURCES
         main.cpp
@@ -63,7 +61,11 @@ include_directories(
 
 add_subdirectory(Algo)
 
-target_link_libraries(IPAY PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(IPAY
+    PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    proto_tensorflow
+    prediction_client)
 
 set_target_properties(IPAY PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

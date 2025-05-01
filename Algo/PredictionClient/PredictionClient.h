@@ -3,9 +3,9 @@
 #include "tensorflow_serving/apis/get_model_metadata.pb.h"
 #include <array>
 #include <cstddef>
-#include <grpc++/grpc++.h>
+//#include <grpc++/grpc++.h>
 
-#include <grpcpp/channel.h>
+// #include <grpcpp/channel.h>
 #include <memory>
 #include <tensorflow_serving/apis/prediction_service.grpc.pb.h>
 #include <tensorflow_serving/apis/prediction_service.pb.h>
