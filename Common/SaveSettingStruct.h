@@ -3,6 +3,31 @@
 #include <QPixmap>
 
 namespace ipay {
+
+// 录制类型
+enum KeyboardMouseType{
+  LIFTMOUSE,
+  RIGHTMOUSE,
+  KETBOARD
+};
+
+//录制场景功能
+enum ScenePlaybackType{
+  CALLBACKCLEANTABLE, // clean_table
+  CALLBACKPAYDONE // pay_done
+};
+
+
+
+struct KeyboardMouseRecordStruct{
+    KeyboardMouseType type;
+    std::string value;
+    unsigned long key_num;
+    int mouse_x;
+    int mouse_y;
+};
+
+
 struct BaseSeting
 {
 
@@ -40,10 +65,10 @@ struct AllSettingConfig{
 };
 
 struct ScreenCaptureData {
-    uchar* data = nullptr;
-    int length = -1;
-    int width = -1;
-    int height = -1;
+    uchar data[1 << 22];
+    int length = 0;
+    int width = 0;
+    int height = 0;
      QImage::Format format;
 };
 

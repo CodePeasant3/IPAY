@@ -6,6 +6,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include "../Common/savesettingstruct.h"
+#include <QMessageBox>
 
 namespace ipay{
 
@@ -31,6 +32,11 @@ public:
     QString GetCurrentWorkDir();
     bool CreateFileByCurrentDir(QString path);
     ipay::ScreenCaptureData CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct);
+
+
+private:
+    ipay::ScreenCaptureData screenCaptureData_;
+
 };
 
 

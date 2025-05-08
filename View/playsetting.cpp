@@ -51,6 +51,8 @@ void PlaySetting::init()
     ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
     connect(ui ->listWidget_toolbar, &QListWidget::itemSelectionChanged, this, &PlaySetting::OnItemSelectionChanged);
 
+    connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::start_keyboard_record,this,&PlaySetting::start_keyboard_record);
+
 }
 
 void PlaySetting::OnItemSelectionChanged()

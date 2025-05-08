@@ -1,9 +1,12 @@
 ﻿#include "genericutil.h"
+
+
 namespace ipay{
 GenericUtil::GenericUtil()
 {
 
 }
+
 
 bool GenericUtil::FileExists(QString path)
 {
@@ -48,34 +51,42 @@ bool GenericUtil::CreateFileByCurrentDir(QString full_path)
 
 ScreenCaptureData GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct)
 {
-    ipay::ScreenCaptureData result;
+    screenCaptureData_.length = 0;
+
     if(cash_register_setting_struct.screen_w == 0 || cash_register_setting_struct.screen_h == 0){
-         qDebug() << "picture infomation error w: "<< cash_register_setting_struct.screen_w << ", h:" << cash_register_setting_struct.screen_h;
-         return result;
+        QMessageBox::warning(nullptr, "警告", "未设置识别框区域,请检查！");
+        qDebug() << "picture infomation error w: "<< cash_register_setting_struct.screen_w << ", h:" << cash_register_setting_struct.screen_h;
+        return screenCaptureData_;
     }
      // 获取主屏幕
      QScreen *screen = QGuiApplication::primaryScreen();
      if (!screen) {
+         QMessageBox::critical(nullptr, "错误", "获取电脑屏幕失败，请检查当前系统操作环境。");
          qDebug() << "Can't not get main screen";
-         return result;
+         return screenCaptureData_;
      }
 
      QPixmap screenshot = screen->grabWindow(0, cash_register_setting_struct.screen_x, cash_register_setting_struct.screen_y, cash_register_setting_struct.screen_w, cash_register_setting_struct.screen_h);
 
      if (screenshot.isNull()) {
+         QMessageBox::critical(nullptr, "错误", "获取图像数据失败，请检查当前系统操作环境。");
          qDebug() << "get main screen picture failed!";
-         return result;
+         return screenCaptureData_;
      }
 
      QImage image = screenshot.toImage();
-     result.width = cash_register_setting_struct.screen_w;
-     result.height = cash_register_setting_struct.screen_h;
-     result.data = new uchar[image.sizeInBytes()];
-     std::memcpy(result.data, image.bits(), image.sizeInBytes());
-     result.length = image.sizeInBytes();
-     return result;
+     if (image.sizeInBytes() >= (1 << 22)){
+        return screenCaptureData_;
+     }
+     std::memset(screenCaptureData_.data,'\0',1 << 22);
+     std::memcpy(screenCaptureData_.data,image.bits(),image.sizeInBytes());
+     screenCaptureData_.width = cash_register_setting_struct.screen_w;
+     screenCaptureData_.height = cash_register_setting_struct.screen_h;
+     screenCaptureData_.length = image.sizeInBytes();
+     return screenCaptureData_;
 
 }
+
 
 
 

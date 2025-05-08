@@ -53,12 +53,6 @@ void CashRegisterSetting::CreateWidgetItem()
 
 }
 
-//开始录制
-void CashRegisterSetting::on_pushButton_6_clicked()
-{
-
-}
-
 
 void CashRegisterSetting::on_pushButton_auto_input_clicked()
 {
@@ -113,7 +107,8 @@ void CashRegisterSetting::RegisterArea()
 //开始录制
 void CashRegisterSetting::on_pushButton_record_clicked()
 {
-
+    ipay::GlobalStatusCommon::instance()->StartRecordKeyboard(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+    emit start_keyboard_record();
 }
 
 //自动录入软件

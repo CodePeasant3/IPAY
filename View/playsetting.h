@@ -32,6 +32,9 @@ public:
     void init();
     void exit();
 
+signals:
+    void start_keyboard_record();
+
 private slots:
     void OnItemSelectionChanged();
 

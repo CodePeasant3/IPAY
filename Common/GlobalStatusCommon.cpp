@@ -81,5 +81,16 @@ ScreenCaptureData GlobalStatusCommon::GetPictureData()
     return generic_util_.CaptureScreen(all_setting_config_->cash_register_setting);
 }
 
+void GlobalStatusCommon::StartRecordKeyboard(ipay::ScenePlaybackType currentType)
+{
+    current_type_ = currentType;
+}
+
+void  GlobalStatusCommon::StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector)
+{
+    keyboard_playback_map_[current_type_].clear();
+    keyboard_playback_map_[current_type_] = std::move(keyboardVector);
+}
+
 
 }

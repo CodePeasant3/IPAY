@@ -15,5 +15,6 @@
         <file>Resources/image/CashDetail.png</file>
         <file>Resources/image/screen_error.png</file>
         <file>Resources/image/screen_right.png</file>
+        <file>Resources/image/km_close.png</file>
     </qresource>
 </RCC>

@@ -20,9 +20,10 @@ public:
     void UIStatus();
     void CreateWidgetItem();
 
-private slots:
-    void on_pushButton_6_clicked();
+signals:
+    void start_keyboard_record();
 
+private slots:
     void on_pushButton_auto_input_clicked();
 
     void on_pushButton_recognition_clicked();
