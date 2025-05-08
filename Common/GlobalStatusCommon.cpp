@@ -29,6 +29,32 @@ void GlobalStatusCommon::ConfigInit()
     if(!file_picture.isNull()){
         all_setting_config_->cash_register_setting.screen_pixmap = file_picture;
     }
+
+    ::tensorflow::TensorProto tensor_input, tensor_output;
+    tensor_input.set_dtype(tensorflow::DataType::DT_FLOAT);
+    tensor_input.mutable_tensor_shape()->add_dim()->set_size(1);
+    tensor_input.mutable_tensor_shape()->add_dim()->set_size(640);
+    tensor_input.mutable_tensor_shape()->add_dim()->set_size(640);
+    tensor_input.mutable_tensor_shape()->add_dim()->set_size(3);
+    tensor_output.set_dtype(tensorflow::DataType::DT_FLOAT);
+    tensor_output.mutable_tensor_shape()->add_dim()->set_size(1);
+    tensor_output.mutable_tensor_shape()->add_dim()->set_size(15);
+    tensor_output.mutable_tensor_shape()->add_dim()->set_size(8400);
+
+    int ret = client.Init("123.138.200.114:8010",
+                          std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
+    if(ret) {
+        qCritical() << "Link remote server 123.138.200.114:8010 Failed";
+        return;
+    }else{
+        qWarning() << "Link remote server 123.138.200.114:8010 success";
+        ::tensorflow::serving::GetModelMetadataResponse response_meta;
+        client.GetModelMetadata(&response_meta);
+        qInfo() << "model.name: " << response_meta.model_spec().name().c_str();
+        qInfo() << "model.version: " << response_meta.model_spec().version().value();
+        qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
+    }
+
     if(!process_timer_){
         process_timer_ = new QTimer();
         process_timer_->setInterval(1000);

@@ -5,6 +5,8 @@
 #include "savesettingstruct.h"
 #include <QTimer>
 
+#include <PredictionClient.h>
+
 namespace ipay{
 class GlobalStatusCommon
 {
@@ -25,6 +27,7 @@ private:
     std::shared_ptr<ipay::AllSettingConfig> all_setting_config_{nullptr};
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
+    PredictionClient client;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);
