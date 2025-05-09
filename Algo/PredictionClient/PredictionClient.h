@@ -44,7 +44,7 @@ public:
 
 public:
   int GetModelMetadata(GetModelMetadataResponse *response);
-  int Predict(cv::Mat &&image, float score = 0.5,
+  std::string Predict(cv::Mat &&image, float score = 0.5,
               const std::string &save_path = {});
 
 private:
@@ -69,7 +69,7 @@ private:
 
   float iou(const BoxInfo &box1, const BoxInfo &box2);
 
-  double objToDouble(std::vector<BoxInfo> &boxes);
+  std::string objToDouble(std::vector<BoxInfo> &boxes);
 
 private:
   ::tensorflow::TensorProto tensor_input_;

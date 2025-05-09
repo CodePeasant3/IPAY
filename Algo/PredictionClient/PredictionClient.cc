@@ -63,12 +63,12 @@ int PredictionClient::GetModelMetadata(GetModelMetadataResponse *response) {
   return 0;
 }
 
-int PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
+std::string PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
                               const std::string &save_path /* = {} */) {
 
   if (image.empty()) {
     std::cerr << "image is empty" << std::endl;
-    return -1;
+    return "0";
   }
 
   // TODO: 确定1和2对应的是w和h,分别是哪一个
@@ -91,29 +91,12 @@ int PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
   request.mutable_model_spec()->set_signature_name("serving_default");
 
   // Step.3 处理输入图像
-  std::cout << "image.dims: " << image.dims << std::endl
-            << "image.channels: " << image.channels() << std::endl
-            << "image.cols|width: " << image.cols << std::endl
-            << "image.rows|height: " << image.rows << std::endl
-            << "image.depth: " << image.depth() << std::endl
-            << "image.elemSize: " << image.elemSize() << std::endl;
-  assert(image.dims == 2);       // 维度为二维
-  assert(image.channels() == 3); // 通道为3
-  assert(image_w == image_h);
 
   cv::Mat convert_mat(image_w, image_h, CV_32FC3);
   float scale = 0.0;
   int padding_top = 0, padding_left = 0;
   letterbox_preprocess(image, convert_mat, &scale, &padding_top, &padding_left,
                        image_w);
-
-  std::cout << "convert_mat.dims: " << convert_mat.dims << std::endl
-            << "convert_mat.channels: " << convert_mat.channels() << std::endl
-            << "convert_mat.cols|width: " << convert_mat.cols << std::endl
-            << "convert_mat.rows|height: " << convert_mat.rows << std::endl
-            << "convert_mat.depth: " << convert_mat.depth() << std::endl
-            << "convert_mat.total: " << convert_mat.total() << std::endl
-            << "convert_mat.elemSize: " << convert_mat.elemSize() << std::endl;
 
   // Step.4: 填充数据
   ::tensorflow::TensorProto tensor_proto(tensor_input_);
@@ -129,7 +112,7 @@ int PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
   // Step.6: 处理返回结果
   if (!status.ok()) {
     std::cerr << "Predict failed." << std::endl;
-    return -1;
+    return "0.0";
   }
 
   const auto &result = response.outputs().at("output0");
@@ -139,11 +122,13 @@ int PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
 
   auto obj_box = this->nms(filter_box);
 
-  double amount = this->objToDouble(obj_box);
+  auto amount = this->objToDouble(obj_box);
 
-  this->drawResult(obj_box, image, save_path, amount);
+  std::cerr << "amount: " << amount << std::endl;
 
-  return 0;
+  // this->drawResult(obj_box, image, save_path, amount);
+
+  return amount;
 }
 
 void PredictionClient::Final() {}
@@ -236,6 +221,9 @@ int PredictionClient::drawResult(std::vector<BoxInfo> &boxs_info,
     cv::imwrite(output_image, convert_mat);
     std::cout << "Write to image: " << output_image << std::endl;
   }
+
+  cv::imshow("predict", convert_mat);
+  cv::waitKey(1);
   return 0;
 }
 
@@ -339,7 +327,7 @@ float PredictionClient::iou(const BoxInfo &box1, const BoxInfo &box2) {
   return intersection_area / union_area;
 }
 
-double PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
+std::string PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
   std::sort(boxs_info.begin(), boxs_info.end(),
             [this](const BoxInfo &l, const BoxInfo &r) {
               return (l.x1 + l.x2) < (r.x1 + r.x2);
@@ -347,7 +335,7 @@ double PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
 
   if (boxs_info.size() < 2) {
     std::cerr << "objToDouble boxs_info.size: " << boxs_info.size();
-    return 0.0;
+    return "0";
   }
 
   std::vector<int> part_integer;
@@ -384,14 +372,16 @@ double PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
     sum_integer +=
         part_integer[i] * std::pow<int>(10, part_integer.size() - 1 - i);
   }
-  std::cout << "sum_integer: " << sum_integer << std::endl;
+  std::cerr << "sum_integer: " << sum_integer << std::endl;
 
   // 组合小数部分
-  double sum_decimal = 0.0f;
-  for (int i = 0; i < part_decimal.size(); ++i) {
-    sum_decimal += part_decimal[i] * std::pow<double>(0.1f, i + 1);
+  int sum_decimal = 0;
+  for (int i = part_decimal.size() - 1; i>=0; --i) {
+    sum_decimal +=
+          part_decimal[i] * std::pow<double>(10, part_decimal.size() - 1 - i);
   }
-  std::cout << "sum_decimal: " << sum_decimal << std::endl;
+  std::cerr << "sum_decimal: " << sum_decimal << std::endl;
 
-  return double(sum_integer + sum_decimal);
+  std::string ret = std::to_string(sum_integer) + std::to_string(sum_decimal);
+  return ret;
 }

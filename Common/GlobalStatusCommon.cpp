@@ -101,8 +101,9 @@ IdentifyResults GlobalStatusCommon::PictureProcess()
     cv::Mat screenCaptureData;
     GetPictureData(screenCaptureData);
     if(!screenCaptureData.empty()) {
-        cv::imshow("capture image", screenCaptureData);
-        cv::waitKey(1);
+        // cv::imshow("capture image", screenCaptureData);
+        // cv::waitKey(1);
+        client.Predict(std::move(screenCaptureData), 0.2);
     }
 
     return result;
