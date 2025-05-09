@@ -15,11 +15,13 @@ public:
     void ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct);
     void ModifyRemindSetting(const RemindSettingStruct& remind_setting_struct);
     void FinshConfig();
-    void PictureProcess();
+    IdentifyResults PictureProcess();
     std::shared_ptr<ipay::AllSettingConfig> GetAllSettingConfig();
-    ScreenCaptureData GetPictureData();
+    void GetPictureData(ScreenCaptureData& screenCaptureData);
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
+
+
 private:
     QTimer *process_timer_{nullptr};
     ipay::JsonOperationCommon json_common_;
@@ -27,7 +29,7 @@ private:
     std::shared_ptr<ipay::AllSettingConfig> all_setting_config_{nullptr};
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
-    PredictionClient client;
+//    PredictionClient client;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);

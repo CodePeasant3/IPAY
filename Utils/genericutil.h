@@ -31,11 +31,11 @@ public:
     bool FileExists(QString path);
     QString GetCurrentWorkDir();
     bool CreateFileByCurrentDir(QString path);
-    ipay::ScreenCaptureData CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct);
+    void CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct,ScreenCaptureData& screenCaptureData);
 
 
 private:
-    ipay::ScreenCaptureData screenCaptureData_;
+//    ipay::ScreenCaptureData screenCaptureData_;
 
 };
 

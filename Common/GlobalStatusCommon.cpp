@@ -1,4 +1,5 @@
 ﻿#include "globalstatuscommon.h"
+#include <mutex>
 
 namespace ipay{
 
@@ -55,6 +56,7 @@ void GlobalStatusCommon::ConfigInit()
         qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
     }
 
+
     if(!process_timer_){
         process_timer_ = new QTimer();
         process_timer_->setInterval(1000);
@@ -62,10 +64,11 @@ void GlobalStatusCommon::ConfigInit()
             if(all_setting_config_->cash_register_setting.recognition_type == 1){
                 return;
             }
-            PictureProcess();
+             PictureProcess();
         });
         process_timer_->start();
     }
+
 
 }
 
@@ -89,22 +92,24 @@ void GlobalStatusCommon::FinshConfig()
     all_setting_config_->cash_register_setting.screen_pixmap.save(config_picture_path,"jpg");
 }
 
-void GlobalStatusCommon::PictureProcess()
+IdentifyResults GlobalStatusCommon::PictureProcess()
 {
+    IdentifyResults result;
     qDebug() << "One second has passed.";
-
-
-
+    ipay::ScreenCaptureData screenCaptureData;
+    GetPictureData(screenCaptureData);
+    return result;
 }
+
 
 std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetAllSettingConfig()
 {
     return all_setting_config_;
 }
 
-ScreenCaptureData GlobalStatusCommon::GetPictureData()
+void GlobalStatusCommon::GetPictureData(ScreenCaptureData& screenCaptureData)
 {
-    return generic_util_.CaptureScreen(all_setting_config_->cash_register_setting);
+    generic_util_.CaptureScreen(all_setting_config_->cash_register_setting,screenCaptureData);
 }
 
 void GlobalStatusCommon::StartRecordKeyboard(ipay::ScenePlaybackType currentType)

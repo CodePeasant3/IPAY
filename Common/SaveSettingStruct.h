@@ -65,15 +65,49 @@ struct AllSettingConfig{
 };
 
 struct ScreenCaptureData {
-    uchar data[1 << 22];
+    uchar* data = nullptr;
     int length = 0;
     int width = 0;
     int height = 0;
-     QImage::Format format;
+    QImage::Format format;
+    ~ScreenCaptureData() {
+        delete[] data;
+    }
 };
 
 
+using ScreenCaptureDataPtr =  std::shared_ptr<ipay::ScreenCaptureData>;
+using GetPictureDataCallBack = std::function<void(ScreenCaptureDataPtr)>;
+
+//识别结果
+struct IdentifyResults{
+
+
+
+};
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
