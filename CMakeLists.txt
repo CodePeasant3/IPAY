@@ -64,6 +64,7 @@ add_subdirectory(Algo)
 target_link_libraries(IPAY
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
     proto_tensorflow
     prediction_client)
 
