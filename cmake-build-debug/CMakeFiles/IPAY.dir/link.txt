@@ -1,3 +1,0 @@
-D:\softWare\clion\clion\bin\cmake\win\x64\bin\cmake.exe -E rm -f CMakeFiles\IPAY.dir/objects.a
-D:\softWare\clion\clion\bin\mingw\bin\ar.exe qc CMakeFiles\IPAY.dir/objects.a @CMakeFiles\IPAY.dir\objects1.rsp
-D:\softWare\clion\clion\bin\mingw\bin\g++.exe -g -mwindows -Wl,--whole-archive CMakeFiles\IPAY.dir/objects.a -Wl,--no-whole-archive -o IPAY.exe -Wl,--out-implib,libIPAY.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\IPAY.dir\linkLibs.rsp
