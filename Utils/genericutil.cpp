@@ -74,6 +74,7 @@ void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_regi
      }
 
     QImage image = screenshot.toImage();
+    screenCaptureData.format = image.format();
     screenCaptureData.length = image.sizeInBytes();
     screenCaptureData.data = new uchar[screenCaptureData.length];
     std::memcpy(screenCaptureData.data,image.bits(),image.sizeInBytes());
