@@ -49,9 +49,8 @@ bool GenericUtil::CreateFileByCurrentDir(QString full_path)
 
 }
 
-void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct,ScreenCaptureData& screenCaptureData)
+void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct, cv::Mat& screenCaptureData)
 {
-    screenCaptureData.length = 0;
     if(cash_register_setting_struct.screen_w == 0 || cash_register_setting_struct.screen_h == 0){
         QMessageBox::warning(nullptr, "警告", "未设置识别框区域,请检查！");
         qDebug() << "picture infomation error w: "<< cash_register_setting_struct.screen_w << ", h:" << cash_register_setting_struct.screen_h;
@@ -74,13 +73,8 @@ void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_regi
      }
 
     QImage image = screenshot.toImage();
-    screenCaptureData.format = image.format();
-    screenCaptureData.length = image.sizeInBytes();
-    screenCaptureData.data = new uchar[screenCaptureData.length];
-    std::memcpy(screenCaptureData.data,image.bits(),image.sizeInBytes());
-    screenCaptureData.width = cash_register_setting_struct.screen_w;
-    screenCaptureData.height = cash_register_setting_struct.screen_h;
-
+    screenCaptureData = cv::Mat(image.height(), image.width(), CV_8UC4, (void*)image.constBits(), image.bytesPerLine()).clone();
+    return;
 }
 
 

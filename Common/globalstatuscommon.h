@@ -6,7 +6,7 @@
 #include <QTimer>
 
 #include <PredictionClient.h>
-
+#include <opencv2/opencv.hpp>
 namespace ipay{
 class GlobalStatusCommon
 {
@@ -17,7 +17,7 @@ public:
     void FinshConfig();
     IdentifyResults PictureProcess();
     std::shared_ptr<ipay::AllSettingConfig> GetAllSettingConfig();
-    void GetPictureData(ScreenCaptureData& screenCaptureData);
+    void GetPictureData(cv::Mat& screenCaptureData);
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
 
@@ -29,7 +29,7 @@ private:
     std::shared_ptr<ipay::AllSettingConfig> all_setting_config_{nullptr};
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
-//    PredictionClient client;
+    PredictionClient client;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);

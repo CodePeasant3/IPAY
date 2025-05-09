@@ -1,4 +1,6 @@
 ﻿#include "globalstatuscommon.h"
+#include "opencv2/core/hal/interface.h"
+#include <opencv2/opencv.hpp>
 #include <mutex>
 
 namespace ipay{
@@ -96,8 +98,13 @@ IdentifyResults GlobalStatusCommon::PictureProcess()
 {
     IdentifyResults result;
     qDebug() << "One second has passed.";
-    ipay::ScreenCaptureData screenCaptureData;
+    cv::Mat screenCaptureData;
     GetPictureData(screenCaptureData);
+    if(!screenCaptureData.empty()) {
+        cv::imshow("capture image", screenCaptureData);
+        cv::waitKey(1);
+    }
+
     return result;
 }
 
@@ -107,7 +114,7 @@ std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetAllSettingConfig()
     return all_setting_config_;
 }
 
-void GlobalStatusCommon::GetPictureData(ScreenCaptureData& screenCaptureData)
+void GlobalStatusCommon::GetPictureData(cv::Mat& screenCaptureData)
 {
     generic_util_.CaptureScreen(all_setting_config_->cash_register_setting,screenCaptureData);
 }

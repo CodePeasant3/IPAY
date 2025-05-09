@@ -7,6 +7,7 @@
 #include <QScreen>
 #include "../Common/savesettingstruct.h"
 #include <QMessageBox>
+#include <opencv2/opencv.hpp>
 
 namespace ipay{
 
@@ -31,7 +32,7 @@ public:
     bool FileExists(QString path);
     QString GetCurrentWorkDir();
     bool CreateFileByCurrentDir(QString path);
-    void CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct,ScreenCaptureData& screenCaptureData);
+    void CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct,cv::Mat& screenCaptureData);
 
 
 private:
