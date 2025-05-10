@@ -17,6 +17,9 @@ OrderDetails::~OrderDetails()
 
 void OrderDetails::Init()
 {
+    this->setWindowFlags(windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
+    this->setFixedSize(800,550);
+    this->setWindowTitle("OrderList");
 
     cashDetail_= new QListWidgetItem(QIcon(":/Resources/image/CashDetail.png"),"明细");
     ui ->listWidget_toolbar ->addItem(cashDetail_);
