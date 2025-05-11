@@ -4,6 +4,8 @@
 #include "qstandarditemmodel.h"
 #include <QWidget>
 #include <QListWidgetItem>
+#include "Common/dbops.h"
+#include <QSqlTableModel>
 
 namespace Ui {
 class OrderDetails;
@@ -20,8 +22,11 @@ public:
 
 private:
     Ui::OrderDetails *ui;
-    QStandardItemModel *model = nullptr;
+    // QStandardItemModel *model = nullptr;
+    std::shared_ptr<QSqlTableModel> model;
     QListWidgetItem *cashDetail_ = nullptr;
+private:
+    DBOps db_ops;
 };
 
 #endif // ORDERDETAILS_H

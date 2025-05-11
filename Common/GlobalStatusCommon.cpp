@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <mutex>
 
+
 namespace ipay{
 
 GlobalStatusCommon::GlobalStatusCommon(){}
@@ -72,6 +73,8 @@ void GlobalStatusCommon::ConfigInit()
     }
 
 
+
+
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
@@ -103,7 +106,7 @@ IdentifyResults GlobalStatusCommon::PictureProcess()
     if(!screenCaptureData.empty()) {
         // cv::imshow("capture image", screenCaptureData);
         // cv::waitKey(1);
-        client.Predict(std::move(screenCaptureData), 0.2);
+        // client.Predict(std::move(screenCaptureData), 0.2);
     }
 
     return result;

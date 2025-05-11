@@ -16,8 +16,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Sql)
 
 file(GLOB VIEW_SOURCES ./View/*.cpp ./View/*.h ./View/*.ui)
 file(GLOB COMMON_SOURCES ./Common/*.cpp ./Common/*.h)
@@ -54,6 +54,7 @@ else()
     endif()
 endif()
 include_directories(
+    ${CMAKE_SOURCE_DIR}/
     ${CMAKE_SOURCE_DIR}/Utils
     ${CMAKE_SOURCE_DIR}/Algo/PredictionClient
     ${CMAKE_SOURCE_DIR}/Algo/proto
@@ -65,6 +66,7 @@ target_link_libraries(IPAY
     PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Sql
     proto_tensorflow
     prediction_client)
 
