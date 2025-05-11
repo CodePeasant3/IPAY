@@ -8,11 +8,9 @@ public:
     void final();
     QSqlDatabase m_db;
 private:
-    int createTable();
-    bool insertData(QString pay_order_id,QString time,QString amount,int status);
-
-    void insertTestData();
-
+    int createTable(QSqlQuery& query);
+    bool insertData(QSqlQuery& query, QString pay_order_id,QString time,QString amount,int status);
+    bool cleanOldData(QSqlQuery& query);
 };
 
 #endif // DBOPS_H

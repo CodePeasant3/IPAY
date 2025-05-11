@@ -3,6 +3,7 @@
 #include <qlogging.h>
 #include <QSqlQuery>
 #include <QVariant>
+#include <QTime>
 
 int DBOps::init() {
     m_db = QSqlDatabase::addDatabase("QSQLITE", "iPayOrderList");
@@ -13,8 +14,11 @@ int DBOps::init() {
         return -1;
     }
     std::cout << "db is open: " << m_db.isOpen() << std::endl;
-    this->createTable();
-    this->insertData("111", "202505110011", "100", 1);
+    QSqlQuery query(m_db);
+    this->createTable(query);
+    this->cleanOldData(query);
+
+    this->insertData(query, "00000", "202505110011", "200", 1);
     return 0;
 }
 
@@ -24,9 +28,7 @@ void DBOps::final() {
 }
 
 
-int DBOps::createTable() {
-    QSqlQuery query(m_db);
-
+int DBOps::createTable(QSqlQuery& query) {
     QString sql =
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -46,18 +48,17 @@ int DBOps::createTable() {
     return 0;
 }
 
-bool DBOps::insertData(QString pay_order_id, QString time, QString amount, int status) {
-    QSqlQuery query(m_db);
-
+bool DBOps::insertData(QSqlQuery& query, QString pay_order_id, QString time, QString amount, int status) {
     QString sqlInsertWithoutTime =
-        "INSERT OR IGNORE INTO users (payOrderId, time, amount, status) VALUES (:payOrderId, :time, :amount, :status)";
-
+        "INSERT OR IGNORE INTO users (payOrderId, time, amount, status, created_at) VALUES (:payOrderId, :time, :amount, :status, :created_at)";
+    QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
     query.prepare(sqlInsertWithoutTime);
     query.bindValue(":payOrderId", pay_order_id);
     query.bindValue(":time", time);
     query.bindValue(":amount", amount);
     query.bindValue(":status", status);
+    query.bindValue(":created_at", localTimeStr);
 
     if (!query.exec()) {
         std::cerr << "Insert fail"  << std::endl;
@@ -65,7 +66,13 @@ bool DBOps::insertData(QString pay_order_id, QString time, QString amount, int s
     return true;
 }
 
-void DBOps::insertTestData() {
 
+bool DBOps::cleanOldData(QSqlQuery& query) {
+    query.exec("DELETE FROM employees WHERE created_at < DATE('now', '-30 days')");
+
+    // 检查删除了多少条记录
+    int deletedCount = query.numRowsAffected();
+    std::cerr << "Has delete item: " << deletedCount << std::endl;
+    return true;
 }
 
