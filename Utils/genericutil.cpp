@@ -51,11 +51,13 @@ bool GenericUtil::CreateFileByCurrentDir(QString full_path)
 
 void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_register_setting_struct, cv::Mat& screenCaptureData)
 {
+    /*
     if(cash_register_setting_struct.screen_w == 0 || cash_register_setting_struct.screen_h == 0){
         QMessageBox::warning(nullptr, "警告", "未设置识别框区域,请检查！");
         qDebug() << "picture infomation error w: "<< cash_register_setting_struct.screen_w << ", h:" << cash_register_setting_struct.screen_h;
         return;
     }
+    */
      // 获取主屏幕
      QScreen *screen = QGuiApplication::primaryScreen();
      if (!screen) {
