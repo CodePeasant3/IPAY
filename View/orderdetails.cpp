@@ -2,6 +2,13 @@
 #include "playsetting.h"
 #include "ui_orderdetails.h"
 
+
+#include <QSqlTableModel>
+#include <QString>
+#include <QVariant>
+#include <Qt>
+
+
 OrderDetails::OrderDetails(DBOps& db_ops, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderDetails)
@@ -28,14 +35,16 @@ void OrderDetails::Init(DBOps& db_ops)
     ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
 
 
-    model = std::make_shared<QSqlTableModel>(this, db_ops.m_db);
+    model = std::make_shared<QSqlTableModel>(this,db_ops.m_db);
     model->setTable("users");
     model->select();
 
     model->setHeaderData(1, Qt::Horizontal, "订单号");
-    model->setHeaderData(2, Qt::Horizontal, "交易时间");
+    model->setHeaderData(2, Qt::Horizontal, "交易类型");
     model->setHeaderData(3, Qt::Horizontal, "金额");
-    model->setHeaderData(4, Qt::Horizontal, "状态");
+    model->setHeaderData(4, Qt::Horizontal, "交易状态");
+    model->setHeaderData(5, Qt::Horizontal, "时间");
+
 
     ui ->tableView_order->setModel(model.get());
     ui ->tableView_order->resizeColumnsToContents();
@@ -53,6 +62,10 @@ void OrderDetails::Init(DBOps& db_ops)
     ui->tableView_order->setEditTriggers(QAbstractItemView::NoEditTriggers);
     // Header自动铺满窗体
     ui->tableView_order->horizontalHeader()->setStretchLastSection(true);
+    ui->tableView_order->setColumnHidden(0, true);
+    ui->tableView_order->setColumnHidden(6, true);
+
+
 
     // 备用
     // 刷新数据

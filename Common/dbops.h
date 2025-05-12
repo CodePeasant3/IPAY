@@ -9,7 +9,12 @@ public:
     QSqlDatabase m_db;
 private:
     int createTable(QSqlQuery& query);
-    bool insertData(QSqlQuery& query, QString pay_order_id,QString time,QString amount,int status);
+    bool insertData(QSqlQuery& query,
+                    QString pay_order_id,
+                    int type,
+                    QString time,
+                    QString amount,
+                    int status);
     bool cleanOldData(QSqlQuery& query);
 };
 

@@ -18,7 +18,7 @@ int DBOps::init() {
     this->createTable(query);
     this->cleanOldData(query);
 
-    this->insertData(query, "00000", "202505110011", "200", 1);
+    this->insertData(query, "00000", 2, "202505110011", "200", 1);
     return 0;
 }
 
@@ -27,16 +27,25 @@ void DBOps::final() {
     return;
 }
 
+// id 主键
+// orderid 订单号
+// type 订单类型: 1-付款 2-退款
+// amount 金额 单位分
+// status 状态 1-完成 2-未完成
+// created_at 订单生成时间
+// time 订单生成时间
+
 
 int DBOps::createTable(QSqlQuery& query) {
     QString sql =
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "payOrderId TEXT UNIQUE, "
-        "time TEXT NOT NULL, "
+        "orderid TEXT UNIQUE, "
+        "type INTEGER NOT NULL, "
         "amount TEXT NOT NULL, "
-        "status INTEGER, "
-        "created_at DATETIME DEFAULT CURRENT_TIMESTAMP"
+        "status INTEGER NOT NULL, "
+        "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+        "time TEXT NOT NULL "
         ")";
 
     if (!query.exec(sql)) {
@@ -48,17 +57,25 @@ int DBOps::createTable(QSqlQuery& query) {
     return 0;
 }
 
-bool DBOps::insertData(QSqlQuery& query, QString pay_order_id, QString time, QString amount, int status) {
-    QString sqlInsertWithoutTime =
-        "INSERT OR IGNORE INTO users (payOrderId, time, amount, status, created_at) VALUES (:payOrderId, :time, :amount, :status, :created_at)";
-    QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+bool DBOps::insertData(QSqlQuery& query,
+                       QString pay_order_id,
+                       int type,
+                       QString time,
+                       QString amount,
+                       int status) {
 
-    query.prepare(sqlInsertWithoutTime);
-    query.bindValue(":payOrderId", pay_order_id);
-    query.bindValue(":time", time);
+    QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");    
+    QString sql_cmd_str =
+        "INSERT OR IGNORE INTO users (orderid, type, amount, status, created_at, time) "\
+        "VALUES (:orderid, :type, :amount, :status, :created_at, :time)";
+    query.prepare(sql_cmd_str);
+    query.bindValue(":orderid", pay_order_id);
+    query.bindValue(":type", type);
     query.bindValue(":amount", amount);
     query.bindValue(":status", status);
     query.bindValue(":created_at", localTimeStr);
+    query.bindValue(":time", time);
+
 
     if (!query.exec()) {
         std::cerr << "Insert fail"  << std::endl;
