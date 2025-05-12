@@ -5,6 +5,7 @@
 #include "savesettingstruct.h"
 #include <QTimer>
 #include "dbops.h"
+#include <QSettings>
 
 #include <PredictionClient.h>
 #include <opencv2/opencv.hpp>
@@ -24,6 +25,7 @@ public:
 
 public:
     DBOps db_ops;
+    std::shared_ptr<QSettings> settings;
 
 private:
     QTimer *process_timer_{nullptr};

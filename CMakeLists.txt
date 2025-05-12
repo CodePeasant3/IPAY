@@ -81,6 +81,7 @@ set_target_properties(IPAY PROPERTIES
 install(TARGETS IPAY
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(FILES config.ini DESTINATION .)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(IPAY)

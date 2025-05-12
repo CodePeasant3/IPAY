@@ -16,7 +16,7 @@ GlobalStatusCommon::~GlobalStatusCommon(){
 }
 void GlobalStatusCommon::ConfigInit()
 {
-
+    settings = std::make_shared<QSettings>("config.ini", QSettings::IniFormat);
     QString config_josn_path =  generic_util_.GetCurrentWorkDir() + "/config/test.json";
     QString config_picture_path =  generic_util_.GetCurrentWorkDir() + "/config/screen_picture.jpg";
     QFileInfo file_info(config_josn_path);
@@ -45,20 +45,25 @@ void GlobalStatusCommon::ConfigInit()
     tensor_output.mutable_tensor_shape()->add_dim()->set_size(15);
     tensor_output.mutable_tensor_shape()->add_dim()->set_size(8400);
 
-    int ret = client.Init("123.138.200.114:8010",
-                          std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
+    int ret = 0;
+    auto infer_server = settings->value(QString("Infer/Server")).toString();
+    qWarning() << "read from ini file, server: " << infer_server;
+
+
+    ret = client.Init(infer_server.toStdString(),
+                      std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
     if(ret) {
-        qCritical() << "Link remote server 123.138.200.114:8010 Failed";
+        qCritical() << "Link remote server Failed" << infer_server;
         return;
-    }else{
-        qWarning() << "Link remote server 123.138.200.114:8010 success";
+    }
+    else{
+        qCritical() << "Link remote server Success" << infer_server;
         ::tensorflow::serving::GetModelMetadataResponse response_meta;
         client.GetModelMetadata(&response_meta);
         qInfo() << "model.name: " << response_meta.model_spec().name().c_str();
         qInfo() << "model.version: " << response_meta.model_spec().version().value();
         qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
     }
-
 
     if(!process_timer_){
         process_timer_ = new QTimer();
@@ -76,6 +81,14 @@ void GlobalStatusCommon::ConfigInit()
     if(ret) {
         qWarning() << "DB ops init failed";
     }
+
+
+    auto mchNo = settings->value("Business/mchNo").toString();
+    auto appId = settings->value("Business/appId").toString();
+
+    qWarning() << "read from ini file, mchNo: " << mchNo;
+    qWarning() << "read from ini file, appId: " << appId;
+
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
