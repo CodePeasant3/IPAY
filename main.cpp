@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     QRect rect = primaryScreen.GetGeometryScreen();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
-    OrderDetails orderDetails;
+    OrderDetails orderDetails(ipay::GlobalStatusCommon::instance()->db_ops);
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;
 

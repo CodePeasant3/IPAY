@@ -4,6 +4,7 @@
 #include "jsonoperationcommon.h"
 #include "savesettingstruct.h"
 #include <QTimer>
+#include "dbops.h"
 
 #include <PredictionClient.h>
 #include <opencv2/opencv.hpp>
@@ -21,6 +22,8 @@ public:
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
 
+public:
+    DBOps db_ops;
 
 private:
     QTimer *process_timer_{nullptr};

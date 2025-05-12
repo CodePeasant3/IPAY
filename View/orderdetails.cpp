@@ -2,12 +2,12 @@
 #include "playsetting.h"
 #include "ui_orderdetails.h"
 
-OrderDetails::OrderDetails(QWidget *parent) :
+OrderDetails::OrderDetails(DBOps& db_ops, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderDetails)
 {
     ui->setupUi(this);
-    Init();
+    Init(db_ops);
 }
 
 OrderDetails::~OrderDetails()
@@ -15,7 +15,7 @@ OrderDetails::~OrderDetails()
     delete ui;
 }
 
-void OrderDetails::Init()
+void OrderDetails::Init(DBOps& db_ops)
 {
     this->setWindowFlags(windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     this->setFixedSize(800,550);
@@ -27,10 +27,7 @@ void OrderDetails::Init()
     ui->listWidget_toolbar->setItemDelegate(delegate);
     ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
 
-    int ret = db_ops.init();
-    if(ret) {
-        qWarning() << "DB ops init failed";
-    }
+
     model = std::make_shared<QSqlTableModel>(this, db_ops.m_db);
     model->setTable("users");
     model->select();

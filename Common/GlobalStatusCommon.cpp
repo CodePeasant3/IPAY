@@ -72,9 +72,10 @@ void GlobalStatusCommon::ConfigInit()
         process_timer_->start();
     }
 
-
-
-
+    ret = db_ops.init();
+    if(ret) {
+        qWarning() << "DB ops init failed";
+    }
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
