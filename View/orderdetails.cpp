@@ -9,6 +9,28 @@
 #include <Qt>
 
 
+CustomProxyModel::CustomProxyModel(QObject *parent) : QIdentityProxyModel(parent) {
+
+}
+
+QVariant CustomProxyModel::data(const QModelIndex &index, int role) const{
+    if (role == Qt::DisplayRole && index.column() == 2) { // 第3列
+        int status = sourceModel()->data(index, Qt::EditRole).toInt();
+        switch (status) {
+        case 1: return "付款";
+        case 2: return "退款";
+        }
+    }
+    if (role == Qt::DisplayRole && index.column() == 4) { // 第5列
+        int status = sourceModel()->data(index, Qt::EditRole).toInt();
+        switch (status) {
+        case 1: return "完成";
+        case 2: return "取消";
+        }
+    }
+    return QIdentityProxyModel::data(index, role);
+}
+
 OrderDetails::OrderDetails(DBOps& db_ops, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderDetails)
@@ -36,6 +58,9 @@ void OrderDetails::Init(DBOps& db_ops)
 
 
     model = std::make_shared<QSqlTableModel>(this,db_ops.m_db);
+    proxy =  std::make_shared<CustomProxyModel>();
+    proxy->setSourceModel(model.get());
+
     model->setTable("users");
     model->select();
 
@@ -46,7 +71,7 @@ void OrderDetails::Init(DBOps& db_ops)
     model->setHeaderData(5, Qt::Horizontal, "时间");
 
 
-    ui ->tableView_order->setModel(model.get());
+    ui ->tableView_order->setModel(proxy.get());
     ui ->tableView_order->resizeColumnsToContents();
     ui ->tableView_order->setAlternatingRowColors(true);
 

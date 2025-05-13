@@ -7,11 +7,20 @@
 #include "Common/dbops.h"
 #include <QSqlTableModel>
 #include "Common/dbops.h"
+#include <QIdentityProxyModel>
+
 
 
 namespace Ui {
 class OrderDetails;
 }
+
+class CustomProxyModel : public QIdentityProxyModel {
+    Q_OBJECT
+public:
+    explicit CustomProxyModel(QObject *parent = nullptr);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+};
 
 class OrderDetails : public QWidget
 {
@@ -26,6 +35,7 @@ private:
     Ui::OrderDetails *ui;
     // QStandardItemModel *model = nullptr;
     std::shared_ptr<QSqlTableModel> model;
+    std::shared_ptr<CustomProxyModel> proxy;
     QListWidgetItem *cashDetail_ = nullptr;
 
 };
