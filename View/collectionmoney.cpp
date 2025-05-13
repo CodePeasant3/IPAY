@@ -3,6 +3,9 @@
 #include "ui_collectionmoney.h"
 #include "QDebug"
 #include "../Common/primaryscreen.h"
+#include <QRegExpValidator>
+#include <QRegExp>
+
 
 CollectionMoney::CollectionMoney(QWidget *parent) :
     QWidget(parent),
@@ -36,6 +39,13 @@ void CollectionMoney::Init()
     ui->label_icon->setPixmap(scaledPixmap);
     ui->label_icon->setAlignment(Qt::AlignCenter);
     FuncationShow("收款","录入顾客手机支付凭证条码","收款");
+
+    // 这里new一下, 会有溢出的问题吗? 无所谓了
+    QRegExp regex("^[0-9]+$");
+    QRegExpValidator *validator = new QRegExpValidator(regex, ui->lineEdit_qr);
+    ui ->lineEdit_qr->setValidator(validator);
+    ui ->lineEdit_qr->setPlaceholderText("请输入数字");
+
 }
 
 void CollectionMoney::FuncationShow(std::string titleStr, std::string remindStr,std::string functionStr)
