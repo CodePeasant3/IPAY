@@ -8,8 +8,7 @@
 class HttpsRequest
 {
 public:
-    HttpsRequest();
-
+    int init(const QSettings& settings);
     int pay(const std::string& amount); // 收款
     int refund(const std::string& refundAmount); // 退款
     int query_pay(); // 查询付款订单状态
@@ -26,12 +25,12 @@ private:
     std::string generateMD5(const std::string& text);
     std::string get_utc_timestamp();
     std::string generateOrderNo();
-    std::string m_mchNo; // 商户号
-    std::string m_appId; // 应用ID
-    std::string url_pay;
-    std::string url_refund;
-    std::string url_query_pay;
-    std::string url_query_refund;
+    QString m_mchNo; // 商户号
+    QString m_appId; // 应用ID
+    QString url_pay;
+    QString url_refund;
+    QString url_query_pay;
+    QString url_query_refund;
 };
 
 #endif // HTTPSREQUEST_H

@@ -3,6 +3,58 @@
 #include <sstream>
 #include <iomanip>
 
+#define DEFAULT_URL_PAY "https://pay.zhuceyiyou.com/api/pay/unifiedOrder"
+#define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
+#define DEFAULT_URL_QUERY_PAY "https://pay.zhuceyiyou.com/api/pay/query"
+#define DEFAULT_URL_QUERY_REFUND "https://pay.zhuceyiyou.com/api/refund/query"
+#define DEFAULT_MCHNO "00000001"
+#define DEFAULT_APPID "00000002"
+
+int HttpsRequest::init(const QSettings& settings) {
+
+    this->url_pay =
+        settings.value("Payment/UrlPay", DEFAULT_URL_PAY).toString();
+    this->url_refund =
+        settings.value("Payment/UrlRefund", DEFAULT_URL_REFUND).toString();
+    this->url_query_pay =
+        settings.value("Payment/UrlQueryPay", DEFAULT_URL_QUERY_PAY).toString();
+    this->url_query_refund =
+        settings.value("Payment/UrlQueryRefund", DEFAULT_URL_QUERY_REFUND).toString();
+    this->m_mchNo =
+        settings.value("Business/mchNo", DEFAULT_MCHNO).toString();
+    this->m_appId =
+        settings.value("Business/appId", DEFAULT_APPID).toString();
+
+    qInfo() << "mchNo: " << m_mchNo;
+    qInfo() << "appId: " << m_appId;
+    qInfo() << "url_pay: " << url_pay;
+    qInfo() << "url_refund: " << url_refund;
+    qInfo() << "url_query_pay: " << url_query_pay;
+    qInfo() << "url_query_refund: " << url_query_refund;
+
+    request_pay.setUrl(url_pay);
+    request_pay.setRawHeader("accept", "*/*");
+    request_pay.setRawHeader("Accept-Language", "zh-CN");
+    request_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
+
+    request_refund.setUrl(url_refund);
+    request_refund.setRawHeader("accept", "*/*");
+    request_refund.setRawHeader("Accept-Language", "zh-CN");
+    request_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
+
+    request_query_pay.setUrl(url_query_pay);
+    request_query_pay.setRawHeader("accept", "*/*");
+    request_query_pay.setRawHeader("Accept-Language", "zh-CN");
+    request_query_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
+
+    request_query_refund.setUrl(url_query_refund);
+    request_query_refund.setRawHeader("accept", "*/*");
+    request_query_refund.setRawHeader("Accept-Language", "zh-CN");
+    request_query_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
+    return 0;
+}
+
+
 // 获取13位UTC时间戳（毫秒级）
 std::string HttpsRequest::get_utc_timestamp() {
     using namespace std::chrono;
@@ -34,47 +86,18 @@ std::string HttpsRequest::generateOrderNo() {
 }
 
 
-
-HttpsRequest::HttpsRequest() {
-    // TOOD 获取商户号和应用ID
-    this->m_mchNo = "TODO";
-    this->m_appId = "TODO";
-
-    this->url_pay = "http://pay.zhuceyiyou.com/api/pay/unifiedOrder";
-    this->url_refund = "http://pay.zhuceyiyou.com/api/refund/refundOrder";
-    this->url_query_pay = "http://pay.zhuceyiyou.com/api/pay/query";
-    this->url_query_refund = "http://pay.zhuceyiyou.com/api/refund/query";
-
-     request_pay.setUrl(QUrl(url_pay.c_str()));
-     request_pay.setRawHeader("accept", "*/*");
-     request_pay.setRawHeader("Accept-Language", "zh-CN");
-     request_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
-     request_refund.setUrl(QUrl(url_refund.c_str()));
-     request_refund.setRawHeader("accept", "*/*");
-     request_refund.setRawHeader("Accept-Language", "zh-CN");
-     request_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
-     request_query_pay.setUrl(QUrl(url_query_pay.c_str()));
-     request_query_pay.setRawHeader("accept", "*/*");
-     request_query_pay.setRawHeader("Accept-Language", "zh-CN");
-     request_query_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
-     request_query_refund.setUrl(QUrl(url_query_refund.c_str()));
-     request_query_refund.setRawHeader("accept", "*/*");
-     request_query_refund.setRawHeader("Accept-Language", "zh-CN");
-     request_query_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
-
-}
-
 int HttpsRequest::pay(const std::string& amount) {
+    if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_pay.isEmpty()) {
+        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_pay.isEmpty()";
+        return -1;
+    }
+
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
 
     body_data["amount"] = amount; //金额
-    body_data["mchNo"] = m_mchNo;
-    body_data["appId"] = m_appId;
+    body_data["mchNo"] = m_mchNo.toStdString();
+    body_data["appId"] = m_appId.toStdString();
 
     body_data["mchOrderNo"] = generateOrderNo(); // 商户生成的订单号
     body_data["channelExtra"] = "TODO";
@@ -103,10 +126,15 @@ int HttpsRequest::pay(const std::string& amount) {
 }
 
 int HttpsRequest::refund(const std::string& refundAmount) {
+    if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_refund.isEmpty()) {
+        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_refund.isEmpty()";
+        return -1;
+    }
+
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
-    body_data["mchNo"] = m_mchNo;
-    body_data["appId"] = m_appId;
+    body_data["mchNo"] = m_mchNo.toStdString();
+    body_data["appId"] = m_appId.toStdString();
     body_data["refundAmount"] = refundAmount;
 
     body_data["mchOrderNo"] = "TODO";
@@ -135,6 +163,11 @@ int HttpsRequest::refund(const std::string& refundAmount) {
 }
 
 int HttpsRequest::query_pay() {
+    if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_query_pay.isEmpty()) {
+        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_query_pay.isEmpty()";
+        return -1;
+    }
+
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
     for(const auto& ele : body_data) {
@@ -147,6 +180,11 @@ int HttpsRequest::query_pay() {
 
 
 int HttpsRequest::query_refund() {
+    if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_query_refund.isEmpty()) {
+        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_query_refund.isEmpty()";
+        return -1;
+    }
+
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
     for(const auto& ele : body_data) {
