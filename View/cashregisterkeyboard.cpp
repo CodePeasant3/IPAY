@@ -20,6 +20,27 @@ void CashRegisterKeyboard::Init()
     ui->widget_3->hide();
     connect(ui ->label_keyboard,&ClickableLabel::clicked,this,&CashRegisterKeyboard::KeyboardShow);
     money_vector_.push_back("0");
+    connect(ui->pushButton_cash1,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
+    connect(ui->pushButton_cash2,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
+
+}
+
+int CashRegisterKeyboard::MoneyBack(QString qrStr)
+{
+    qrStr; // QR 条码
+    money_result_; // 金额
+
+    return 0;
+}
+
+void CashRegisterKeyboard::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        ClickReceive();
+        event->accept();
+    } else {
+        QWidget::keyPressEvent(event);
+    }
 
 }
 
@@ -47,13 +68,47 @@ void CashRegisterKeyboard::KeyboardShow()
 
 void CashRegisterKeyboard::ChangeMonet()
 {
-    std::string money_result;
+    money_result_ = "";
     for (const auto& str : money_vector_) {
-        money_result += str;
+        money_result_ += str;
     }
-    ui->label_money ->setText(QString::fromStdString("¥"+money_result));
-    emit FinalMoney(money_result);
+    ui->label_money ->setText(QString::fromStdString("¥"+money_result_));
+    emit FinalMoney(money_result_);
 }
+
+void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
+{
+
+    qrStr_ = qrStr;
+}
+
+void CashRegisterKeyboard::operationShow(int flags)
+{
+    if(flags == 0){
+        ui ->pushButton_cash2->setText("退款");
+        ui ->pushButton_cash1 ->setText("退款");
+    }else{
+        ui ->pushButton_cash2->setText("收款");
+        ui ->pushButton_cash1 ->setText("收款");
+    }
+    flags_ = flags;
+}
+
+void CashRegisterKeyboard::ClickReceive()
+{
+    if(money_result_.empty()){
+        QMessageBox::warning(nullptr,"警告","请设置金额后操作");
+        return;
+    }
+    if(flags_ != 0){
+        emit ShowCollection();
+        return;
+    }
+
+    MoneyBack(qrStr_);
+}
+
+
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {

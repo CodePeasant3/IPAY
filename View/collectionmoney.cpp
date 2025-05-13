@@ -1,0 +1,98 @@
+﻿#include "collectionmoney.h"
+#include "qevent.h"
+#include "ui_collectionmoney.h"
+#include "QDebug"
+#include "../Common/primaryscreen.h"
+
+CollectionMoney::CollectionMoney(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::CollectionMoney)
+{
+    ui->setupUi(this);
+    Init();
+}
+
+CollectionMoney::~CollectionMoney()
+{
+    delete ui;
+}
+
+void CollectionMoney::Init()
+{
+    ipay::PrimaryScreen primaryScreen;
+    QRect rect = primaryScreen.GetGeometryScreen();
+    this->resize(rect.width() * 0.2,rect.height() *0.4);
+
+    QPixmap QRCodePixmap("://Resources/image/QRCode.png");
+    int labelIconWidth = rect.width() * 0.12;
+
+    double widthRatio = (double)labelIconWidth / QRCodePixmap.width();
+    int scaledQRHeight = QRCodePixmap.height() * widthRatio;
+    QPixmap scaledPixmap = QRCodePixmap.scaled(
+        labelIconWidth, scaledQRHeight,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation
+    );
+    ui->label_icon->setPixmap(scaledPixmap);
+    ui->label_icon->setAlignment(Qt::AlignCenter);
+    FuncationShow("收款","录入顾客手机支付凭证条码","收款");
+}
+
+void CollectionMoney::FuncationShow(std::string titleStr, std::string remindStr,std::string functionStr)
+{
+    ui->label_remind->setText(QString::fromStdString(remindStr));
+    ui->label_title->setText(QString::fromStdString(titleStr));
+    ui->label_remind->setAlignment(Qt::AlignCenter);
+    ui->label_title->setAlignment(Qt::AlignCenter);
+    ui->pushButton_qr->setText(QString::fromStdString(functionStr));
+}
+
+void CollectionMoney::ReceiveMoney()
+{
+    receiveMoney_; // 金额
+    QString qtStr = ui ->lineEdit_qr->text();// 二维码
+
+}
+
+void CollectionMoney::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+            on_pushButton_qr_clicked();
+            event->accept();
+        } else {
+            QWidget::keyPressEvent(event);
+        }
+}
+
+void CollectionMoney::operationShow(int flags)
+{
+    funcationFlags_ = flags;
+    if(flags == 0){
+        FuncationShow("退款","录入顾客手机收款码","查询");
+    }else{
+        FuncationShow("收款","录入顾客手机支付凭证条码","收款");
+    }
+}
+
+void CollectionMoney::transferMoney(std::string money)
+{
+    receiveMoney_ = money;
+}
+
+void CollectionMoney::on_pushButton_qr_clicked()
+{
+    QString qtStr = ui ->lineEdit_qr->text();
+    if(qtStr.isEmpty()){
+        QMessageBox::warning(nullptr,"错误","请输入条纹码信息!");
+        return;
+    }
+    if(funcationFlags_ == 0){
+        emit receiveFlags(qtStr);
+        emit showKeyboard();
+        return;
+    }
+    ReceiveMoney();
+
+
+}
+

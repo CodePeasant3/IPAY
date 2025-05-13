@@ -35,6 +35,7 @@ private:
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
     PredictionClient client;
+
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);
 };

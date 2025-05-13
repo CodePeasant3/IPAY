@@ -34,8 +34,8 @@ void PaymentPlatform::init()
     ui ->MainPushButton->setMenu(pushMenu_);
 
     connect(ui->label_money,&ClickableLabel::doubleClicked,this,&PaymentPlatform::ShowCashKeyboard);
-    connect(receiptAction_, &QAction::triggered, this, [=]() {  });
-    connect(refundActuin_, &QAction::triggered, this, [=]() {  });
+    connect(receiptAction_, &QAction::triggered, this, [=]() { emit ShowCashKeyboard(); emit StartModel(1);});
+    connect(refundActuin_, &QAction::triggered, this, [=]() { emit ShowCollecton(); emit StartModel(0);});
     connect(detailAction_, &QAction::triggered, this, [=]() {emit ShowDetails(); });
     connect(settingAction_, &QAction::triggered, this, [=]() { emit ShowSetting(); });
     connect(exitAction_, &QAction::triggered, this, [=]() { emit ClickExit(); });

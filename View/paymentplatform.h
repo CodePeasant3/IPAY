@@ -22,9 +22,11 @@ public:
     void exit();
 signals:
     void ShowCashKeyboard();
+    void ShowCollecton();
     void ShowSetting();
     void ClickExit();
     void ShowDetails();
+    void StartModel(int flags);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

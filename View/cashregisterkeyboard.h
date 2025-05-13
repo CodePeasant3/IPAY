@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <string>
 #include <vector>
+#include <QMessageBox>
 
 namespace Ui {
 class CashRegisterKeyboard;
@@ -17,21 +18,33 @@ public:
     explicit CashRegisterKeyboard(QWidget *parent = nullptr);
     ~CashRegisterKeyboard();
     void Init();
+    int MoneyBack(QString qrStr); //金额退款
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void CollectMoney(std::string money);
     void FinalMoney(std::string money);
+    void ShowCollection();
+    void SendMoneyNum(std::string money);
 
 public slots:
     void KeyboardShow();
     void ModifyMoney(std::string number);
     void DeleteMoney();
     void ChangeMonet();
+    void ReceiveQRInfo(QString qrStr);
+    void operationShow(int flags);
+    void ClickReceive();
 
 private:
     Ui::CashRegisterKeyboard *ui;
+    std::string money_result_;
     bool isShow_ = false;
     static std::vector<std::string> money_vector_;
+    QString qrStr_;
+    int flags_;
+
 };
 
 #endif // CASHREGISTERKEYBOARD_H

@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <windows.h>
 #include <Shlobj.h>
+#include "View/collectionmoney.h"
 
 
 
@@ -31,17 +32,31 @@ int main(int argc, char *argv[])
 //        }
 //        return 0;
 //    }
+
+
     ipay::GlobalStatusCommon::instance()->ConfigInit();
     ipay::PrimaryScreen primaryScreen;
     QRect rect = primaryScreen.GetGeometryScreen();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
     OrderDetails orderDetails(ipay::GlobalStatusCommon::instance()->db_ops);
+    CollectionMoney collectionMoney;
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;
 
+    Qt::WindowFlags playSettingFlags = playSetting.windowFlags();
     playSetting.resize(rect.width() * 0.4,rect.height() *0.4);
+    playSetting.setWindowFlags(playSettingFlags &~ Qt::WindowMinMaxButtonsHint);
+    playSetting.setFixedSize(rect.width() * 0.4,rect.height() *0.4);
+    playSetting.setWindowTitle("Setting");
+
+
     orderDetails.resize(rect.width() * 0.4,rect.height() *0.4);
+    Qt::WindowFlags orderDetailsFlags = orderDetails.windowFlags();
+    orderDetails.setWindowFlags(orderDetailsFlags &~ Qt::WindowMinMaxButtonsHint);
+    orderDetails.setFixedSize(rect.width() * 0.4,rect.height() *0.4);
+    orderDetails.setWindowTitle("OrderList");
+
     cashRegisterKeyboard.resize(rect.width() * 0.2,rect.height() *0.2);
     paymentPlatform.resize(rect.width() * 0.2,rect.height() *0.1);
     keyboardRecordOperation.resize(rect.width() * 0.4,rect.height() *0.2);
@@ -54,11 +69,28 @@ int main(int argc, char *argv[])
     cashRegisterKeyboard.hide();
     orderDetails.hide();
     keyboardRecordOperation.hide();
+    collectionMoney.hide();
     paymentPlatform.show();
 
 
+    QWidget::connect(&collectionMoney,&CollectionMoney::receiveFlags,&cashRegisterKeyboard,&CashRegisterKeyboard::ReceiveQRInfo);
+    QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::SendMoneyNum,&collectionMoney,&CollectionMoney::transferMoney);
 
+    QWidget::connect(&collectionMoney,&CollectionMoney::showKeyboard,&cashRegisterKeyboard,&CashRegisterKeyboard::show);
+    QWidget::connect(&collectionMoney,&CollectionMoney::showKeyboard,&collectionMoney,&CollectionMoney::hide);
+    QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::ShowCollection,&collectionMoney,&CollectionMoney::show);
+    QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::ShowCollection,&cashRegisterKeyboard,&CashRegisterKeyboard::hide);
+
+
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCollecton,&collectionMoney,&CollectionMoney::show);
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCollecton,&cashRegisterKeyboard,&CashRegisterKeyboard::hide);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboard,&cashRegisterKeyboard,&CashRegisterKeyboard::show);
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboard,&collectionMoney,&CollectionMoney::hide);
+
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&collectionMoney,&CollectionMoney::operationShow);
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&cashRegisterKeyboard,&CashRegisterKeyboard::operationShow);
+
+
     QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::FinalMoney,&paymentPlatform,&PaymentPlatform::ReceiveMoney);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowSetting,&playSetting,&PlaySetting::show);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ClickExit,&a,&QApplication::quit);
