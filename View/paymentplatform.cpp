@@ -7,6 +7,7 @@ PaymentPlatform::PaymentPlatform(QWidget *parent)
 {
     ui->setupUi(this);
     this ->setWindowFlags(this->windowFlags() | Qt::FramelessWindowHint);
+    this->move(0,0);
     init();
 }
 
