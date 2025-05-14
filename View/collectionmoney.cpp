@@ -46,10 +46,13 @@ void CollectionMoney::Init()
     ui ->lineEdit_qr->setValidator(validator);
     ui ->lineEdit_qr->setPlaceholderText("请输入数字");
 
+    this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+
 }
 
 void CollectionMoney::FuncationShow(std::string titleStr, std::string remindStr,std::string functionStr)
 {
+    this->setWindowTitle(titleStr.c_str());
     ui->label_remind->setText(QString::fromStdString(remindStr));
     ui->label_title->setText(QString::fromStdString(titleStr));
     ui->label_remind->setAlignment(Qt::AlignCenter);

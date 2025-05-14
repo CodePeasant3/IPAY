@@ -46,6 +46,8 @@ OrderDetails::~OrderDetails()
 
 void OrderDetails::Init(DBOps& db_ops)
 {
+    this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+
     cashDetail_= new QListWidgetItem(QIcon(":/Resources/image/CashDetail.png"),"明细");
     ui ->listWidget_toolbar ->addItem(cashDetail_);
     CustomDelegate* delegate = new CustomDelegate(ui->listWidget_toolbar);

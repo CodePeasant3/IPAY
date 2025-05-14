@@ -20,6 +20,8 @@ void CashRegisterKeyboard::Init()
     ui->widget_3->hide();
     connect(ui ->label_keyboard,&ClickableLabel::clicked,this,&CashRegisterKeyboard::KeyboardShow);
     money_vector_.push_back("0");
+    this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+    this->setWindowTitle("收款");
     connect(ui->pushButton_cash1,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
     connect(ui->pushButton_cash2,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
 
