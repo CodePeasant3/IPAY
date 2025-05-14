@@ -17,6 +17,7 @@ CashRegisterKeyboard::~CashRegisterKeyboard()
 
 void CashRegisterKeyboard::Init()
 {
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     ui->widget_3->hide();
     connect(ui ->label_keyboard,&ClickableLabel::clicked,this,&CashRegisterKeyboard::KeyboardShow);
     money_vector_.push_back("0");
