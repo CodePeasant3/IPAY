@@ -47,7 +47,7 @@ void CollectionMoney::Init()
     ui ->lineEdit_qr->setPlaceholderText("请输入数字");
 
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
-
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
 }
 
 void CollectionMoney::FuncationShow(std::string titleStr, std::string remindStr,std::string functionStr)

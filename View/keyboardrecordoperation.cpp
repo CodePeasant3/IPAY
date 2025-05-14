@@ -62,6 +62,7 @@ void KeyboardRecordOperation::Init()
     // win 7 核心库无法使用这个函数
 //    SetThreadDescription(record_keyboard_thread.native_handle(), LPCWSTR("keyborad_record_thr_"));
     record_keyboard_thread.detach();
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
 }
 
 

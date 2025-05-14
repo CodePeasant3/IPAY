@@ -16,7 +16,7 @@ PlaySetting::~PlaySetting()
 
 void PlaySetting::init()
 {
-
+    this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     cashRegisterSetting_= new QListWidgetItem(QIcon(":/Resources/image/cashRegisterSetting.png"),"收银设置");
     reminderSetting_= new QListWidgetItem(QIcon(":/Resources/image/reminderSetting.png"),"提醒设置");
     scanCodeSetting_= new QListWidgetItem(QIcon(":/Resources/image/scanCodeSetting.png"),"扫码设置");
