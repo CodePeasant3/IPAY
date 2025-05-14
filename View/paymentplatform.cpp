@@ -34,7 +34,10 @@ void PaymentPlatform::init()
     pushMenu_->addAction(exitAction_);
     ui ->MainPushButton->setMenu(pushMenu_);
 
-    connect(ui->label_money,&ClickableLabel::doubleClicked,this,&PaymentPlatform::ShowCashKeyboard);
+    connect(ui->label_money,&ClickableLabel::doubleClicked,this,[=]() {
+        emit ShowCashKeyboard();
+        this->setEnabled(false);
+    });
 
     connect(receiptAction_, &QAction::triggered, this, [=]() {
         emit ShowCashKeyboard();
