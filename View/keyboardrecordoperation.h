@@ -33,6 +33,7 @@ private slots:
 
 signals:
     void stop_keyboard_record();
+    void AllowOperation();
 
 private:
     Ui::KeyboardRecordOperation *ui;

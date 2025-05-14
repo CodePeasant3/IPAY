@@ -102,6 +102,13 @@ int main(int argc, char *argv[])
                      &keyboardRecordOperation,&KeyboardRecordOperation::StartRecordKeyboard,Qt::DirectConnection);
     QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::stop_keyboard_record,
                      &keyboardRecordOperation,&KeyboardRecordOperation::hide);
+
+    QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+    QWidget::connect(&collectionMoney,&CollectionMoney::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+    QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+    QWidget::connect(&orderDetails,&OrderDetails::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+    QWidget::connect(&playSetting,&PlaySetting::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+
     return a.exec();
 }
 

@@ -113,4 +113,9 @@ void PaymentPlatform::ReceiveMoney(std::string moneyNumber)
     ui->label_money->setText(QString::fromStdString("¥" + moneyNumber));
 }
 
+void PaymentPlatform::EnableOperation()
+{
+    this->setEnabled(true);
+}
+
 

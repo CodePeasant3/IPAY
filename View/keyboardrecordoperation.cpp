@@ -149,8 +149,8 @@ void KeyboardRecordOperation::on_pushButton_stop_record_clicked()
     emit stop_keyboard_record();
 }
 void KeyboardRecordOperation::closeEvent(QCloseEvent *event) {
-    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
     event->accept();
+    emit AllowOperation();
 }
 
 

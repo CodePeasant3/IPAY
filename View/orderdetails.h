@@ -31,6 +31,9 @@ public:
     ~OrderDetails();
     void  Init(DBOps& db_ops);
 
+signals:
+    void AllowOperation();
+
 private:
     Ui::OrderDetails *ui;
     // QStandardItemModel *model = nullptr;

@@ -34,6 +34,7 @@ public:
 
 signals:
     void start_keyboard_record();
+    void AllowOperation();
 
 private slots:
     void OnItemSelectionChanged();

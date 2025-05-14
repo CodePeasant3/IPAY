@@ -111,8 +111,8 @@ void CashRegisterKeyboard::ClickReceive()
 }
 
 void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
-    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
     event->accept();
+    emit AllowOperation();
 }
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)

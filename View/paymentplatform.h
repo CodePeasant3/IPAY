@@ -35,6 +35,7 @@ protected:
 
  public slots:
     void ReceiveMoney(std::string moneyNumber);
+    void EnableOperation();
 
 
 

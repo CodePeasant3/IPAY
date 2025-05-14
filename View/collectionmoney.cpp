@@ -111,6 +111,6 @@ void CollectionMoney::on_pushButton_qr_clicked()
 
 
 void CollectionMoney::closeEvent(QCloseEvent *event) {
-    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
     event->accept();
+    emit AllowOperation();
 }

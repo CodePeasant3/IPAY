@@ -28,6 +28,7 @@ signals:
     void FinalMoney(std::string money);
     void ShowCollection();
     void SendMoneyNum(std::string money);
+    void AllowOperation();
 
 public slots:
     void KeyboardShow();

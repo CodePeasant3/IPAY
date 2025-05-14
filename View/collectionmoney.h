@@ -30,6 +30,7 @@ public slots:
 signals:
     void receiveFlags(QString qrStr);
     void showKeyboard();
+    void AllowOperation();
 
 private slots:
     void on_pushButton_qr_clicked();
