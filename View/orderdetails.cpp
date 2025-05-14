@@ -95,3 +95,9 @@ void OrderDetails::Init(DBOps& db_ops)
     // model->select();
     // tableView->resizeColumnsToContents();
 }
+
+
+void OrderDetails::closeEvent(QCloseEvent *event) {
+    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
+    event->accept();
+}

@@ -38,6 +38,8 @@ private:
     Ui::KeyboardRecordOperation *ui;
     bool recordFlags_ = false;
     bool modify_record_flag_ = false;
+protected:
+    void closeEvent(QCloseEvent *event) override;
 };
 
 #endif // KEYBOARDRECORDOPERATION_H

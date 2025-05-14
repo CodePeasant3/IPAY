@@ -35,22 +35,47 @@ void PaymentPlatform::init()
     ui ->MainPushButton->setMenu(pushMenu_);
 
     connect(ui->label_money,&ClickableLabel::doubleClicked,this,&PaymentPlatform::ShowCashKeyboard);
-    connect(receiptAction_, &QAction::triggered, this, [=]() { emit ShowCashKeyboard(); emit StartModel(1);});
-    connect(refundActuin_, &QAction::triggered, this, [=]() { emit ShowCollecton(); emit StartModel(0);});
-    connect(detailAction_, &QAction::triggered, this, [=]() {emit ShowDetails(); });
-    connect(settingAction_, &QAction::triggered, this, [=]() { emit ShowSetting(); });
-    connect(exitAction_, &QAction::triggered, this, [=]() { emit ClickExit(); });
+
+    connect(receiptAction_, &QAction::triggered, this, [=]() {
+        emit ShowCashKeyboard();
+        emit StartModel(1);
+        this->setEnabled(false);
+    });
+
+    connect(refundActuin_, &QAction::triggered, this, [=]() {
+        emit ShowCollecton();
+        emit StartModel(0);
+        this->setEnabled(false);
+    });
+    connect(detailAction_, &QAction::triggered, this, [=]() {
+        emit ShowDetails();
+        this->setEnabled(false);
+    });
+    connect(settingAction_, &QAction::triggered, this, [=]() {
+        emit ShowSetting();
+        this->setEnabled(false);
+
+    });
+    connect(exitAction_, &QAction::triggered, this, [=]() {
+        emit ClickExit();
+    });
 
 }
 
 void PaymentPlatform::exit()
 {
-    delete receiptAction_;
-    delete refundActuin_;
-    delete detailAction_;
-    delete settingAction_;
-    delete exitAction_;
-    delete pushMenu_;
+    if(receiptAction_)
+        delete receiptAction_;
+    if(refundActuin_)
+        delete refundActuin_;
+    if(detailAction_)
+        delete detailAction_;
+    if(settingAction_)
+        delete settingAction_;
+    if(exitAction_)
+        delete exitAction_;
+    if(pushMenu_)
+        delete pushMenu_;
 }
 
 void PaymentPlatform::mousePressEvent(QMouseEvent *event)

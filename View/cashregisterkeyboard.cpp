@@ -110,7 +110,10 @@ void CashRegisterKeyboard::ClickReceive()
     MoneyBack(qrStr_);
 }
 
-
+void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
+    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
+    event->accept();
+}
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {

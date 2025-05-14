@@ -1,6 +1,6 @@
 ﻿#include "keyboardrecordoperation.h"
 #include "ui_keyboardrecordoperation.h"
-
+#include <QCloseEvent>
 
 std::vector<ipay::KeyboardMouseRecordStruct> keyboard_vector_;
 HHOOK h_mouse_hook = NULL;
@@ -148,13 +148,10 @@ void KeyboardRecordOperation::on_pushButton_stop_record_clicked()
 
     emit stop_keyboard_record();
 }
-
-
-
-
-
-
-
+void KeyboardRecordOperation::closeEvent(QCloseEvent *event) {
+    // TODO(Shucong): 去触发paymentPlatform的setEnable(true);
+    event->accept();
+}
 
 
 

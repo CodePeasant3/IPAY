@@ -37,6 +37,7 @@ signals:
 
 private slots:
     void OnItemSelectionChanged();
+    void closeEvent(QCloseEvent *event) override;
 
 
 private:

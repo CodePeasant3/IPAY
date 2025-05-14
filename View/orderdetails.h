@@ -37,6 +37,8 @@ private:
     std::shared_ptr<QSqlTableModel> model;
     std::shared_ptr<CustomProxyModel> proxy;
     QListWidgetItem *cashDetail_ = nullptr;
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 };
 
