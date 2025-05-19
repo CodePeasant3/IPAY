@@ -54,6 +54,9 @@ void PlaySetting::init()
 
     connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::start_keyboard_record,this,&PlaySetting::start_keyboard_record);
 
+    connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::hideSettingPage,this,&PlaySetting::hide);
+    connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::hideSettingPage,this,&PlaySetting::AllowOperation);
+
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
     this->setWindowTitle("设置");
 }

@@ -22,13 +22,13 @@ public:
     void GetPictureData(cv::Mat& screenCaptureData);
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
+    std::shared_ptr<ipay::AllSettingConfig> GetSettingConfig();
 
 public:
     DBOps db_ops;
     std::shared_ptr<QSettings> settings;
 
 private:
-    QTimer *process_timer_{nullptr};
     ipay::JsonOperationCommon json_common_;
     ipay::GenericUtil generic_util_;
     std::shared_ptr<ipay::AllSettingConfig> all_setting_config_{nullptr};

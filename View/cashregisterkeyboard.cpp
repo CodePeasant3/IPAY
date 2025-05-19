@@ -1,6 +1,7 @@
 ﻿    #include "cashregisterkeyboard.h"
 #include "qdebug.h"
 #include "ui_cashregisterkeyboard.h"
+#include <QTimer>
 std::vector<std::string> CashRegisterKeyboard::money_vector_;
 CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
     QWidget(parent),
@@ -12,6 +13,11 @@ CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
 
 CashRegisterKeyboard::~CashRegisterKeyboard()
 {
+    if(process_timer_){
+        process_timer_->stop();
+        delete process_timer_;
+        process_timer_ = nullptr;
+    }
     delete ui;
 }
 
@@ -26,6 +32,18 @@ void CashRegisterKeyboard::Init()
     connect(ui->pushButton_cash1,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
     connect(ui->pushButton_cash2,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
 
+    if(!process_timer_){
+        process_timer_ = new QTimer();
+        process_timer_->setInterval(1000);
+        QObject::connect(process_timer_, &QTimer::timeout, [this]() {
+            if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 1){
+                return;
+            }
+            ipay::IdentifyResults result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+        });
+        process_timer_->start();
+    }
+
 }
 
 int CashRegisterKeyboard::MoneyBack(QString qrStr)
@@ -38,11 +56,35 @@ int CashRegisterKeyboard::MoneyBack(QString qrStr)
 
 void CashRegisterKeyboard::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-        ClickReceive();
-        event->accept();
-    } else {
-        QWidget::keyPressEvent(event);
+    switch (event->key()) {
+        case Qt::Key_1:
+        case Qt::Key_2:
+        case Qt::Key_3:
+        case Qt::Key_4:
+        case Qt::Key_5:
+        case Qt::Key_6:
+        case Qt::Key_7:
+        case Qt::Key_8:
+        case Qt::Key_9:
+            ModifyMoney(QString::number(event->key() - Qt::Key_0).toStdString());
+            event->accept();
+            break;
+        case Qt::Key_Period:
+        case Qt::Key_Comma:
+            ModifyMoney(".");
+            break;
+        case Qt::Key_Backspace:
+             DeleteMoney();
+            event->accept();
+            break;
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+            ClickReceive();
+            event->accept();
+            break;
+        default:
+            QWidget::keyPressEvent(event);
+            break;
     }
 
 }
@@ -100,7 +142,7 @@ void CashRegisterKeyboard::operationShow(int flags)
 void CashRegisterKeyboard::ClickReceive()
 {
     if(money_result_.empty()){
-        QMessageBox::warning(nullptr,"警告","请设置金额后操作");
+        QMessageBox::warning(this,"警告","请设置金额后操作");
         return;
     }
     if(flags_ != 0){
@@ -118,6 +160,12 @@ void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {
+    if(isDecimalPoint_ && number == "."){
+        return;
+    }
+    if(number == "."){
+        isDecimalPoint_ = true;
+    }
     if(money_vector_.back() == "0" && money_vector_.size() == 1){
         money_vector_.pop_back();
         money_vector_.push_back(number);
@@ -133,6 +181,10 @@ void CashRegisterKeyboard::DeleteMoney()
         money_vector_.pop_back();
         money_vector_.push_back("0");
     }else{
+        std::string lastElement = money_vector_.back();
+        if(lastElement == "."){
+             isDecimalPoint_ = false;
+        }
         money_vector_.pop_back();
     }
     ChangeMonet();

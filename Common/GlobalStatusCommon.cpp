@@ -8,11 +8,7 @@ namespace ipay{
 
 GlobalStatusCommon::GlobalStatusCommon(){}
 GlobalStatusCommon::~GlobalStatusCommon(){
-    if(process_timer_){
-        process_timer_->stop();
-        delete process_timer_;
-        process_timer_ = nullptr;
-    }
+
 }
 void GlobalStatusCommon::ConfigInit()
 {
@@ -64,18 +60,6 @@ void GlobalStatusCommon::ConfigInit()
 //        qInfo() << "model.version: " << response_meta.model_spec().version().value();
 //        qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
 //    }
-
-    if(!process_timer_){
-        process_timer_ = new QTimer();
-        process_timer_->setInterval(1000);
-        QObject::connect(process_timer_, &QTimer::timeout, [this]() {
-            if(all_setting_config_->cash_register_setting.recognition_type == 1){
-                return;
-            }
-//             PictureProcess();
-        });
-        process_timer_->start();
-    }
 
     ret = db_ops.init();
     if(ret) {
@@ -146,6 +130,11 @@ void  GlobalStatusCommon::StopRecordKeyboard(std::vector<KeyboardMouseRecordStru
 {
     keyboard_playback_map_[current_type_].clear();
     keyboard_playback_map_[current_type_] = std::move(keyboardVector);
+}
+
+std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetSettingConfig()
+{
+    return all_setting_config_;
 }
 
 

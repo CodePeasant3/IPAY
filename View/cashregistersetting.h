@@ -22,10 +22,9 @@ public:
 
 signals:
     void start_keyboard_record();
+    void hideSettingPage();
 
 private slots:
-    void on_pushButton_auto_input_clicked();
-
     void on_pushButton_recognition_clicked();
 
     void on_pushButton_save_clicked();

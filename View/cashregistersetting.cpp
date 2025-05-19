@@ -30,8 +30,6 @@ void CashRegisterSetting::Init()
 void CashRegisterSetting::UIStatus()
 {
     cash_register_setting_struct_ = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting;
-    cash_register_setting_struct_.automatic_money_entry == 0 ?
-                ui ->pushButton_auto_input->setText("手动"):ui ->pushButton_auto_input->setText("自动");
     ui->radioButton_cycle->setChecked(cash_register_setting_struct_.recognition_type == 0);
     ui->radioButton_once->setChecked(cash_register_setting_struct_.recognition_type == 1);
     ui->radioButton_money_back->setChecked(cash_register_setting_struct_.enable_money_playback == 1);
@@ -53,15 +51,6 @@ void CashRegisterSetting::CreateWidgetItem()
 
 }
 
-
-void CashRegisterSetting::on_pushButton_auto_input_clicked()
-{
-
-    cash_register_setting_struct_.automatic_money_entry == 0 ?
-                ui ->pushButton_auto_input->setText("手动"):ui ->pushButton_auto_input->setText("自动");
-    cash_register_setting_struct_.automatic_money_entry = !cash_register_setting_struct_.automatic_money_entry;
-
-}
 
 // 设置识别区域
 void CashRegisterSetting::on_pushButton_recognition_clicked()
@@ -85,12 +74,14 @@ void CashRegisterSetting::on_pushButton_save_clicked()
 {
     cash_register_setting_struct_.interaval_entry_ms = ui->lineEdit->text().toInt();
     ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSetting(cash_register_setting_struct_);
+    emit hideSettingPage();
 }
 
 
 void CashRegisterSetting::on_pushButton_cancel_clicked()
 {
     UIStatus();
+    emit hideSettingPage();
 }
 
 void CashRegisterSetting::RegisterArea()

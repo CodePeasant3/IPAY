@@ -96,7 +96,7 @@ void CollectionMoney::on_pushButton_qr_clicked()
 {
     QString qtStr = ui ->lineEdit_qr->text();
     if(qtStr.isEmpty()){
-        QMessageBox::warning(nullptr,"错误","请输入条纹码信息!");
+        QMessageBox::warning(this,"错误","请输入条纹码信息!");
         return;
     }
     if(funcationFlags_ == 0){

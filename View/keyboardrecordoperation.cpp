@@ -90,7 +90,7 @@ void KeyboardRecordOperation::StartRecordKeyboard()
 {
     std::lock_guard<std::mutex> lock(keyboard_mtx_);
     if(recordFlags_){
-        QMessageBox::warning(nullptr,"警告","请开始录制后重试！");
+        QMessageBox::warning(this,"警告","请开始录制后重试！");
         return;
     }
     record_info_str_ = "";
@@ -133,7 +133,7 @@ void KeyboardRecordOperation::on_pushButton_stop_record_clicked()
 {
     std::lock_guard<std::mutex> lock(keyboard_mtx_);
     if(!recordFlags_){
-        QMessageBox::warning(nullptr,"警告","请开始录制后重试！");
+        QMessageBox::warning(this,"警告","请开始录制后重试！");
         return;
     }
 
