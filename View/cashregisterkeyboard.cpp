@@ -44,6 +44,19 @@ void CashRegisterKeyboard::Init()
         process_timer_->start();
     }
 
+    connect(ui->pushButton_0, &QPushButton::clicked, this, [=]() { ModifyMoney("0"); });
+    connect(ui->pushButton_1, &QPushButton::clicked, this, [=]() { ModifyMoney("1"); });
+    connect(ui->pushButton_2, &QPushButton::clicked, this, [=]() { ModifyMoney("2"); });
+    connect(ui->pushButton_3, &QPushButton::clicked, this, [=]() { ModifyMoney("3"); });
+    connect(ui->pushButton_4, &QPushButton::clicked, this, [=]() { ModifyMoney("4"); });
+    connect(ui->pushButton_5, &QPushButton::clicked, this, [=]() { ModifyMoney("5"); });
+    connect(ui->pushButton_6, &QPushButton::clicked, this, [=]() { ModifyMoney("6"); });
+    connect(ui->pushButton_7, &QPushButton::clicked, this, [=]() { ModifyMoney("7"); });
+    connect(ui->pushButton_8, &QPushButton::clicked, this, [=]() { ModifyMoney("8"); });
+    connect(ui->pushButton_9, &QPushButton::clicked, this, [=]() { ModifyMoney("9"); });
+    connect(ui->pushButton_point, &QPushButton::clicked, this, [=]() { ModifyMoney("."); });
+    connect(ui->pushButton_X, &QPushButton::clicked, this, [=]() { DeleteMoney(); });
+
 }
 
 int CashRegisterKeyboard::MoneyBack(QString qrStr)
@@ -57,6 +70,7 @@ int CashRegisterKeyboard::MoneyBack(QString qrStr)
 void CashRegisterKeyboard::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
+        case Qt::Key_0:
         case Qt::Key_1:
         case Qt::Key_2:
         case Qt::Key_3:
@@ -96,18 +110,6 @@ void CashRegisterKeyboard::KeyboardShow()
    isShow_ ? ui->pushButton_cash1->show() : ui->pushButton_cash1->hide();
    isShow_ ? ui->label_keyboard->setText("显示键盘") : ui->label_keyboard->setText("隐藏键盘");
    isShow_ = !isShow_;
-   connect(ui->pushButton_0, &QPushButton::clicked, this, [=]() { ModifyMoney("0"); });
-   connect(ui->pushButton_1, &QPushButton::clicked, this, [=]() { ModifyMoney("1"); });
-   connect(ui->pushButton_2, &QPushButton::clicked, this, [=]() { ModifyMoney("2"); });
-   connect(ui->pushButton_3, &QPushButton::clicked, this, [=]() { ModifyMoney("3"); });
-   connect(ui->pushButton_4, &QPushButton::clicked, this, [=]() { ModifyMoney("4"); });
-   connect(ui->pushButton_5, &QPushButton::clicked, this, [=]() { ModifyMoney("5"); });
-   connect(ui->pushButton_6, &QPushButton::clicked, this, [=]() { ModifyMoney("6"); });
-   connect(ui->pushButton_7, &QPushButton::clicked, this, [=]() { ModifyMoney("7"); });
-   connect(ui->pushButton_8, &QPushButton::clicked, this, [=]() { ModifyMoney("8"); });
-   connect(ui->pushButton_9, &QPushButton::clicked, this, [=]() { ModifyMoney("9"); });
-   connect(ui->pushButton_point, &QPushButton::clicked, this, [=]() { ModifyMoney("."); });
-   connect(ui->pushButton_X, &QPushButton::clicked, this, [=]() { DeleteMoney(); });
 
 }
 
@@ -155,6 +157,9 @@ void CashRegisterKeyboard::ClickReceive()
 
 void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
     event->accept();
+    std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
+    settingConfig.get()->cash_register_setting.recognition_type = 0;
+    ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     emit AllowOperation();
 }
 
@@ -167,7 +172,9 @@ void CashRegisterKeyboard::ModifyMoney(std::string number)
         isDecimalPoint_ = true;
     }
     if(money_vector_.back() == "0" && money_vector_.size() == 1){
-        money_vector_.pop_back();
+        if(number != "."){
+            money_vector_.pop_back();
+        }
         money_vector_.push_back(number);
     }else{
         money_vector_.push_back(number);

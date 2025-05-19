@@ -15,7 +15,9 @@ class GlobalStatusCommon
 public:
     void ConfigInit();
     void ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct);
+    void ModifyCashRegisterSettingNotWrite(const CashRegisterSettingStruct & cash_register_setting_struct);
     void ModifyRemindSetting(const RemindSettingStruct& remind_setting_struct);
+    void ModifyRemindSettingNotWrite(const RemindSettingStruct& remind_setting_struct);
     void FinshConfig();
     IdentifyResults PictureProcess();
     std::shared_ptr<ipay::AllSettingConfig> GetAllSettingConfig();

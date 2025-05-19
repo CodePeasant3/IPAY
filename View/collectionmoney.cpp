@@ -112,5 +112,8 @@ void CollectionMoney::on_pushButton_qr_clicked()
 
 void CollectionMoney::closeEvent(QCloseEvent *event) {
     event->accept();
+    std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
+    settingConfig.get()->cash_register_setting.recognition_type = 0;
+    ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     emit AllowOperation();
 }

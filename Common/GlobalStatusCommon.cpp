@@ -81,10 +81,20 @@ void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStru
     FinshConfig();
 }
 
+void GlobalStatusCommon::ModifyCashRegisterSettingNotWrite(const CashRegisterSettingStruct &cash_register_setting_struct)
+{
+    all_setting_config_->cash_register_setting = cash_register_setting_struct;
+}
+
 void GlobalStatusCommon::ModifyRemindSetting(const RemindSettingStruct &remind_setting_struct)
 {
     all_setting_config_ ->remind_setting = remind_setting_struct;
     FinshConfig();
+}
+
+void GlobalStatusCommon::ModifyRemindSettingNotWrite(const RemindSettingStruct &remind_setting_struct)
+{
+    all_setting_config_ ->remind_setting = remind_setting_struct;
 }
 
 void GlobalStatusCommon::FinshConfig()

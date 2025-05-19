@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QAction>
 #include <string>
+#include "../Common/globalstatuscommon.h"
 
 
 QT_BEGIN_NAMESPACE

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMessageBox>
+#include "../Common/globalstatuscommon.h"
 
 namespace Ui {
 class CollectionMoney;
