@@ -46,20 +46,20 @@ void GlobalStatusCommon::ConfigInit()
     qWarning() << "read from ini file, server: " << infer_server;
 
 
-//    ret = client.Init(infer_server.toStdString(),
-//                      std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
-//    if(ret) {
-//        qCritical() << "Link remote server Failed" << infer_server;
-//        return;
-//    }
-//    else{
-//        qCritical() << "Link remote server Success" << infer_server;
-//        ::tensorflow::serving::GetModelMetadataResponse response_meta;
-//        client.GetModelMetadata(&response_meta);
-//        qInfo() << "model.name: " << response_meta.model_spec().name().c_str();
-//        qInfo() << "model.version: " << response_meta.model_spec().version().value();
-//        qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
-//    }
+   ret = client.Init(infer_server.toStdString(),
+                     std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
+   if(ret) {
+       qCritical() << "Link remote server Failed" << infer_server;
+       return;
+   }
+   else{
+       qCritical() << "Link remote server Success" << infer_server;
+       ::tensorflow::serving::GetModelMetadataResponse response_meta;
+       client.GetModelMetadata(&response_meta);
+       qInfo() << "model.name: " << response_meta.model_spec().name().c_str();
+       qInfo() << "model.version: " << response_meta.model_spec().version().value();
+       qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
+   }
 
     ret = db_ops.init();
     if(ret) {
@@ -114,7 +114,7 @@ IdentifyResults GlobalStatusCommon::PictureProcess()
     if(!screenCaptureData.empty()) {
         // cv::imshow("capture image", screenCaptureData);
         // cv::waitKey(1);
-        // client.Predict(std::move(screenCaptureData), 0.2);
+        client.Predict(std::move(screenCaptureData), 0.2);
     }
 
     return result;
