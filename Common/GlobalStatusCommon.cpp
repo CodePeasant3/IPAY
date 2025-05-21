@@ -8,7 +8,6 @@ namespace ipay{
 
 GlobalStatusCommon::GlobalStatusCommon(){}
 GlobalStatusCommon::~GlobalStatusCommon(){
-
 }
 void GlobalStatusCommon::ConfigInit()
 {
@@ -72,7 +71,7 @@ void GlobalStatusCommon::ConfigInit()
 
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
-
+    ok = true;
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
@@ -104,20 +103,28 @@ void GlobalStatusCommon::FinshConfig()
     QString config_picture_path =  generic_util_.GetCurrentWorkDir() + "/config/screen_picture.jpg";
     all_setting_config_->cash_register_setting.screen_pixmap.save(config_picture_path,"jpg");
 }
+std::string GlobalStatusCommon::PictureProcess() {
+    std::lock_guard<std::mutex> lock_(mtx_);
+    std::string tmp = ret_amount;
+    return tmp;
+}
 
-IdentifyResults GlobalStatusCommon::PictureProcess()
+
+void GlobalStatusCommon::WhileDetect()
 {
-    IdentifyResults result;
-    qDebug() << "One second has passed.";
-    cv::Mat screenCaptureData;
-    GetPictureData(screenCaptureData);
-    if(!screenCaptureData.empty()) {
-        // cv::imshow("capture image", screenCaptureData);
-        // cv::waitKey(1);
-        client.Predict(std::move(screenCaptureData), 0.2);
+    while(this->ok) {
+        qDebug() << "One second has passed.";
+        cv::Mat screenCaptureData;
+        GetPictureData(screenCaptureData);
+        if(!screenCaptureData.empty()) {
+            // cv::imshow("capture image", screenCaptureData);
+            // cv::waitKey(1);
+            std::lock_guard<std::mutex> lock_(mtx_);
+            ret_amount = client.Predict(std::move(screenCaptureData), 0.2);
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    return result;
 }
 
 

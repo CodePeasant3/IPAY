@@ -6,6 +6,8 @@
 #include <vector>
 #include <QMessageBox>
 #include "../Common/globalstatuscommon.h"
+#include <future>
+#include <thread>
 
 namespace Ui {
 class CashRegisterKeyboard;
@@ -49,6 +51,7 @@ private:
     static std::vector<std::string> money_vector_;
     QString qrStr_;
     int flags_;
+    std::future<void> future_thread;
 
 };
 

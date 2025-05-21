@@ -367,21 +367,19 @@ std::string PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
   }
 
   // 组合整数部分
-  int sum_integer = 0;
-  for (int i = part_integer.size() - 1; i >= 0; --i) {
-    sum_integer +=
-        part_integer[i] * std::pow<int>(10, part_integer.size() - 1 - i);
+  std::string sum_integer = {};
+  for(auto ele : part_integer) {
+      sum_integer.append(std::to_string(ele));
   }
   std::cerr << "sum_integer: " << sum_integer << std::endl;
 
   // 组合小数部分
-  int sum_decimal = 0;
-  for (int i = part_decimal.size() - 1; i>=0; --i) {
-    sum_decimal +=
-          part_decimal[i] * std::pow<double>(10, part_decimal.size() - 1 - i);
+  std::string sum_decimal = {};
+  for(auto ele : part_decimal) {
+      sum_decimal.append(std::to_string(ele));
   }
   std::cerr << "sum_decimal: " << sum_decimal << std::endl;
 
-  std::string ret = std::to_string(sum_integer) + std::to_string(sum_decimal);
+  std::string ret = sum_integer + sum_decimal;
   return ret;
 }

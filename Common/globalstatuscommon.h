@@ -19,7 +19,8 @@ public:
     void ModifyRemindSetting(const RemindSettingStruct& remind_setting_struct);
     void ModifyRemindSettingNotWrite(const RemindSettingStruct& remind_setting_struct);
     void FinshConfig();
-    IdentifyResults PictureProcess();
+    std::string PictureProcess();
+    void WhileDetect();
     std::shared_ptr<ipay::AllSettingConfig> GetAllSettingConfig();
     void GetPictureData(cv::Mat& screenCaptureData);
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
@@ -37,6 +38,10 @@ private:
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
     PredictionClient client;
+
+    std::mutex mtx_;
+    std::string ret_amount;
+    std::atomic<bool> ok;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);
