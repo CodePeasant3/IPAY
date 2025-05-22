@@ -357,11 +357,11 @@ std::string PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
     std::cout << ">>> " << ele.label << " " << proportion_integer << " "
               << proportion_decimal << std::endl;
 
-    if (proportion_integer > 0.9 && proportion_integer < 1.2) {
+    if (proportion_integer > 0.6 && proportion_integer < 1.2) {
       part_integer.push_back(ele.label);
     }
 
-    if (proportion_decimal > 0.9 && proportion_decimal < 1.2) {
+    if (proportion_decimal > 0.6 && proportion_decimal < 1.2) {
       part_decimal.push_back(ele.label);
     }
   }
