@@ -28,9 +28,14 @@ target_link_libraries(test_tf
     prediction_client
 )
 
+add_executable(test_log test_log.cpp)
+target_link_libraries(test_log
+    Qt${QT_VERSION_MAJOR}::Core
+)
+
 
 # Install
-install(TARGETS test_opencv test_md5 test_request test_tf DESTINATION .)
+install(TARGETS test_opencv test_md5 test_request test_tf test_log DESTINATION .)
 install(DIRECTORY data DESTINATION .)
 install(DIRECTORY ${OPENCV_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
 install(DIRECTORY ${GRPC_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
