@@ -133,4 +133,4 @@ target_link_libraries(${PROJECT_NAME}
                zlibstatic
 )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+#install(TARGETS ${PROJECT_NAME} DESTINATION .)

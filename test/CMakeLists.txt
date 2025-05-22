@@ -23,7 +23,14 @@ target_link_libraries(test_request
     Qt${QT_VERSION_MAJOR}::Network
 )
 
+add_executable(test_tf test_tensorflow_server.cpp)
+target_link_libraries(test_tf
+    prediction_client
+)
+
+
 # Install
-install(TARGETS test_opencv test_md5 test_request DESTINATION .)
+install(TARGETS test_opencv test_md5 test_request test_tf DESTINATION .)
 install(DIRECTORY data DESTINATION .)
 install(DIRECTORY ${OPENCV_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY ${GRPC_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
