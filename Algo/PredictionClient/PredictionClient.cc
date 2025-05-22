@@ -77,10 +77,10 @@ std::string PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
   const int result_class = tensor_output_.tensor_shape().dim(1).size();
   const int result_num = tensor_output_.tensor_shape().dim(2).size();
 
-  std::cout << "image_w: " << image_w << std::endl
-            << "image_h: " << image_h << std::endl
-            << "result_class: " << result_class << std::endl
-            << "result_num: " << result_num << std::endl;
+  std::cout << "image_w h class num: " << image_w << "\t"
+            << image_h << "\t"
+            << result_class << "\t"
+            << result_num << std::endl;
 
   // Step.1: 构造必要上下文
   ::grpc::ClientContext context;

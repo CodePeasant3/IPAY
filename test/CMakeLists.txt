@@ -16,11 +16,14 @@ target_link_libraries(test_md5
 
 add_executable(test_request
     ${CMAKE_CURRENT_SOURCE_DIR}/test_request.cpp
-    ${CMAKE_SOURCE_DIR}/Common/httpsrequest.cpp)
+    ${CMAKE_SOURCE_DIR}/Common/httpsrequest.cpp
+    ${CMAKE_SOURCE_DIR}/Common/logging.cpp
+)
 
 target_link_libraries(test_request
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Core
 )
 
 add_executable(test_tf test_tensorflow_server.cpp)
@@ -28,7 +31,10 @@ target_link_libraries(test_tf
     prediction_client
 )
 
-add_executable(test_log test_log.cpp)
+add_executable(test_log
+    test_log.cpp
+    ${CMAKE_SOURCE_DIR}/Common/logging.cpp
+)
 target_link_libraries(test_log
     Qt${QT_VERSION_MAJOR}::Core
 )

@@ -1,5 +1,5 @@
 ﻿#include "genericutil.h"
-
+#include <Common/logging.h>
 
 namespace ipay{
 GenericUtil::GenericUtil()
@@ -29,7 +29,7 @@ bool GenericUtil::CreateFileByCurrentDir(QString full_path)
     QDir dir;
     if(!dir.exists(full_path))
     if (!dir.mkpath(directory_path)) {
-        qDebug() << "文件夹创建失败: " << directory_path;
+        qCritical(IPAY) << "文件夹创建失败: " << directory_path;
         return false;
     }
 
@@ -39,12 +39,12 @@ bool GenericUtil::CreateFileByCurrentDir(QString full_path)
 
     QFile file(full_path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "Failed to create file:" << full_path;
+        qCritical(IPAY) << "Failed to create file:" << full_path;
         return false;
     }
 
     file.close();
-    qDebug() << "File created successfully:" << full_path;
+    qInfo(IPAY) << "File created successfully:" << full_path;
     return true;
 
 }
@@ -62,7 +62,7 @@ void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_regi
      QScreen *screen = QGuiApplication::primaryScreen();
      if (!screen) {
          QMessageBox::critical(nullptr, "错误", "获取电脑屏幕失败，请检查当前系统操作环境。");
-         qDebug() << "Can't not get main screen";
+         qCritical(IPAY) << "Can't not get main screen";
          return;
      }
 
@@ -70,7 +70,7 @@ void GenericUtil::CaptureScreen(const ipay::CashRegisterSettingStruct &cash_regi
 
      if (screenshot.isNull()) {
          QMessageBox::critical(nullptr, "错误", "获取图像数据失败，请检查当前系统操作环境。");
-         qDebug() << "get main screen picture failed!";
+         qCritical(IPAY) << "get main screen picture failed!";
          return;
      }
 

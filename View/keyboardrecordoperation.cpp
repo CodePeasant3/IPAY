@@ -1,6 +1,7 @@
 ﻿#include "keyboardrecordoperation.h"
 #include "ui_keyboardrecordoperation.h"
 #include <QCloseEvent>
+#include <Common/logging.h>
 
 std::vector<ipay::KeyboardMouseRecordStruct> keyboard_vector_;
 HHOOK h_mouse_hook = NULL;
@@ -36,19 +37,19 @@ LRESULT CALLBACK KeyboardRecordOperation::MouseProcUtil(int nCode, WPARAM wParam
             km_record.type = ipay::KeyboardMouseType::LIFTMOUSE;
             keyboard_vector_.emplace_back(km_record);
             record_info_str_ += "L( x:" + std::to_string(km_record.mouse_x)  + ", y:" + std::to_string(km_record.mouse_y) + " )";
-            qDebug() << "Left mouse button down X: " << cursorPos.x << " Y: " << cursorPos.y;
+            qDebug(IPAY) << "Left mouse button down X: " << cursorPos.x << " Y: " << cursorPos.y;
             break;
         case WM_LBUTTONUP:
-            qDebug() << "Left mouse button up";
+            qDebug(IPAY) << "Left mouse button up";
             break;
         case WM_RBUTTONDOWN:
             km_record.type = ipay::KeyboardMouseType::RIGHTMOUSE;
             keyboard_vector_.emplace_back(km_record);
             record_info_str_ += "R( x:" + std::to_string(km_record.mouse_x)  + ", y:" + std::to_string(km_record.mouse_y) + " )";
-            qDebug() << "Right mouse button down";
+            qDebug(IPAY) << "Right mouse button down";
             break;
         case WM_RBUTTONUP:
-            qDebug() << "Right mouse button up";
+            qDebug(IPAY) << "Right mouse button up";
             break;
         }
     }
@@ -76,10 +77,10 @@ LRESULT CALLBACK KeyboardRecordOperation::KeyboardProcUtil(int nCode, WPARAM wPa
             km_record.key_num = pKeyboardHook->vkCode;
             keyboard_vector_.emplace_back(km_record);
             record_info_str_ += "K (" + std::to_string(km_record.key_num) + " )";
-            qDebug() << "Key down:" << pKeyboardHook->vkCode;
+            qDebug(IPAY) << "Key down:" << pKeyboardHook->vkCode;
             break;
         case WM_KEYUP:
-            qDebug() << "Key up:" << pKeyboardHook->vkCode;
+            qDebug(IPAY) << "Key up:" << pKeyboardHook->vkCode;
             break;
         }
     }

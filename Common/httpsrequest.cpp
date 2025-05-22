@@ -2,6 +2,7 @@
 #include <chrono>
 #include <sstream>
 #include <iomanip>
+#include <Common/logging.h>
 
 #define DEFAULT_URL_PAY "https://pay.zhuceyiyou.com/api/pay/unifiedOrder"
 #define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
@@ -25,12 +26,12 @@ int HttpsRequest::init(const QSettings& settings) {
     this->m_appId =
         settings.value("Business/appId", DEFAULT_APPID).toString();
 
-    qInfo() << "mchNo: " << m_mchNo;
-    qInfo() << "appId: " << m_appId;
-    qInfo() << "url_pay: " << url_pay;
-    qInfo() << "url_refund: " << url_refund;
-    qInfo() << "url_query_pay: " << url_query_pay;
-    qInfo() << "url_query_refund: " << url_query_refund;
+    qInfo(IPAY) << "mchNo: " << m_mchNo;
+    qInfo(IPAY) << "appId: " << m_appId;
+    qInfo(IPAY) << "url_pay: " << url_pay;
+    qInfo(IPAY) << "url_refund: " << url_refund;
+    qInfo(IPAY) << "url_query_pay: " << url_query_pay;
+    qInfo(IPAY) << "url_query_refund: " << url_query_refund;
 
     request_pay.setUrl(url_pay);
     request_pay.setRawHeader("accept", "*/*");
