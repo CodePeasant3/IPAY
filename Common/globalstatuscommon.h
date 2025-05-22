@@ -26,6 +26,7 @@ public:
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
     std::shared_ptr<ipay::AllSettingConfig> GetSettingConfig();
+    void unsetOK();
 
 public:
     DBOps db_ops;
@@ -41,7 +42,7 @@ private:
 
     std::mutex mtx_;
     std::string ret_amount;
-    std::atomic<bool> ok;
+    std::atomic<bool> ok = true;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);

@@ -41,6 +41,7 @@ public slots:
     void ReceiveQRInfo(QString qrStr);
     void operationShow(int flags);
     void ClickReceive();
+    void killAlgoThread();
 
 private:
     Ui::CashRegisterKeyboard *ui;

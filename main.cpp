@@ -175,6 +175,8 @@ int main(int argc, char *argv[])
     QWidget::connect(&orderDetails,&OrderDetails::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&playSetting,&PlaySetting::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
 
+    QObject::connect(&a, &QCoreApplication::aboutToQuit, &cashRegisterKeyboard, &CashRegisterKeyboard::killAlgoThread);
+
     return a.exec();
 }
 

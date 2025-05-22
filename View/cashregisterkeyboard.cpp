@@ -201,3 +201,7 @@ void CashRegisterKeyboard::DeleteMoney()
     ChangeMonet();
 }
 
+void CashRegisterKeyboard::killAlgoThread() {
+    ipay::GlobalStatusCommon::instance()->unsetOK();
+}
+

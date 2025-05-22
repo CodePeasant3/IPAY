@@ -71,7 +71,6 @@ void GlobalStatusCommon::ConfigInit()
 
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
-    ok = true;
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
@@ -154,5 +153,8 @@ std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetSettingConfig()
     return all_setting_config_;
 }
 
-
+void GlobalStatusCommon::unsetOK() {
+    qWarning() << "set atomic ok is false;";
+    this->ok = false;
+}
 }
