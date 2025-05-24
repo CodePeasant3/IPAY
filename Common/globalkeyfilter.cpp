@@ -2,6 +2,7 @@
 #include "globalkeyfilter.h"
 
 #include "logging.h"
+#include <iostream>
 
 GlobalEnterHook* GlobalEnterHook::m_instance = nullptr;
 
@@ -47,15 +48,68 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
     {
         KBDLLHOOKSTRUCT* kbStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
 
-        // 只处理回车键（VK_RETURN）
-        if (kbStruct->vkCode == VK_RETURN)
-        {
-            qDebug(IPAY) << "Listen, 监听到USB扫码枪的键盘事件";
-            // 发送按键事件
-            if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)
-                emit m_instance->enterPressed();
-            else if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                emit m_instance->enterReleased();
+        switch(kbStruct->vkCode) {
+        case VK_NUMPAD0:
+        case VK_0:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(0);
+            break;
+        case VK_NUMPAD1:
+        case VK_1:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(1);
+            break;
+        case VK_NUMPAD2:
+        case VK_2:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(2);
+            break;
+        case VK_NUMPAD3:
+        case VK_3:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(3);
+            break;
+        case VK_NUMPAD4:
+        case VK_4:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(4);
+            break;
+        case VK_NUMPAD5:
+        case VK_5:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(5);
+            break;
+        case VK_NUMPAD6:
+        case VK_6:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(6);
+            break;
+        case VK_NUMPAD7:
+        case VK_7:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(7);
+            break;
+        case VK_NUMPAD8:
+        case VK_8:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.push_back(8);
+            break;
+        case VK_NUMPAD9:
+        case VK_9:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+            m_instance->numbers.push_back(9);
+            break;
+        case VK_RETURN:
+            emit m_instance->enterPressed();
+            std::cerr << "number: ";
+            for(const auto& ele : m_instance->numbers) {
+                std::cerr << ele;
+            }
+            std::cerr << std::endl;
+            std::cerr << "---------------" << std::endl;
+            m_instance->numbers.clear();
+            // TODO: 分析条形码 是否需要发起支付
+            break;
         }
     }
 
