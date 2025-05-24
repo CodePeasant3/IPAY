@@ -20,7 +20,8 @@
 #include <QMutex>
 #include <qdebug.h>
 #include <QLoggingCategory>
-
+#include <QKeyEvent>
+#include <Common/globalkeyfilter.h>
 
 // 互斥锁，用于线程安全
 static QMutex logMutex;
@@ -75,6 +76,9 @@ void loadLoggingRulesFromFile(const QString& filePath) {
     }
 }
 
+
+
+
 int main(int argc, char *argv[])
 {
     // 检查命令行参数，是否需要显示控制台
@@ -113,6 +117,15 @@ int main(int argc, char *argv[])
 //        return 0;
 //    }
 
+    GlobalEnterHook enterHook;
+    // 启动监听
+    if (enterHook.startHook()) {
+        qDebug() << "全局回车键监听已启动";
+    }
+    else
+    {
+        qDebug() << "无法启动全局回车键监听！可能缺少管理员权限。";
+    }
 
     ipay::GlobalStatusCommon::instance()->ConfigInit();
     ipay::PrimaryScreen primaryScreen;
