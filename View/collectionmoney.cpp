@@ -22,8 +22,8 @@ CollectionMoney::~CollectionMoney()
 
 void CollectionMoney::Init()
 {
-    ipay::PrimaryScreen primaryScreen;
-    QRect rect = primaryScreen.GetGeometryScreen();
+
+    QRect rect = ipay::GlobalStatusCommon::instance()->GetScreenScope();
     this->resize(rect.width() * 0.2,rect.height() *0.4);
 
     QPixmap QRCodePixmap("://Resources/image/QRCode.png");

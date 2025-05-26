@@ -133,7 +133,7 @@ void Screen::mouseReleaseEvent(QMouseEvent *e)    //只有已经按下鼠标按�
                                background-color: #eaecf0;}");
     }
     //设置控制面板的位置
-    control_->setGeometry(movePoint.x(), movePoint.y(), 150, 25);
+    control_->setGeometry(movePoint.x() - 150, movePoint.y(), 150, 32);
     control_->show();
 }
 

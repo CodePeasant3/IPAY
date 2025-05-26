@@ -1,21 +1,18 @@
-﻿#include "View/paymentplatform.h"
+﻿//
 #include <QApplication>
+#include "View/paymentplatform.h"
 #include "View/PlaySetting.h"
 #include "View/cashregisterkeyboard.h"
 #include "View/orderdetails.h"
 #include "View/keyboardrecordoperation.h"
 #include "Common/primaryscreen.h"
-#include <QThread>
 #include "Common/globalstatuscommon.h"
-#include <QProcess>
-#include <QMessageBox>
-#include <windows.h>
-#include <Shlobj.h>
 #include "View/collectionmoney.h"
-
+#include "Common/jsonoperationcommon.h"
 
 int main(int argc, char *argv[])
 {
+
     QApplication a(argc, argv);
 //    if (!IsUserAnAdmin()) {
 //        QString executable_path = QCoreApplication::applicationFilePath();
@@ -34,8 +31,7 @@ int main(int argc, char *argv[])
 
 
     ipay::GlobalStatusCommon::instance()->ConfigInit();
-    ipay::PrimaryScreen primaryScreen;
-    QRect rect = primaryScreen.GetGeometryScreen();
+    QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
     OrderDetails orderDetails(ipay::GlobalStatusCommon::instance()->db_ops);
@@ -43,18 +39,6 @@ int main(int argc, char *argv[])
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;
 
-    Qt::WindowFlags playSettingFlags = playSetting.windowFlags();
-    playSetting.resize(rect.width() * 0.4,rect.height() *0.4);
-    playSetting.setWindowFlags(playSettingFlags &~ Qt::WindowMinMaxButtonsHint);
-    playSetting.setFixedSize(rect.width() * 0.4,rect.height() *0.4);
-    playSetting.setWindowTitle("Setting");
-
-
-    orderDetails.resize(rect.width() * 0.4,rect.height() *0.4);
-    Qt::WindowFlags orderDetailsFlags = orderDetails.windowFlags();
-    orderDetails.setWindowFlags(orderDetailsFlags &~ Qt::WindowMinMaxButtonsHint);
-    orderDetails.setFixedSize(rect.width() * 0.4,rect.height() *0.4);
-    orderDetails.setWindowTitle("OrderList");
 
     cashRegisterKeyboard.resize(rect.width() * 0.2,rect.height() *0.2);
     paymentPlatform.resize(rect.width() * 0.2,rect.height() *0.1);
@@ -63,7 +47,6 @@ int main(int argc, char *argv[])
 
     paymentPlatform.setWindowFlags(paymentPlatform.windowFlags() | Qt::WindowStaysOnTopHint);
     keyboardRecordOperation.setWindowFlags(keyboardRecordOperation.windowFlags() | Qt::WindowStaysOnTopHint);
-
     playSetting.hide();
     cashRegisterKeyboard.hide();
     orderDetails.hide();
@@ -101,6 +84,10 @@ int main(int argc, char *argv[])
                      &keyboardRecordOperation,&KeyboardRecordOperation::StartRecordKeyboard,Qt::DirectConnection);
     QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::stop_keyboard_record,
                      &keyboardRecordOperation,&KeyboardRecordOperation::hide);
+    QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::stop_keyboard_record,
+                     &playSetting,&PlaySetting::show);
+    QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::stop_keyboard_record,
+                     &playSetting,&PlaySetting::stop_record_keyboard);
 
     QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&collectionMoney,&CollectionMoney::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);

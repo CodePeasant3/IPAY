@@ -105,6 +105,146 @@ bool JsonOperationCommon::ReadLocalConfig(AllSettingConfig &all_setting_condfig,
 
 }
 
+bool JsonOperationCommon::WirteKeyboarfRrcordConfig(const std::unordered_map<ScenePlaybackType, std::vector<KeyboardMouseRecordStruct> > &keyboard_playback_map, const QString &full_path)
+{
+    QJsonObject rootObject;
+
+    for (const auto &pair : keyboard_playback_map) {
+        ScenePlaybackType sceneType = pair.first;
+        const std::vector<KeyboardMouseRecordStruct> &records = pair.second;
+        QJsonArray sceneArray;
+        for (const auto &record : records) {
+            QJsonObject recordObject;
+            switch (record.type) {
+                case LIFTMOUSE:
+                    recordObject["type"] = "LIFTMOUSE";
+                    break;
+                case RIGHTMOUSE:
+                    recordObject["type"] = "RIGHTMOUSE";
+                    break;
+                case KETBOARD:
+                    recordObject["type"] = "KETBOARD";
+                    break;
+            }
+            recordObject["value"] = QString::fromStdString(record.value);
+            recordObject["key_num"] = static_cast<qint64>(record.key_num);
+            recordObject["mouse_x"] = record.mouse_x;
+            recordObject["mouse_y"] = record.mouse_y;
+            recordObject["record_index"] = record.record_index;
+
+            sceneArray.append(recordObject);
+        }
+
+        rootObject[QString::number(static_cast<int>(sceneType))] = sceneArray;
+    }
+
+    QJsonDocument jsonDoc(rootObject);
+
+    QFile file(full_path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << full_path;
+        return false;
+    }
+
+    file.write(jsonDoc.toJson(QJsonDocument::Indented));
+    file.close();
+
+    return true;
+
+
+}
+
+bool JsonOperationCommon::ReadKeyboarfRrcordConfig(std::unordered_map<ScenePlaybackType, std::vector<KeyboardMouseRecordStruct> > &keyboard_playback_map, const QString &full_path)
+{
+
+    keyboard_playback_map.clear();
+
+    QFile file(full_path);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "can't open json file :" << full_path;
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data, &parseError);
+
+    if (parseError.error != QJsonParseError::NoError) {
+        qDebug() << "json file analysis :" << parseError.errorString();
+        return false;
+    }
+
+    if (!jsonDoc.isObject()) {
+        qDebug() << "json file document is error!";
+        return false;
+    }
+    QJsonObject rootObject = jsonDoc.object();
+
+    for (const QString &sceneKey : rootObject.keys()) {
+
+        bool ok;
+        int sceneTypeInt = sceneKey.toInt(&ok);
+        if (!ok) {
+            qDebug() << "无法将场景键转换为整数:" << sceneKey;
+            continue;
+        }
+
+        if (sceneTypeInt < 0 || sceneTypeInt > static_cast<int>(ipay::ScenePlaybackType::CALLBACKPAYDONE)) {
+            qDebug() << "无效的场景类型:" << sceneTypeInt;
+            continue;
+        }
+
+        ScenePlaybackType sceneType = static_cast<ScenePlaybackType>(sceneTypeInt);
+
+        if (!rootObject[sceneKey].isArray()) {
+            qDebug() << "场景数据不是数组类型:" << sceneKey;
+            continue;
+        }
+
+        QJsonArray sceneArray = rootObject[sceneKey].toArray();
+
+        std::vector<KeyboardMouseRecordStruct> records;
+
+        int index_i = 0;
+        for (const QJsonValue &recordValue : sceneArray) {
+            if (!recordValue.isObject()) {
+                qDebug() << "记录不是对象类型";
+                continue;
+            }
+
+            QJsonObject recordObj = recordValue.toObject();
+            KeyboardMouseRecordStruct record;
+
+            QString typeStr = recordObj["type"].toString();
+            if (typeStr == "LIFTMOUSE") {
+                record.type = LIFTMOUSE;
+            } else if (typeStr == "RIGHTMOUSE") {
+                record.type = RIGHTMOUSE;
+            } else if (typeStr == "KETBOARD") {
+                record.type = KETBOARD;
+            } else {
+                qDebug() << "未知的记录类型:" << typeStr;
+                continue;
+            }
+
+            record.value = recordObj["value"].toString().toStdString();
+            record.key_num = recordObj["key_num"].toVariant().toLongLong();
+            record.mouse_x = recordObj["mouse_x"].toInt();
+            record.mouse_y = recordObj["mouse_y"].toInt();
+            record.record_index = index_i;
+
+            records.push_back(record);
+            ++index_i;
+        }
+        keyboard_playback_map[sceneType] = std::move(records);
+
+    }
+    return true;
+}
+
 QJsonObject JsonOperationCommon::ReadJsonFromFile(const QString &full_path)
 {
     QFile file(full_path);

@@ -1,6 +1,7 @@
 ﻿#ifndef SAVESETTINGSTRUCT_H
 #define SAVESETTINGSTRUCT_H
 #include <QPixmap>
+#include <QListWidgetItem>
 
 namespace ipay {
 
@@ -22,9 +23,11 @@ enum ScenePlaybackType{
 struct KeyboardMouseRecordStruct{
     KeyboardMouseType type;
     std::string value;
-    unsigned long key_num;
+//    unsigned long key_num;
+    long key_num;
     int mouse_x;
     int mouse_y;
+    int record_index;
 };
 
 
@@ -85,6 +88,7 @@ struct IdentifyResults{
 
 
 };
+
 
 }
 

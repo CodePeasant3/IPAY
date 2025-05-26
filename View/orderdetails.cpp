@@ -1,8 +1,7 @@
 ﻿#include "orderdetails.h"
 #include "playsetting.h"
 #include "ui_orderdetails.h"
-
-
+#include "../Common/globalstatuscommon.h"
 #include <QSqlTableModel>
 #include <QString>
 #include <QVariant>
@@ -46,6 +45,15 @@ OrderDetails::~OrderDetails()
 
 void OrderDetails::Init(DBOps& db_ops)
 {
+
+    QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
+
+    this->resize(rect.width() * 0.4,rect.height() *0.4);
+    Qt::WindowFlags orderDetailsFlags = this->windowFlags();
+    this->setWindowFlags(orderDetailsFlags &~ Qt::WindowMinMaxButtonsHint);
+    this->setFixedSize(rect.width() * 0.4,rect.height() *0.4);
+    this->setWindowTitle("OrderList");
+
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
     cashDetail_= new QListWidgetItem(QIcon(":/Resources/image/CashDetail.png"),"明细");

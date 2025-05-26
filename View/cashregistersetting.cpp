@@ -25,6 +25,22 @@ void CashRegisterSetting::Init()
     connect(ui->radioButton_once,&QRadioButton::clicked,this,&CashRegisterSetting::RegisterArea);
     connect(ui->radioButton_money_back,&QRadioButton::clicked,this,&CashRegisterSetting::RegisterArea);
 
+
+    ui->listWidget_keyboard->setViewMode(QListView::IconMode);
+    ui->listWidget_keyboard->setFlow(QListView::LeftToRight);  // 从左到右排列
+    ui->listWidget_keyboard->setWrapping(true);                // 自动换行
+    ui->listWidget_keyboard->setResizeMode(QListView::Adjust); // 调整大小时重新排列
+
+    // 设置项之间的间距
+    ui->listWidget_keyboard->setSpacing(10);
+
+    connect(ui->tabWidget,&QTabWidget::currentChanged,[=](int index){
+        if(index == 1){
+            init_show();
+        }
+    });
+
+
 }
 
 void CashRegisterSetting::UIStatus()
@@ -36,10 +52,12 @@ void CashRegisterSetting::UIStatus()
     cash_register_setting_struct_.automatic_amount_entry == 0 ?
                 ui ->pushButton_auto_clean->setText("手动"):ui ->pushButton_auto_clean->setText("自动");
     ui->lineEdit->setText(QString::number(cash_register_setting_struct_.interaval_entry_ms));
-    if(!cash_register_setting_struct_.screen_pixmap.isNull()){
-        QPixmap scaledPixmap = cash_register_setting_struct_.screen_pixmap.scaled(cash_register_setting_struct_.screen_pixmap_w, cash_register_setting_struct_.screen_pixmap_h, Qt::KeepAspectRatio);
-        ui->recognition_label->setPixmap(scaledPixmap);
+    if(cash_register_setting_struct_.screen_pixmap.isNull()){
+        ui->recognition_label->clear();
+        return;
     }
+    QPixmap scaledPixmap = cash_register_setting_struct_.screen_pixmap.scaled(cash_register_setting_struct_.screen_pixmap_w, cash_register_setting_struct_.screen_pixmap_h, Qt::KeepAspectRatio);
+    ui->recognition_label->setPixmap(scaledPixmap);
 
 }
 
@@ -49,6 +67,49 @@ void CashRegisterSetting::CreateWidgetItem()
 
 
 
+}
+
+QListWidgetItem *CashRegisterSetting::GetQListWidget(ipay::ScenePlaybackType type, int index)
+{
+    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->listWidget_keyboard->takeItem(index);
+    }
+}
+
+QWidget *CashRegisterSetting::GetQListItemWidget(ipay::ScenePlaybackType type, QListWidgetItem* item)
+{
+    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->listWidget_keyboard->itemWidget(item);
+    }
+
+}
+
+int CashRegisterSetting::GetQListItemSize(ipay::ScenePlaybackType type)
+{
+    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->listWidget_keyboard->count();
+    }
+    return 0;
+}
+
+
+void CashRegisterSetting::delete_record_keyboard_by_type( const std::vector<ipay::KeyboardMouseRecordStruct> &recordVector,
+                                                         ipay::ScenePlaybackType type)
+{
+    int total_size = GetQListItemSize(type);
+    qDebug() << "==========total_size=============" << total_size;
+    for (int i = 0; i < total_size; ++i) {
+        QListWidgetItem* item = GetQListWidget(type,i);
+        if (item) {
+            qDebug() << "==========1=============";
+            QWidget* widget = GetQListItemWidget(type,item);
+            if (widget) {
+                delete widget;
+            }
+            delete item;
+        }
+    }
+    qDebug() << "==========end =============";
 }
 
 
@@ -100,6 +161,7 @@ void CashRegisterSetting::on_pushButton_record_clicked()
 {
     ipay::GlobalStatusCommon::instance()->StartRecordKeyboard(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
     emit start_keyboard_record();
+
 }
 
 //自动录入软件
@@ -141,6 +203,64 @@ void CashRegisterSetting::save_picture()
         cash_register_setting_struct_.screen_pixmap_w = ui->recognition_label->width();
         cash_register_setting_struct_.screen_pixmap_h = ui->recognition_label->height();
     }
+}
+
+void CashRegisterSetting::save_keyboard_operation()
+{
+    std::vector<ipay::KeyboardMouseRecordStruct>& recordVector = ipay::GlobalStatusCommon::instance()
+            ->GetKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+    if(recordVector.empty()){
+        return;
+    }
+    delete_record_keyboard_by_type(recordVector,ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+    int itemWidth = (ui->listWidget_keyboard->width() - 30) / 4;
+    int itemHeight = (ui->listWidget_keyboard->height() - 30) / 4;
+    if(keyboard_ui_w == -1){
+        keyboard_ui_w = itemWidth;
+        keyboard_ui_h = itemHeight;
+    }
+    qDebug() << "itemWidth =:：" << itemWidth;
+    qDebug() << "itemHeight =:：" << itemHeight;
+    for (int i = 0; i < recordVector.size(); i++) {
+        ipay::KeyboardMouseRecordStruct recordStruct = recordVector.at(i);
+        QListWidgetItem *item = new QListWidgetItem(ui->listWidget_keyboard);
+        KeyboardMouseTemplate *template_keyboard = new KeyboardMouseTemplate(this);
+        template_keyboard->Init(recordStruct.record_index, recordStruct.value,ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+        item->setSizeHint(QSize(itemWidth, itemHeight));
+        ui->listWidget_keyboard->setItemWidget(item, template_keyboard);
+        connect(template_keyboard,&KeyboardMouseTemplate::clickClose,this,&CashRegisterSetting::delete_record_keyboard);
+    }
+}
+
+void CashRegisterSetting::delete_record_keyboard(ipay::ScenePlaybackType type, int index)
+{
+    auto& recordVector  = ipay::GlobalStatusCommon::instance()
+            ->GetKeyboardMouseList(type);
+
+    for (int i = 0; i < recordVector.size(); ++i) {
+        if(recordVector.at(i).record_index == index){
+            QListWidgetItem* item = GetQListWidget(type,i);
+            if (item) {
+                QWidget* widget = GetQListItemWidget(type,item);
+                if (widget) {
+                    delete widget;
+                }
+                delete item;
+            }
+            recordVector.erase(recordVector.begin() + i);
+            return;
+        }
+    }
+
+}
+
+void CashRegisterSetting::init_show()
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::vector<ipay::KeyboardMouseRecordStruct>& recordVector = ipay::GlobalStatusCommon::instance()
+            ->GetFinshKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+    save_keyboard_operation();
+
 }
 
 

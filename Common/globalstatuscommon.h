@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "dbops.h"
 #include <QSettings>
+#include "primaryscreen.h"
 
 #include <PredictionClient.h>
 #include <opencv2/opencv.hpp>
@@ -25,6 +26,9 @@ public:
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
     void StopRecordKeyboard(std::vector<KeyboardMouseRecordStruct> & keyboardVector);
     std::shared_ptr<ipay::AllSettingConfig> GetSettingConfig();
+    std::vector<KeyboardMouseRecordStruct>& GetKeyboardMouseList(ipay::ScenePlaybackType type);
+    std::vector<KeyboardMouseRecordStruct>& GetFinshKeyboardMouseList(ipay::ScenePlaybackType type);
+    QRect GetScreenScope();
 
 public:
     DBOps db_ops;
@@ -35,6 +39,7 @@ private:
     ipay::GenericUtil generic_util_;
     std::shared_ptr<ipay::AllSettingConfig> all_setting_config_{nullptr};
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
+    std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> finsh_keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
 //    PredictionClient client;
 

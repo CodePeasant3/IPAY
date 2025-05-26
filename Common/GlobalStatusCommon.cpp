@@ -15,14 +15,19 @@ void GlobalStatusCommon::ConfigInit()
     settings = std::make_shared<QSettings>("config.ini", QSettings::IniFormat);
     QString config_josn_path =  generic_util_.GetCurrentWorkDir() + "/config/test.json";
     QString config_picture_path =  generic_util_.GetCurrentWorkDir() + "/config/screen_picture.jpg";
+    QString config_keyboard_josn_path =  generic_util_.GetCurrentWorkDir() + "/config/keyboard.json";
     QFileInfo file_info(config_josn_path);
     QPixmap  file_picture(config_picture_path);
+    QFileInfo keyboard_file_info(config_josn_path);
     ipay::AllSettingConfig all_config;
     if(!file_info.exists()){
         generic_util_.CreateFileByCurrentDir(config_josn_path);
         json_common_.WirteLocalConfig(all_config,config_josn_path);
     }
+
     json_common_.ReadLocalConfig(all_config,config_josn_path);
+    json_common_.ReadKeyboarfRrcordConfig(finsh_keyboard_playback_map_,config_keyboard_josn_path);
+    keyboard_playback_map_ = finsh_keyboard_playback_map_;
     all_setting_config_ = std::make_shared<ipay::AllSettingConfig>();
     all_setting_config_->cash_register_setting = all_config.cash_register_setting;
     all_setting_config_ ->remind_setting = all_config.remind_setting;
@@ -99,10 +104,18 @@ void GlobalStatusCommon::ModifyRemindSettingNotWrite(const RemindSettingStruct &
 
 void GlobalStatusCommon::FinshConfig()
 {
+    std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> tempMap =  keyboard_playback_map_;
+    finsh_keyboard_playback_map_.clear();
+    finsh_keyboard_playback_map_ = tempMap;
     QString config_josn_path =  generic_util_.GetCurrentWorkDir() + "/config/test.json";
     json_common_.WirteLocalConfig(*all_setting_config_,config_josn_path);
     QString config_picture_path =  generic_util_.GetCurrentWorkDir() + "/config/screen_picture.jpg";
     all_setting_config_->cash_register_setting.screen_pixmap.save(config_picture_path,"jpg");
+    QString config_keyboard_josn_path =  generic_util_.GetCurrentWorkDir() + "/config/keyboard.json";
+    json_common_.WirteKeyboarfRrcordConfig(tempMap,config_keyboard_josn_path);
+
+
+
 }
 
 IdentifyResults GlobalStatusCommon::PictureProcess()
@@ -112,9 +125,9 @@ IdentifyResults GlobalStatusCommon::PictureProcess()
     cv::Mat screenCaptureData;
     GetPictureData(screenCaptureData);
     if(!screenCaptureData.empty()) {
-        // cv::imshow("capture image", screenCaptureData);
-        // cv::waitKey(1);
-        // client.Predict(std::move(screenCaptureData), 0.2);
+         cv::imshow("capture image", screenCaptureData);
+         cv::waitKey(1);
+//         client.Predict(std::move(screenCaptureData), 0.2);
     }
 
     return result;
@@ -145,6 +158,22 @@ void  GlobalStatusCommon::StopRecordKeyboard(std::vector<KeyboardMouseRecordStru
 std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetSettingConfig()
 {
     return all_setting_config_;
+}
+
+std::vector<KeyboardMouseRecordStruct>& GlobalStatusCommon::GetKeyboardMouseList(ipay::ScenePlaybackType type)
+{
+    return keyboard_playback_map_[type];
+}
+
+std::vector<KeyboardMouseRecordStruct> &GlobalStatusCommon::GetFinshKeyboardMouseList(ScenePlaybackType type)
+{
+    return finsh_keyboard_playback_map_[type];
+}
+
+QRect GlobalStatusCommon::GetScreenScope()
+{
+    ipay::PrimaryScreen primaryScreen;
+    return primaryScreen.GetGeometryScreen();
 }
 
 

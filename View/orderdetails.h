@@ -9,8 +9,6 @@
 #include "Common/dbops.h"
 #include <QIdentityProxyModel>
 
-
-
 namespace Ui {
 class OrderDetails;
 }

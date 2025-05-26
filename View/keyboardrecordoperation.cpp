@@ -34,8 +34,10 @@ LRESULT CALLBACK KeyboardRecordOperation::MouseProcUtil(int nCode, WPARAM wParam
         switch (wParam) {
         case WM_LBUTTONDOWN:
             km_record.type = ipay::KeyboardMouseType::LIFTMOUSE;
+            km_record.record_index = keyboard_vector_.size();
+            km_record.value = "L( " + std::to_string(km_record.mouse_x)  + "," + std::to_string(km_record.mouse_y) + " )";
             keyboard_vector_.emplace_back(km_record);
-            record_info_str_ += "L( x:" + std::to_string(km_record.mouse_x)  + ", y:" + std::to_string(km_record.mouse_y) + " )";
+            record_info_str_ += km_record.value;
             qDebug() << "Left mouse button down X: " << cursorPos.x << " Y: " << cursorPos.y;
             break;
         case WM_LBUTTONUP:
@@ -43,8 +45,11 @@ LRESULT CALLBACK KeyboardRecordOperation::MouseProcUtil(int nCode, WPARAM wParam
             break;
         case WM_RBUTTONDOWN:
             km_record.type = ipay::KeyboardMouseType::RIGHTMOUSE;
+            km_record.record_index = keyboard_vector_.size();
+            km_record.value = "R( " + std::to_string(km_record.mouse_x)  + "," + std::to_string(km_record.mouse_y) + " )";
             keyboard_vector_.emplace_back(km_record);
-            record_info_str_ += "R( x:" + std::to_string(km_record.mouse_x)  + ", y:" + std::to_string(km_record.mouse_y) + " )";
+            record_info_str_ += km_record.value;
+
             qDebug() << "Right mouse button down";
             break;
         case WM_RBUTTONUP:
@@ -74,8 +79,10 @@ LRESULT CALLBACK KeyboardRecordOperation::KeyboardProcUtil(int nCode, WPARAM wPa
         switch (wParam) {
         case WM_KEYDOWN:
             km_record.key_num = pKeyboardHook->vkCode;
+            km_record.record_index = keyboard_vector_.size();
+            km_record.value = "K ( " + std::to_string(km_record.key_num) + " )";
             keyboard_vector_.emplace_back(km_record);
-            record_info_str_ += "K (" + std::to_string(km_record.key_num) + " )";
+            record_info_str_ += km_record.value;
             qDebug() << "Key down:" << pKeyboardHook->vkCode;
             break;
         case WM_KEYUP:
@@ -146,6 +153,7 @@ void KeyboardRecordOperation::on_pushButton_stop_record_clicked()
     keyboard_vector_.clear();
 
     record_info_str_ = "";
+    ui ->label_keyboard_info -> setText(QString::fromStdString(record_info_str_));
 
     emit stop_keyboard_record();
 }

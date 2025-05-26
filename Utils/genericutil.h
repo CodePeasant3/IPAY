@@ -36,7 +36,7 @@ public:
 
 
 private:
-//    ipay::ScreenCaptureData screenCaptureData_;
+    ipay::ScreenCaptureData screenCaptureData_;
 
 };
 

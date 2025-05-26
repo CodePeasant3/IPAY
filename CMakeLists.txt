@@ -68,7 +68,8 @@ target_link_libraries(IPAY
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
     proto_tensorflow
-    prediction_client)
+    prediction_client
+)
 
 set_target_properties(IPAY PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

@@ -83,7 +83,7 @@ border: 0px;
   <customwidget>
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
-   <header>clickablelabel.h</header>
+   <header location="global">clickablelabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

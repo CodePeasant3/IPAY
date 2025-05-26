@@ -16,7 +16,8 @@
 #include <QSize>
 #include <QStyledItemDelegate>
 #include <QMapIterator>
-
+#include "../Common/primaryscreen.h"
+#include <QLayout>
 
 namespace Ui {
 class PlaySetting;
@@ -35,6 +36,7 @@ public:
 signals:
     void start_keyboard_record();
     void AllowOperation();
+    void stop_record_keyboard();
 
 private slots:
     void OnItemSelectionChanged();

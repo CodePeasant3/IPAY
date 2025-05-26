@@ -16,6 +16,14 @@ PlaySetting::~PlaySetting()
 
 void PlaySetting::init()
 {
+    QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
+    Qt::WindowFlags playSettingFlags = this->windowFlags();
+    this->resize(rect.width() * 0.4,rect.height() *0.4);
+    this->setWindowFlags(playSettingFlags &~ Qt::WindowMinMaxButtonsHint);
+    this->setFixedSize(rect.width() * 0.4,rect.height() *0.4);
+    this->setWindowTitle("Setting");
+
+
     this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     cashRegisterSetting_= new QListWidgetItem(QIcon(":/Resources/image/cashRegisterSetting.png"),"收银设置");
     reminderSetting_= new QListWidgetItem(QIcon(":/Resources/image/reminderSetting.png"),"提醒设置");
@@ -57,8 +65,11 @@ void PlaySetting::init()
     connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::hideSettingPage,this,&PlaySetting::hide);
     connect(ui ->widget_cashRegisterSetting,&CashRegisterSetting::hideSettingPage,this,&PlaySetting::AllowOperation);
 
+    connect(this,&PlaySetting::stop_record_keyboard,ui ->widget_cashRegisterSetting,&CashRegisterSetting::save_keyboard_operation);
+
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
     this->setWindowTitle("设置");
+
 }
 
 void PlaySetting::OnItemSelectionChanged()
