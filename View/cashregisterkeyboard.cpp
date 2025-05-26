@@ -13,6 +13,7 @@ CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
 
 CashRegisterKeyboard::~CashRegisterKeyboard()
 {
+    future_thread.get();
     if(process_timer_){
         process_timer_->stop();
         delete process_timer_;
@@ -39,7 +40,8 @@ void CashRegisterKeyboard::Init()
             if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 1){
                 return;
             }
-            ipay::IdentifyResults result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+            std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+            std::cerr << "PictreProcess ret: " << result << std::endl;
         });
         process_timer_->start();
     }
@@ -57,6 +59,8 @@ void CashRegisterKeyboard::Init()
     connect(ui->pushButton_point, &QPushButton::clicked, this, [=]() { ModifyMoney("."); });
     connect(ui->pushButton_X, &QPushButton::clicked, this, [=]() { DeleteMoney(); });
 
+    future_thread =
+        std::async(std::launch::async, &ipay::GlobalStatusCommon::WhileDetect, ipay::GlobalStatusCommon::instance()) ;
 }
 
 int CashRegisterKeyboard::MoneyBack(QString qrStr)
@@ -195,5 +199,9 @@ void CashRegisterKeyboard::DeleteMoney()
         money_vector_.pop_back();
     }
     ChangeMonet();
+}
+
+void CashRegisterKeyboard::killAlgoThread() {
+    ipay::GlobalStatusCommon::instance()->unsetOK();
 }
 

@@ -7,9 +7,10 @@
 #include "dbops.h"
 #include <QSettings>
 #include "primaryscreen.h"
-
-#include <PredictionClient.h>
+#include <mutex>
+#include "PredictionClient.h"
 #include <opencv2/opencv.hpp>
+
 namespace ipay{
 class GlobalStatusCommon
 {
@@ -20,7 +21,8 @@ public:
     void ModifyRemindSetting(const RemindSettingStruct& remind_setting_struct);
     void ModifyRemindSettingNotWrite(const RemindSettingStruct& remind_setting_struct);
     void FinshConfig();
-    IdentifyResults PictureProcess();
+    std::string PictureProcess();
+    void WhileDetect();
     std::shared_ptr<ipay::AllSettingConfig> GetAllSettingConfig();
     void GetPictureData(cv::Mat& screenCaptureData);
     void StartRecordKeyboard(ipay::ScenePlaybackType currentType);
@@ -29,6 +31,7 @@ public:
     std::vector<KeyboardMouseRecordStruct>& GetKeyboardMouseList(ipay::ScenePlaybackType type);
     std::vector<KeyboardMouseRecordStruct>& GetFinshKeyboardMouseList(ipay::ScenePlaybackType type);
     QRect GetScreenScope();
+    void unsetOK();
 
 public:
     DBOps db_ops;
@@ -41,7 +44,11 @@ private:
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> finsh_keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
-//    PredictionClient client;
+    PredictionClient client;
+
+    std::mutex mtx_;
+    std::string ret_amount;
+    std::atomic<bool> ok = true;
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);

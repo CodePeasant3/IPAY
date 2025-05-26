@@ -97,11 +97,9 @@ void CashRegisterSetting::delete_record_keyboard_by_type( const std::vector<ipay
                                                          ipay::ScenePlaybackType type)
 {
     int total_size = GetQListItemSize(type);
-    qDebug() << "==========total_size=============" << total_size;
     for (int i = 0; i < total_size; ++i) {
         QListWidgetItem* item = GetQListWidget(type,i);
         if (item) {
-            qDebug() << "==========1=============";
             QWidget* widget = GetQListItemWidget(type,item);
             if (widget) {
                 delete widget;
@@ -109,7 +107,6 @@ void CashRegisterSetting::delete_record_keyboard_by_type( const std::vector<ipay
             delete item;
         }
     }
-    qDebug() << "==========end =============";
 }
 
 
@@ -219,8 +216,6 @@ void CashRegisterSetting::save_keyboard_operation()
         keyboard_ui_w = itemWidth;
         keyboard_ui_h = itemHeight;
     }
-    qDebug() << "itemWidth =:：" << itemWidth;
-    qDebug() << "itemHeight =:：" << itemHeight;
     for (int i = 0; i < recordVector.size(); i++) {
         ipay::KeyboardMouseRecordStruct recordStruct = recordVector.at(i);
         QListWidgetItem *item = new QListWidgetItem(ui->listWidget_keyboard);

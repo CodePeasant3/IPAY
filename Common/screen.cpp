@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QTime>
 #include"myrect.h"
+#include <Common/logging.h>
 
 Screen::Screen(QWidget *parent)
     : QWidget(parent),
@@ -124,7 +125,7 @@ void Screen::mouseReleaseEvent(QMouseEvent *e)    //只有已经按下鼠标按�
     oncePress = false;
     if( !control_ )        //如果未出现截图操作控件
     {
-        qDebug() << "new ControlScreen";   //新建一个窗口控件
+        qInfo(IPAY) << "new ControlScreen";   //新建一个窗口控件
         QHBoxLayout *layout = new QHBoxLayout(control_);    //在control上建立水平布局
         layout->addWidget(controlUi_);         //将控制窗口应用于水平布局
         layout->setContentsMargins(0, 0, 0, 0);

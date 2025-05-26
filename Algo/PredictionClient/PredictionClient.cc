@@ -77,10 +77,10 @@ std::string PredictionClient::Predict(cv::Mat &&image, float score /* = 0.5 */,
   const int result_class = tensor_output_.tensor_shape().dim(1).size();
   const int result_num = tensor_output_.tensor_shape().dim(2).size();
 
-  std::cout << "image_w: " << image_w << std::endl
-            << "image_h: " << image_h << std::endl
-            << "result_class: " << result_class << std::endl
-            << "result_num: " << result_num << std::endl;
+  std::cout << "image_w h class num: " << image_w << "\t"
+            << image_h << "\t"
+            << result_class << "\t"
+            << result_num << std::endl;
 
   // Step.1: 构造必要上下文
   ::grpc::ClientContext context;
@@ -357,31 +357,29 @@ std::string PredictionClient::objToDouble(std::vector<BoxInfo> &boxs_info) {
     std::cout << ">>> " << ele.label << " " << proportion_integer << " "
               << proportion_decimal << std::endl;
 
-    if (proportion_integer > 0.9 && proportion_integer < 1.2) {
+    if (proportion_integer > 0.6 && proportion_integer < 1.2) {
       part_integer.push_back(ele.label);
     }
 
-    if (proportion_decimal > 0.9 && proportion_decimal < 1.2) {
+    if (proportion_decimal > 0.6 && proportion_decimal < 1.2) {
       part_decimal.push_back(ele.label);
     }
   }
 
   // 组合整数部分
-  int sum_integer = 0;
-  for (int i = part_integer.size() - 1; i >= 0; --i) {
-    sum_integer +=
-        part_integer[i] * std::pow<int>(10, part_integer.size() - 1 - i);
+  std::string sum_integer = {};
+  for(auto ele : part_integer) {
+      sum_integer.append(std::to_string(ele));
   }
   std::cerr << "sum_integer: " << sum_integer << std::endl;
 
   // 组合小数部分
-  int sum_decimal = 0;
-  for (int i = part_decimal.size() - 1; i>=0; --i) {
-    sum_decimal +=
-          part_decimal[i] * std::pow<double>(10, part_decimal.size() - 1 - i);
+  std::string sum_decimal = {};
+  for(auto ele : part_decimal) {
+      sum_decimal.append(std::to_string(ele));
   }
   std::cerr << "sum_decimal: " << sum_decimal << std::endl;
 
-  std::string ret = std::to_string(sum_integer) + std::to_string(sum_decimal);
+  std::string ret = sum_integer + sum_decimal;
   return ret;
 }

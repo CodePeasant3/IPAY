@@ -16,14 +16,32 @@ target_link_libraries(test_md5
 
 add_executable(test_request
     ${CMAKE_CURRENT_SOURCE_DIR}/test_request.cpp
-    ${CMAKE_SOURCE_DIR}/Common/httpsrequest.cpp)
+    ${CMAKE_SOURCE_DIR}/Common/httpsrequest.cpp
+    ${CMAKE_SOURCE_DIR}/Common/logging.cpp
+)
 
 target_link_libraries(test_request
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::Core
 )
 
+add_executable(test_tf test_tensorflow_server.cpp)
+target_link_libraries(test_tf
+    prediction_client
+)
+
+add_executable(test_log
+    test_log.cpp
+    ${CMAKE_SOURCE_DIR}/Common/logging.cpp
+)
+target_link_libraries(test_log
+    Qt${QT_VERSION_MAJOR}::Core
+)
+
+
 # Install
-install(TARGETS test_opencv test_md5 test_request DESTINATION .)
+install(TARGETS test_opencv test_md5 test_request test_tf test_log DESTINATION .)
 install(DIRECTORY data DESTINATION .)
 install(DIRECTORY ${OPENCV_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY ${GRPC_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")

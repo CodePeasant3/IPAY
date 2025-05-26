@@ -4,16 +4,17 @@
 #include <QSqlQuery>
 #include <QVariant>
 #include <QTime>
+#include "logging.h"
 
 int DBOps::init() {
     m_db = QSqlDatabase::addDatabase("QSQLITE", "iPayOrderList");
     m_db.setHostName("localhost");  //数据库主机名
     m_db.setDatabaseName("ipay.db");   //数据库名
     if(!m_db.open()) {
-        std::cerr << "DB not opened" << std::endl;
+        qCritical(IPAY) << "DB not opened";
         return -1;
     }
-    std::cout << "db is open: " << m_db.isOpen() << std::endl;
+    qInfo(IPAY) << "db is open: " << m_db.isOpen();
     QSqlQuery query(m_db);
     this->createTable(query);
     this->cleanOldData(query);
@@ -49,11 +50,11 @@ int DBOps::createTable(QSqlQuery& query) {
         ")";
 
     if (!query.exec(sql)) {
-        std::cerr << "create table failed" << std::endl;
+        qCritical(IPAY) << "create table failed";
         return -1;
     }
 
-    std::cout << "crate table success" << std::endl;
+    qInfo(IPAY) << "crate table success";
     return 0;
 }
 
@@ -78,7 +79,7 @@ bool DBOps::insertData(QSqlQuery& query,
 
 
     if (!query.exec()) {
-        std::cerr << "Insert fail"  << std::endl;
+        qCritical(IPAY) << "Insert fail";
     }
     return true;
 }
@@ -89,7 +90,7 @@ bool DBOps::cleanOldData(QSqlQuery& query) {
 
     // 检查删除了多少条记录
     int deletedCount = query.numRowsAffected();
-    std::cerr << "Has delete item: " << deletedCount << std::endl;
+    qInfo(IPAY) << "Has delete item: " << deletedCount;
     return true;
 }
 

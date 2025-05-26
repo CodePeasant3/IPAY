@@ -1,4 +1,5 @@
 ﻿#include "jsonoperationcommon.h"
+#include <Common/logging.h>
 namespace ipay {
 
 QJsonObject CashRegisterSettingToJson(const CashRegisterSettingStruct& setting) {
@@ -79,7 +80,7 @@ bool JsonOperationCommon::WirteLocalConfig(const ipay::AllSettingConfig &all_set
 
     QFile file(full_path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "无法打开文件进行写入: " << full_path;
+        qCritical(IPAY) << "无法打开文件进行写入: " << full_path;
         return false;
     }
 
@@ -87,7 +88,7 @@ bool JsonOperationCommon::WirteLocalConfig(const ipay::AllSettingConfig &all_set
     QByteArray json_data = json_doc.toJson(QJsonDocument::Indented);
     file.write(json_data);
     file.close();
-    qDebug() << "JSON数据已成功写入文件: " << full_path;
+    qInfo(IPAY) << "JSON数据已成功写入文件: " << full_path;
 
     return true;
 }

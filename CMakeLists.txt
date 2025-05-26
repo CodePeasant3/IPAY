@@ -16,8 +16,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Sql Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Sql Core)
 
 file(GLOB VIEW_SOURCES ./View/*.cpp ./View/*.h ./View/*.ui)
 file(GLOB COMMON_SOURCES ./Common/*.cpp ./Common/*.h)
@@ -67,6 +67,7 @@ target_link_libraries(IPAY
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Sql
+    Qt${QT_VERSION_MAJOR}::Core
     proto_tensorflow
     prediction_client
 )
@@ -80,13 +81,13 @@ set_target_properties(IPAY PROPERTIES
 )
 
 install(TARGETS IPAY
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    DESTINATION .)
+
 install(FILES config.ini DESTINATION .)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(IPAY)
 endif()
 
-add_subdirectory(test)
+#add_subdirectory(test)
 

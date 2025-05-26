@@ -10,8 +10,94 @@
 #include "View/collectionmoney.h"
 #include "Common/jsonoperationcommon.h"
 
+#include <QCoreApplication>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
+#include <QMutex>
+#include <qdebug.h>
+#include <QLoggingCategory>
+#include <QKeyEvent>
+#include <Common/globalkeyfilter.h>
+
+
+// 互斥锁，用于线程安全
+static QMutex logMutex;
+
+// 自定义消息处理函数
+void customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QMutexLocker locker(&logMutex); // 加锁保证线程安全
+    const QString& now = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss.zzz");
+    // 构建日志消息
+    QString logMessage;
+    switch (type) {
+    case QtDebugMsg:
+        logMessage = QString("%5 [DEBUG] %1 (%2:%3, %4)").arg(msg).arg(context.file).arg(context.line).arg(context.function).arg(now);
+        break;
+    case QtInfoMsg:
+        logMessage = QString("%5 [INFO] %1 (%2:%3, %4)").arg(msg).arg(context.file).arg(context.line).arg(context.function).arg(now);
+        break;
+    case QtWarningMsg:
+        logMessage = QString("%5 [WARNING] %1 (%2:%3, %4)").arg(msg).arg(context.file).arg(context.line).arg(context.function).arg(now);
+        break;
+    case QtCriticalMsg:
+        logMessage = QString("%5 [CRITICAL] %1 (%2:%3, %4)").arg(msg).arg(context.file).arg(context.line).arg(context.function).arg(now);
+        break;
+    case QtFatalMsg:
+        logMessage = QString("%5 [FATAL] %1 (%2:%3, %4)").arg(msg).arg(context.file).arg(context.line).arg(context.function).arg(now);
+        abort(); // 发生致命错误时终止程序
+    }
+
+    // 输出到控制台
+    QTextStream(stdout) << logMessage << endl;
+
+    // 输出到文件
+    QFile file("application.log");
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream logStream(&file);
+        logStream << logMessage << endl;
+        file.close();
+    }
+
+    // 可以添加更多处理，如发送到远程服务器
+}
+
+// 设置日志等级
+void loadLoggingRulesFromFile(const QString& filePath) {
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        QString rules = in.readAll();
+        QLoggingCategory::setFilterRules(rules);
+        file.close();
+    }
+}
+
+
+
+
 int main(int argc, char *argv[])
 {
+    // 检查命令行参数，是否需要显示控制台
+    bool showConsole = false;
+    for (int i = 0; i < argc; ++i) {
+        if (QString(argv[i]) == "--console") {
+            showConsole = true;
+            break;
+        }
+    }
+
+    // 如果需要显示控制台
+    if (showConsole) {
+        AllocConsole();
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+    }
+
+    // 安装自定义消息处理函数
+    qInstallMessageHandler(customMessageHandler);
+    loadLoggingRulesFromFile("config.ini");
 
     QApplication a(argc, argv);
 //    if (!IsUserAnAdmin()) {
@@ -29,6 +115,15 @@ int main(int argc, char *argv[])
 //        return 0;
 //    }
 
+    GlobalEnterHook enterHook;
+    // 启动监听
+    if (enterHook.startHook()) {
+        qDebug() << "全局回车键监听已启动";
+    }
+    else
+    {
+        qDebug() << "无法启动全局回车键监听！可能缺少管理员权限。";
+    }
 
     ipay::GlobalStatusCommon::instance()->ConfigInit();
     QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
@@ -94,6 +189,8 @@ int main(int argc, char *argv[])
     QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&orderDetails,&OrderDetails::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&playSetting,&PlaySetting::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+
+    QObject::connect(&a, &QCoreApplication::aboutToQuit, &cashRegisterKeyboard, &CashRegisterKeyboard::killAlgoThread);
 
     return a.exec();
 }

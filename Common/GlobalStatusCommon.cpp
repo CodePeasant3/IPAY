@@ -1,15 +1,13 @@
 ﻿#include "globalstatuscommon.h"
 #include "opencv2/core/hal/interface.h"
-#include <opencv2/opencv.hpp>
 #include <mutex>
-
+#include "logging.h"
 
 namespace ipay{
 
 GlobalStatusCommon::GlobalStatusCommon(){}
-GlobalStatusCommon::~GlobalStatusCommon(){
+GlobalStatusCommon::~GlobalStatusCommon(){}
 
-}
 void GlobalStatusCommon::ConfigInit()
 {
     settings = std::make_shared<QSettings>("config.ini", QSettings::IniFormat);
@@ -51,20 +49,20 @@ void GlobalStatusCommon::ConfigInit()
     qWarning() << "read from ini file, server: " << infer_server;
 
 
-//    ret = client.Init(infer_server.toStdString(),
-//                      std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
-//    if(ret) {
-//        qCritical() << "Link remote server Failed" << infer_server;
-//        return;
-//    }
-//    else{
-//        qCritical() << "Link remote server Success" << infer_server;
-//        ::tensorflow::serving::GetModelMetadataResponse response_meta;
-//        client.GetModelMetadata(&response_meta);
-//        qInfo() << "model.name: " << response_meta.model_spec().name().c_str();
-//        qInfo() << "model.version: " << response_meta.model_spec().version().value();
-//        qInfo() << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
-//    }
+   ret = client.Init(infer_server.toStdString(),
+                     std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
+   if(ret) {
+       qCritical(IPAY) << "Link remote server Failed" << infer_server;
+       return;
+   }
+   else{
+       qCritical(IPAY) << "Link remote server Success" << infer_server;
+       ::tensorflow::serving::GetModelMetadataResponse response_meta;
+       client.GetModelMetadata(&response_meta);
+       qInfo(IPAY) << "model.name: " << response_meta.model_spec().name().c_str();
+       qInfo(IPAY) << "model.version: " << response_meta.model_spec().version().value();
+       qInfo(IPAY) << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
+   }
 
     ret = db_ops.init();
     if(ret) {
@@ -77,7 +75,6 @@ void GlobalStatusCommon::ConfigInit()
 
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
-
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)
@@ -117,20 +114,28 @@ void GlobalStatusCommon::FinshConfig()
 
 
 }
+std::string GlobalStatusCommon::PictureProcess() {
+    std::lock_guard<std::mutex> lock_(mtx_);
+    std::string tmp = ret_amount;
+    return tmp;
+}
 
-IdentifyResults GlobalStatusCommon::PictureProcess()
+
+void GlobalStatusCommon::WhileDetect()
 {
-    IdentifyResults result;
-    qDebug() << "One second has passed.";
-    cv::Mat screenCaptureData;
-    GetPictureData(screenCaptureData);
-    if(!screenCaptureData.empty()) {
-         cv::imshow("capture image", screenCaptureData);
-         cv::waitKey(1);
-//         client.Predict(std::move(screenCaptureData), 0.2);
+    while(this->ok) {
+        qDebug(IPAY) << "One second has passed.";
+        cv::Mat screenCaptureData;
+        GetPictureData(screenCaptureData);
+        if(!screenCaptureData.empty()) {
+            // cv::imshow("capture image", screenCaptureData);
+            // cv::waitKey(1);
+            std::lock_guard<std::mutex> lock_(mtx_);
+            ret_amount = client.Predict(std::move(screenCaptureData), 0.2);
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    return result;
 }
 
 
@@ -160,6 +165,7 @@ std::shared_ptr<AllSettingConfig> GlobalStatusCommon::GetSettingConfig()
     return all_setting_config_;
 }
 
+
 std::vector<KeyboardMouseRecordStruct>& GlobalStatusCommon::GetKeyboardMouseList(ipay::ScenePlaybackType type)
 {
     return keyboard_playback_map_[type];
@@ -176,5 +182,9 @@ QRect GlobalStatusCommon::GetScreenScope()
     return primaryScreen.GetGeometryScreen();
 }
 
+void GlobalStatusCommon::unsetOK() {
+    qWarning() << "set atomic ok is false;";
+    this->ok = false;
+}
 
 }
