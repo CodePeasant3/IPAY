@@ -57,6 +57,7 @@ public:
     // 启动和停止监听
     bool startHook();
     void stopHook();
+    bool isPaymentCode();
 
 signals:
     // 回车键按下信号
@@ -73,7 +74,7 @@ private:
 
     // 静态实例指针，用于回调函数访问
     static GlobalEnterHook* m_instance;
-    std::vector<int> numbers;
+    std::string numbers;
 };
 
 #endif // GLOBALENTERHOOK_H

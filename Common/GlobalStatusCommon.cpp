@@ -75,6 +75,10 @@ void GlobalStatusCommon::ConfigInit()
 
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
+
+    QSettings settings("config.ini", QSettings::IniFormat);
+    request.init(settings);
+
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)

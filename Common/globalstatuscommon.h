@@ -10,6 +10,7 @@
 #include <mutex>
 #include "PredictionClient.h"
 #include <opencv2/opencv.hpp>
+#include "httpsrequest.h"
 
 namespace ipay{
 class GlobalStatusCommon
@@ -36,6 +37,7 @@ public:
 public:
     DBOps db_ops;
     std::shared_ptr<QSettings> settings;
+    HttpsRequest request;
 
 private:
     ipay::JsonOperationCommon json_common_;
@@ -49,6 +51,8 @@ private:
     std::mutex mtx_;
     std::string ret_amount;
     std::atomic<bool> ok = true;
+
+
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);
