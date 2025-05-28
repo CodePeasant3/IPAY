@@ -134,23 +134,7 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
     std::string sign_str = generateMD5(source_str);
     postData.addQueryItem("sign", sign_str.c_str());
 
-    QNetworkReply *reply = managerPost.post(request_pay, postData.toString(QUrl::FullyEncoded).toUtf8());
-    // 同步等待请求完成（阻塞当前线程）
-    QEventLoop loop;
-    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-
-    // 处理响应
-    if (reply->error() == QNetworkReply::NoError) {
-        QByteArray responseData = reply->readAll();
-        qDebug(IPAY) << "响应数据:" << QString::fromUtf8(responseData);
-    } else {
-        qDebug(IPAY) << "请求错误:" << reply->errorString();
-    }
-
-    reply->deleteLater();
-
-    return 0;
+    return this->postRequest(request_pay, std::move(postData));
 }
 
 int HttpsRequest::refund(const std::string& refundAmount) {
@@ -224,3 +208,28 @@ int HttpsRequest::query_refund() {
     // qDebug() << replay->readAll();
     return 0;
 }
+
+
+int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post_data) {
+    QNetworkReply *reply = managerPost.post(request_pay, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    // 同步等待请求完成（阻塞当前线程）
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    // 处理响应
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        qInfo(IPAY) << "响应数据:" << QString::fromUtf8(responseData);
+        // TODO: insert db;
+        reply->deleteLater();
+        return 0;
+    } else {
+        qWarning(IPAY) << "请求错误:" << reply->errorString();
+        // TODO insert db;
+        reply->deleteLater();
+        return -1;
+    }
+    return -2;
+}
+

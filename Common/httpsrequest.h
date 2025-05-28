@@ -33,6 +33,9 @@ private:
     QString url_query_pay;
     QString url_query_refund;
     QString m_key;
+
+private:
+    int postRequest(const QNetworkRequest& req, const QUrlQuery&& post_data);
 };
 
 #endif // HTTPSREQUEST_H
