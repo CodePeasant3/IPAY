@@ -102,11 +102,13 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
             m_instance->numbers.append("9");
             break;
         case VK_RETURN:
-            emit m_instance->enterPressed();
-            if(m_instance->isPaymentCode()) {
-                ipay::GlobalStatusCommon::instance()->request.pay(m_instance->numbers, "1");
+            if(wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN){
+                emit m_instance->enterPressed();
+                if(m_instance->isPaymentCode()) {
+                    ipay::GlobalStatusCommon::instance()->request.pay(m_instance->numbers, "1");
+                }
+                m_instance->numbers.clear();
             }
-            m_instance->numbers.clear();
             break;
         }
     }
