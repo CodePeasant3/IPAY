@@ -14,6 +14,7 @@
 #define DEFAULT_URL_QUERY_REFUND "https://pay.zhuceyiyou.com/api/refund/query"
 #define DEFAULT_MCHNO "00000001"
 #define DEFAULT_APPID "00000002"
+#define DEFAULT_KEY "000000"
 
 int HttpsRequest::init(const QSettings& settings) {
 
@@ -29,6 +30,9 @@ int HttpsRequest::init(const QSettings& settings) {
         settings.value("Business/mchNo", DEFAULT_MCHNO).toString();
     this->m_appId =
         settings.value("Business/appId", DEFAULT_APPID).toString();
+    this->m_key =
+        settings.value("Business/Key", DEFAULT_KEY).toString();
+
 
     qInfo(IPAY) << "mchNo: " << m_mchNo;
     qInfo(IPAY) << "appId: " << m_appId;
@@ -36,32 +40,12 @@ int HttpsRequest::init(const QSettings& settings) {
     qInfo(IPAY) << "url_refund: " << url_refund;
     qInfo(IPAY) << "url_query_pay: " << url_query_pay;
     qInfo(IPAY) << "url_query_refund: " << url_query_refund;
+    qInfo(IPAY) << "m_key: " << m_key;
 
     request_pay.setUrl(url_pay);
-
-
-    // request_pay.setRawHeader("accept", "*/*");
-    //request_pay.setRawHeader("Accept-Language", "zh-CN");
-    // request_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
-    // request_pay.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    // request_pay.setHeader(QNetworkRequest::UserAgentHeader, "MyApp/1.0");
-
-
     request_refund.setUrl(url_refund);
-    request_refund.setRawHeader("accept", "*/*");
-    request_refund.setRawHeader("Accept-Language", "zh-CN");
-    request_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
     request_query_pay.setUrl(url_query_pay);
-    request_query_pay.setRawHeader("accept", "*/*");
-    request_query_pay.setRawHeader("Accept-Language", "zh-CN");
-    request_query_pay.setRawHeader("Content-Type", "application/json;charset=UTF-8");
-
     request_query_refund.setUrl(url_query_refund);
-    request_query_refund.setRawHeader("accept", "*/*");
-    request_query_refund.setRawHeader("Accept-Language", "zh-CN");
-    request_query_refund.setRawHeader("Content-Type", "application/json;charset=UTF-8");
     return 0;
 }
 
@@ -121,7 +105,6 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
     body_data["appId"] = m_appId.toStdString();
 
     body_data["mchOrderNo"] = generateOrderNo(); // 商户生成的订单号
-    // body_data["channelExtra"] = "TODO";
     body_data["reqTime"] = get_utc_timestamp();
     body_data["channelExtra"] = generateAuthCode(auth_code);
 
@@ -144,18 +127,14 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
         source_str += "=";
         source_str += ele.second;
     }
-    // postData.addQueryItem("key", "qd248nS36L8ajWkR8NdujGGRV5RLSO6CMsfTI192qGh52p9J5HqVsJazjmvbo59wn4c0vWOUTMoEYuk31Y8lxyHkzfsPuhg5RsuFSbBMtGmeKqwJQPhsS044fNHgZtzx");
-    source_str += "&key=qd248nS36L8ajWkR8NdujGGRV5RLSO6CMsfTI192qGh52p9J5HqVsJazjmvbo59wn4c0vWOUTMoEYuk31Y8lxyHkzfsPuhg5RsuFSbBMtGmeKqwJQPhsS044fNHgZtzx";
 
+    source_str += "&key=";
+    source_str += m_key.toStdString();
     qDebug(IPAY) << "原始字符串: " << source_str.c_str();
     std::string sign_str = generateMD5(source_str);
-    // postData.removeQueryItem("key");
     postData.addQueryItem("sign", sign_str.c_str());
 
-
     QNetworkReply *reply = managerPost.post(request_pay, postData.toString(QUrl::FullyEncoded).toUtf8());
-    qWarning(IPAY) << ">>>>> READAll:";
-
     // 同步等待请求完成（阻塞当前线程）
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);

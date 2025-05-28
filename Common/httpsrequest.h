@@ -32,6 +32,7 @@ private:
     QString url_refund;
     QString url_query_pay;
     QString url_query_refund;
+    QString m_key;
 };
 
 #endif // HTTPSREQUEST_H
