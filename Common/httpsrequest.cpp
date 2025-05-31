@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <Common/logging.h>
+#include <Common/dbops.h>
 
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -16,8 +17,9 @@
 #define DEFAULT_APPID "00000002"
 #define DEFAULT_KEY "000000"
 
-int HttpsRequest::init(const QSettings& settings) {
+int HttpsRequest::init(const QSettings& settings, DBOps* ops_ptr) {
 
+    m_db_ops = ops_ptr;
     this->url_pay =
         settings.value("Payment/UrlPay", DEFAULT_URL_PAY).toString();
     this->url_refund =
@@ -233,12 +235,11 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
             jsonDoc["data"]["orderState"].toInt();
         qInfo(IPAY) << "replay >>> code: " << jsonDoc["code"].toInt();
         qInfo(IPAY) << "replay >>> mchOrderNo: " << jsonDoc["data"]["mchOrderNo"].toString();
-        qInfo(IPAY) << "replay >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
-        qInfo(IPAY) << "replay >>> orderState: " << jsonDoc["data"]["orderState"].toInt();
+        qInfo(IPAY) << "REPLAY >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
+        qInfo(IPAY) << "REPLAY >>> orderState: " << jsonDoc["data"]["orderState"].toInt();
 
         // INFO: insert db;
-        //ipay::GlobalStatusCommon::instance()->db_ops.insertData(pay_order_id, 1, "11111222", "1", order_type);
-        // ipay::GlobalStatusCommon::instance()->unsetOK();
+        this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, pay_order_id, order_type);
         return 0;
     } else {
         qWarning(IPAY) << "请求错误:" << reply->errorString();
@@ -249,10 +250,3 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
     return -2;
 }
 
-/*
- * QString pay_order_id,
-                    int type,
-                    QString time,
-                    QString amount,
-                    int status
-*/

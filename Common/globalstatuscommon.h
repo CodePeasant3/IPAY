@@ -4,13 +4,11 @@
 #include "jsonoperationcommon.h"
 #include "savesettingstruct.h"
 #include <QTimer>
-#include "dbops.h"
 #include <QSettings>
 #include "primaryscreen.h"
 #include <mutex>
 #include "PredictionClient.h"
 #include <opencv2/opencv.hpp>
-#include "httpsrequest.h"
 
 namespace ipay{
 class GlobalStatusCommon
@@ -35,9 +33,8 @@ public:
     void unsetOK();
 
 public:
-    DBOps db_ops;
     std::shared_ptr<QSettings> settings;
-    HttpsRequest request;
+
 
 private:
     ipay::JsonOperationCommon json_common_;

@@ -47,11 +47,14 @@
 #define VK_9 0x39  // 数字2键的Windows虚拟键码
 #endif
 
+class HttpsRequest;
+class DBOps;
+
 class GlobalEnterHook : public QObject
 {
     Q_OBJECT
 public:
-    explicit GlobalEnterHook(QObject *parent = nullptr);
+    GlobalEnterHook(HttpsRequest*, QObject *parent = nullptr);
     ~GlobalEnterHook();
 
     // 启动和停止监听
@@ -75,6 +78,8 @@ private:
     // 静态实例指针，用于回调函数访问
     static GlobalEnterHook* m_instance;
     std::string numbers;
+private:
+    HttpsRequest* m_request;
 };
 
 #endif // GLOBALENTERHOOK_H

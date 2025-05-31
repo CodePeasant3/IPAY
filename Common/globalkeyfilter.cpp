@@ -4,14 +4,17 @@
 #include "logging.h"
 #include <iostream>
 #include "globalstatuscommon.h"
+#include <Common/httpsrequest.h>
+#include <Common/dbops.h>
 
 GlobalEnterHook* GlobalEnterHook::m_instance = nullptr;
 
-GlobalEnterHook::GlobalEnterHook(QObject *parent) : QObject(parent)
+GlobalEnterHook::GlobalEnterHook(HttpsRequest* request_ptr, QObject *parent) : QObject(parent)
 {
     m_hook = NULL;
     m_instance = this;
     numbers.reserve(64);
+    this->m_request = request_ptr;
 }
 
 GlobalEnterHook::~GlobalEnterHook()
@@ -105,7 +108,8 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
             if(wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN){
                 emit m_instance->enterPressed();
                 if(m_instance->isPaymentCode()) {
-                    ipay::GlobalStatusCommon::instance()->request.pay(m_instance->numbers, "1");
+                    m_instance->m_request->pay(m_instance->numbers, "1");
+
                 }
                 m_instance->numbers.clear();
             }

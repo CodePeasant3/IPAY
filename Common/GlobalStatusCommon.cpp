@@ -64,10 +64,7 @@ void GlobalStatusCommon::ConfigInit()
        qInfo(IPAY) << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
    }
 
-    ret = db_ops.init();
-    if(ret) {
-        qWarning() << "DB ops init failed";
-    }
+
 
 
     auto mchNo = settings->value("Business/mchNo").toString();
@@ -76,8 +73,7 @@ void GlobalStatusCommon::ConfigInit()
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
 
-    QSettings settings("config.ini", QSettings::IniFormat);
-    request.init(settings);
+
 
 }
 
