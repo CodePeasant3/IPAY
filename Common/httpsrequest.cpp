@@ -212,7 +212,7 @@ int HttpsRequest::query_refund() {
 
 int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post_data) {
     QNetworkReply *reply = managerPost.post(request_pay, post_data.toString(QUrl::FullyEncoded).toUtf8());
-    // 同步等待请求完成（阻塞当前线程）
+    // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
@@ -220,9 +220,25 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
     // 处理响应
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
-        qInfo(IPAY) << "响应数据:" << QString::fromUtf8(responseData);
-        // TODO: insert db;
-        reply->deleteLater();
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &parseError);
+        if (jsonDoc.isNull()) {
+            qWarning(IPAY) << "JSON解析错误:" << parseError.errorString();
+            qWarning(IPAY) << "原始数据:" << responseData;
+            return -1;
+        }
+        const auto& pay_order_id =
+            jsonDoc["data"]["payOrderId"].toString();
+        int order_type =
+            jsonDoc["data"]["orderState"].toInt();
+        qInfo(IPAY) << "replay >>> code: " << jsonDoc["code"].toInt();
+        qInfo(IPAY) << "replay >>> mchOrderNo: " << jsonDoc["data"]["mchOrderNo"].toString();
+        qInfo(IPAY) << "replay >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
+        qInfo(IPAY) << "replay >>> orderState: " << jsonDoc["data"]["orderState"].toInt();
+
+        // INFO: insert db;
+        //ipay::GlobalStatusCommon::instance()->db_ops.insertData(pay_order_id, 1, "11111222", "1", order_type);
+        // ipay::GlobalStatusCommon::instance()->unsetOK();
         return 0;
     } else {
         qWarning(IPAY) << "请求错误:" << reply->errorString();
@@ -233,3 +249,10 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
     return -2;
 }
 
+/*
+ * QString pay_order_id,
+                    int type,
+                    QString time,
+                    QString amount,
+                    int status
+*/

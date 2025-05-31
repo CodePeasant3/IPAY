@@ -19,7 +19,7 @@ int DBOps::init() {
     this->createTable(query);
     this->cleanOldData(query);
 
-    this->insertData(query, "00000", 2, "202505110011", "200", 1);
+    this->insertData("00000", 2, "202505110011", "200", 1);
     return 0;
 }
 
@@ -58,13 +58,12 @@ int DBOps::createTable(QSqlQuery& query) {
     return 0;
 }
 
-bool DBOps::insertData(QSqlQuery& query,
-                       QString pay_order_id,
+bool DBOps::insertData(QString pay_order_id,
                        int type,
                        QString time,
                        QString amount,
                        int status) {
-
+    QSqlQuery query(m_db);
     QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");    
     QString sql_cmd_str =
         "INSERT OR IGNORE INTO users (orderid, type, amount, status, created_at, time) "\
