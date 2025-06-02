@@ -7,10 +7,10 @@ public:
     int init();
     void final();
     QSqlDatabase m_db;
-private:
+
+public:
     int createTable(QSqlQuery& query);
-    bool insertData(QSqlQuery& query,
-                    QString pay_order_id,
+    bool insertData(QString pay_order_id,
                     int type,
                     QString time,
                     QString amount,

@@ -64,10 +64,7 @@ void GlobalStatusCommon::ConfigInit()
 //       qInfo(IPAY) << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
 //   }
 
-    ret = db_ops.init();
-    if(ret) {
-        qWarning() << "DB ops init failed";
-    }
+
 
 
     auto mchNo = settings->value("Business/mchNo").toString();
@@ -75,6 +72,9 @@ void GlobalStatusCommon::ConfigInit()
 
     qWarning() << "read from ini file, mchNo: " << mchNo;
     qWarning() << "read from ini file, appId: " << appId;
+
+
+
 }
 
 void GlobalStatusCommon::ModifyCashRegisterSetting(const CashRegisterSettingStruct & cash_register_setting_struct)

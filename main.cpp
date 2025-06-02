@@ -19,6 +19,8 @@
 #include <QLoggingCategory>
 #include <QKeyEvent>
 #include <Common/globalkeyfilter.h>
+#include <Common/dbops.h>
+#include <Common/httpsrequest.h>
 
 
 // 互斥锁，用于线程安全
@@ -114,8 +116,17 @@ int main(int argc, char *argv[])
 //        }
 //        return 0;
 //    }
+    DBOps db_ops;
+    int ret = db_ops.init();
+    if(ret) {
+        qWarning() << "DB ops init failed";
+    }
 
-    GlobalEnterHook enterHook;
+    HttpsRequest request;
+    QSettings settings("config.ini", QSettings::IniFormat);
+    request.init(settings, &db_ops);
+
+    GlobalEnterHook enterHook(&request);
     // 启动监听
     if (enterHook.startHook()) {
         qDebug() << "全局回车键监听已启动";
@@ -129,7 +140,7 @@ int main(int argc, char *argv[])
     QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
-    OrderDetails orderDetails(ipay::GlobalStatusCommon::instance()->db_ops);
+    OrderDetails orderDetails(db_ops);
     CollectionMoney collectionMoney;
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;

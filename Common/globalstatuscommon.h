@@ -4,7 +4,6 @@
 #include "jsonoperationcommon.h"
 #include "savesettingstruct.h"
 #include <QTimer>
-#include "dbops.h"
 #include <QSettings>
 #include "primaryscreen.h"
 #include <mutex>
@@ -34,8 +33,8 @@ public:
     void unsetOK();
 
 public:
-    DBOps db_ops;
     std::shared_ptr<QSettings> settings;
+
 
 private:
     ipay::JsonOperationCommon json_common_;
@@ -49,6 +48,8 @@ private:
     std::mutex mtx_;
     std::string ret_amount;
     std::atomic<bool> ok = true;
+
+
 
 public:
     IPAY_DECLARE_SINGLETON(GlobalStatusCommon);

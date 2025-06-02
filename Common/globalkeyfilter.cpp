@@ -3,13 +3,18 @@
 
 #include "logging.h"
 #include <iostream>
+#include "globalstatuscommon.h"
+#include <Common/httpsrequest.h>
+#include <Common/dbops.h>
 
 GlobalEnterHook* GlobalEnterHook::m_instance = nullptr;
 
-GlobalEnterHook::GlobalEnterHook(QObject *parent) : QObject(parent)
+GlobalEnterHook::GlobalEnterHook(HttpsRequest* request_ptr, QObject *parent) : QObject(parent)
 {
     m_hook = NULL;
     m_instance = this;
+    numbers.reserve(64);
+    this->m_request = request_ptr;
 }
 
 GlobalEnterHook::~GlobalEnterHook()
@@ -52,67 +57,99 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
         case VK_NUMPAD0:
         case VK_0:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(0);
+                m_instance->numbers.append("0");
             break;
         case VK_NUMPAD1:
         case VK_1:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(1);
+                m_instance->numbers.append("1");
             break;
         case VK_NUMPAD2:
         case VK_2:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(2);
+                m_instance->numbers.append("2");
             break;
         case VK_NUMPAD3:
         case VK_3:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(3);
+                m_instance->numbers.append("3");
             break;
         case VK_NUMPAD4:
         case VK_4:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(4);
+                m_instance->numbers.append("4");
             break;
         case VK_NUMPAD5:
         case VK_5:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(5);
+                m_instance->numbers.append("5");
             break;
         case VK_NUMPAD6:
         case VK_6:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(6);
+                m_instance->numbers.append("6");
             break;
         case VK_NUMPAD7:
         case VK_7:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(7);
+                m_instance->numbers.append("7");
             break;
         case VK_NUMPAD8:
         case VK_8:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-                m_instance->numbers.push_back(8);
+                m_instance->numbers.append("8");
             break;
         case VK_NUMPAD9:
         case VK_9:
             if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
-            m_instance->numbers.push_back(9);
+            m_instance->numbers.append("9");
             break;
         case VK_RETURN:
-            emit m_instance->enterPressed();
-            std::cerr << "number: ";
-            for(const auto& ele : m_instance->numbers) {
-                std::cerr << ele;
+            if(wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN){
+                emit m_instance->enterPressed();
+                if(m_instance->isPaymentCode()) {
+                    m_instance->m_request->pay(m_instance->numbers, "1");
+
+                }
+                m_instance->numbers.clear();
             }
-            std::cerr << std::endl;
-            std::cerr << "---------------" << std::endl;
-            m_instance->numbers.clear();
-            // TODO: 分析条形码 是否需要发起支付
             break;
         }
     }
 
     // 传递给下一个钩子
     return CallNextHookEx(m_instance->m_hook, nCode, wParam, lParam);
+}
+
+
+bool GlobalEnterHook::isPaymentCode() {
+    // 支付宝: 字符串以25到30之间的数字开头, 有16到24位数
+    // 微信: 18位纯数字，以10、11、12、13、14、15开头
+    // 云闪付: 有 16 个，前两个数字固定为 56
+    if(numbers.size() >= 16) {
+        std::string sign_code = numbers.substr(0, 2);
+        qDebug(IPAY) << "sign code: " << sign_code.c_str();
+
+        if(sign_code == "25" || sign_code == "26" || sign_code == "27" || sign_code == "28" ||
+            sign_code == "29" || sign_code == "30") {
+            qDebug(IPAY) << "支付宝付款码";
+            return true;
+        }
+        else if(sign_code == "10" || sign_code == "11" || sign_code == "12" || sign_code == "13"
+                   || sign_code == "14" || sign_code == "15") {
+            qDebug(IPAY) << "微信付款码";
+            return true;
+        }
+        else if( sign_code == "56" ) {
+            qDebug(IPAY) << "云闪付付款码";
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+    return false;
 }
