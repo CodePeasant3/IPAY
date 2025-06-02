@@ -45,6 +45,7 @@ private:
     Ui::PaymentPlatform *ui;
     QAction * receiptAction_ = nullptr;
     QAction * refundActuin_ = nullptr;
+    QAction * modifyMoney_ = nullptr;
     QAction * detailAction_ = nullptr;
     QAction * settingAction_ = nullptr;
     QAction * exitAction_ = nullptr;

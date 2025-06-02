@@ -17,5 +17,6 @@
         <file>Resources/image/screen_right.png</file>
         <file>Resources/image/km_close.png</file>
         <file>Resources/image/QRCode.png</file>
+        <file>Resources/image/modifyMoney.png</file>
     </qresource>
 </RCC>

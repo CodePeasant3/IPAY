@@ -23,12 +23,15 @@ void PaymentPlatform::init()
     ui ->MainPushButton->setStyleSheet("QPushButton {  border: none; } QPushButton::menu-indicator { image: none; }");
     receiptAction_ = new QAction(QIcon(":/Resources/image/receiptAction.png"),"收款");
     refundActuin_ = new QAction(QIcon(":/Resources/image/refundActuin.png"),"退款");
+    modifyMoney_ = new  QAction(QIcon(":/Resources/image/modifyMoney.png"),"修改");
     detailAction_ = new QAction(QIcon(":/Resources/image/detailAction.png"),"明细");
     settingAction_ = new QAction(QIcon(":/Resources/image/settingAction.png"),"设置");
     exitAction_ = new QAction(QIcon(":/Resources/image/exitAction.png"),"退出");
+
     pushMenu_ = new QMenu();
     pushMenu_->addAction(receiptAction_);
     pushMenu_->addAction(refundActuin_);
+    pushMenu_->addAction(modifyMoney_);
     pushMenu_->addAction(detailAction_);
     pushMenu_->addAction(settingAction_);
     pushMenu_->addAction(exitAction_);
@@ -40,7 +43,8 @@ void PaymentPlatform::init()
     });
 
     connect(receiptAction_, &QAction::triggered, this, [=]() {
-        emit ShowCashKeyboard();
+//        emit ShowCashKeyboard();
+        emit ShowCollecton();
         emit StartModel(1);
         this->setEnabled(false);
         std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
@@ -56,6 +60,15 @@ void PaymentPlatform::init()
         settingConfig.get()->cash_register_setting.recognition_type = 1;
         ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     });
+    connect(modifyMoney_, &QAction::triggered, this, [=]() {
+        emit ShowCashKeyboard();
+        emit StartModel(1);
+        this->setEnabled(false);
+        std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
+        settingConfig.get()->cash_register_setting.recognition_type = 1;
+        ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
+    });
+
     connect(detailAction_, &QAction::triggered, this, [=]() {
         emit ShowDetails();
         this->setEnabled(false);
