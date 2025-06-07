@@ -79,6 +79,7 @@ private:
     // 静态实例指针，用于回调函数访问
     static GlobalEnterHook* m_instance;
     std::string numbers;
+    std::string stripZero(const std::string& str);
 private:
     HttpsRequest* m_request;
 };

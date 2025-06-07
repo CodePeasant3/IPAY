@@ -108,7 +108,15 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
             if(wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN){
                 emit m_instance->enterPressed();
                 if(m_instance->isPaymentCode()) {
-                    m_instance->m_request->pay(m_instance->numbers, "1");
+                    std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+                    std::string strip_str = m_instance->stripZero(result);
+                    if(strip_str == "0"){
+                        m_instance->numbers.clear();
+                        break;
+                    }
+                    else {
+                        m_instance->m_request->pay(m_instance->numbers, strip_str);
+                    }
 
                 }
                 m_instance->numbers.clear();
@@ -119,6 +127,14 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
 
     // 传递给下一个钩子
     return CallNextHookEx(m_instance->m_hook, nCode, wParam, lParam);
+}
+
+std::string GlobalEnterHook::stripZero(const std::string& str) {
+    size_t firstNonZero = str.find_first_not_of('0');
+    if (firstNonZero == std::string::npos) {
+        return "0";
+    }
+    return str.substr(firstNonZero);
 }
 
 
