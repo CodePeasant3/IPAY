@@ -29,7 +29,7 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
 {
     QRect rect = ipay::GlobalStatusCommon::instance()->GetScreenScope();
     this->resize(rect.width() * 0.2,rect.height() *0.2);
-
+    self_type_ = type;
     this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     ui->widget_3->hide();
     connect(ui ->label_keyboard,&ClickableLabel::clicked,this,&CashRegisterKeyboard::KeyboardShow);
@@ -39,7 +39,7 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
     connect(ui->pushButton_cash1,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
     connect(ui->pushButton_cash2,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
 
-    if(type == ipay::KeyboardOperationType::COLLECTION ){
+    if(self_type_ == ipay::KeyboardOperationType::COLLECTION ){
         if(!process_timer_){
             process_timer_ = new QTimer();
             process_timer_->setInterval(1000);
@@ -48,15 +48,12 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
                     return;
                 }
                 std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
-                //正则判断 result
-//                emit FinalMoney(result);
+                modifyMoneySlot();
             });
             process_timer_->start();
         }
         future_thread =
             std::async(std::launch::async, &ipay::GlobalStatusCommon::WhileDetect, ipay::GlobalStatusCommon::instance()) ;
-
-    }else if(type == ipay::KeyboardOperationType::MODIAY){
 
     }
     connect(ui->pushButton_0, &QPushButton::clicked, this, [=]() { ModifyMoney("0"); });
@@ -80,6 +77,12 @@ int CashRegisterKeyboard::MoneyBack()
     qrStr_; // QR 条码  需要数据库拿到对应金额
 
     return 0;
+}
+
+bool CashRegisterKeyboard::isValidNumber(const QString& str)
+{
+    QRegularExpression re("^[0-9.]+$");
+    return re.match(str).hasMatch();
 }
 
 void CashRegisterKeyboard::keyPressEvent(QKeyEvent *event)
@@ -158,6 +161,11 @@ void CashRegisterKeyboard::operationShow(int flags)
 
 void CashRegisterKeyboard::ClickReceive()
 {
+    if(self_type_ == ipay::KeyboardOperationType::MODIAY){
+        modifyMoneySlot();
+        return;
+    }
+
     if(money_result_.empty()){
         QMessageBox::warning(this,"警告","请设置金额后操作");
         return;
@@ -222,12 +230,21 @@ void CashRegisterKeyboard::killAlgoThread() {
 void CashRegisterKeyboard::saveLastQR(const ipay::QRDetailStruct &qr_struct)
 {
     lastQRDetail_ = qr_struct;
+
 }
 
 void CashRegisterKeyboard::modifyMoneySlot()
 {
-    money_vector_.clear();
+
     std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+    if(result.empty()){
+        return;
+    }
+    if(!isValidNumber(QString::fromStdString(result))){
+        QMessageBox::warning(this,"错误","识别金额错误!");
+        return;
+    }
+    money_vector_.clear();
     for (char c : result) {
         // 把每个字符转为string后添加到vector
         money_vector_.push_back(std::string(1, c));

@@ -22,6 +22,7 @@ public:
     ~CashRegisterKeyboard();
     void Init(const ipay::KeyboardOperationType type);
     int MoneyBack(); //金额退款
+    bool isValidNumber(const QString &str);
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
@@ -57,6 +58,7 @@ private:
     int point_bit = 0;
     std::future<void> future_thread;
     ipay::QRDetailStruct lastQRDetail_;
+    ipay::KeyboardOperationType self_type_;
 
 };
 
