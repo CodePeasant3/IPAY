@@ -20,8 +20,8 @@ class CashRegisterKeyboard : public QWidget
 public:
     explicit CashRegisterKeyboard(QWidget *parent = nullptr);
     ~CashRegisterKeyboard();
-    void Init();
-    int MoneyBack(QString qrStr); //金额退款
+    void Init(const ipay::KeyboardOperationType type);
+    int MoneyBack(); //金额退款
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
@@ -42,6 +42,8 @@ public slots:
     void operationShow(int flags);
     void ClickReceive();
     void killAlgoThread();
+    void saveLastQR(const ipay::QRDetailStruct& qr_struct);
+    void modifyMoneySlot();
 
 private:
     Ui::CashRegisterKeyboard *ui;
@@ -49,10 +51,12 @@ private:
     std::string money_result_;
     bool isShow_ = false;
     bool isDecimalPoint_ = false;
-    static std::vector<std::string> money_vector_;
+    std::vector<std::string> money_vector_;
     QString qrStr_;
     int flags_;
+    int point_bit = 0;
     std::future<void> future_thread;
+    ipay::QRDetailStruct lastQRDetail_;
 
 };
 

@@ -140,13 +140,15 @@ int main(int argc, char *argv[])
     QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
+    CashRegisterKeyboard cashKeyboardModiay;
     OrderDetails orderDetails(db_ops);
     CollectionMoney collectionMoney;
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;
 
+    cashRegisterKeyboard.Init(ipay::KeyboardOperationType::COLLECTION);
+    cashKeyboardModiay.Init(ipay::KeyboardOperationType::MODIAY);
 
-    cashRegisterKeyboard.resize(rect.width() * 0.2,rect.height() *0.2);
     paymentPlatform.resize(rect.width() * 0.2,rect.height() *0.1);
     keyboardRecordOperation.resize(rect.width() * 0.4,rect.height() *0.2);
 
@@ -154,6 +156,7 @@ int main(int argc, char *argv[])
     paymentPlatform.setWindowFlags(paymentPlatform.windowFlags() | Qt::WindowStaysOnTopHint);
     keyboardRecordOperation.setWindowFlags(keyboardRecordOperation.windowFlags() | Qt::WindowStaysOnTopHint);
     playSetting.hide();
+    cashKeyboardModiay.hide();
     cashRegisterKeyboard.hide();
     orderDetails.hide();
     keyboardRecordOperation.hide();
@@ -175,6 +178,8 @@ int main(int argc, char *argv[])
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboard,&cashRegisterKeyboard,&CashRegisterKeyboard::show);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboard,&collectionMoney,&CollectionMoney::hide);
 
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboardModify,&cashKeyboardModiay,&CashRegisterKeyboard::show);
+
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&collectionMoney,&CollectionMoney::operationShow);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&cashRegisterKeyboard,&CashRegisterKeyboard::operationShow);
 
@@ -183,6 +188,7 @@ int main(int argc, char *argv[])
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowSetting,&playSetting,&PlaySetting::show);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ClickExit,&a,&QApplication::quit);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowDetails,&orderDetails,&OrderDetails::show);
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowDetails,&orderDetails,&OrderDetails::refresh);
 
     QWidget::connect(&playSetting,&PlaySetting::start_keyboard_record,&playSetting,&PlaySetting::hide);
     QWidget::connect(&playSetting,&PlaySetting::start_keyboard_record,&keyboardRecordOperation,&KeyboardRecordOperation::show);
@@ -196,6 +202,7 @@ int main(int argc, char *argv[])
                      &playSetting,&PlaySetting::stop_record_keyboard);
 
     QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
+    QWidget::connect(&cashKeyboardModiay,&CashRegisterKeyboard::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&collectionMoney,&CollectionMoney::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&keyboardRecordOperation,&KeyboardRecordOperation::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);
     QWidget::connect(&orderDetails,&OrderDetails::AllowOperation,&paymentPlatform,&PaymentPlatform::EnableOperation);

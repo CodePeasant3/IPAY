@@ -1,11 +1,11 @@
-// globalenterhook.h
+﻿// globalenterhook.h
 #ifndef GLOBALENTERHOOK_H
 #define GLOBALENTERHOOK_H
 
 #include <QObject>
 #include <Windows.h>
 #include <vector>
-
+#include "savesettingstruct.h"
 
 #ifndef VK_0
 #define VK_0 0x30  // 数字0键的Windows虚拟键码
@@ -67,6 +67,7 @@ signals:
     void enterPressed();
     // 回车键释放信号
     void enterReleased();
+    void paymentQR(const ipay::QRDetailStruct &qr_struct);
 
 private:
     // 键盘钩子回调函数

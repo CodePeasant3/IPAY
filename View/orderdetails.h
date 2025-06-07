@@ -28,6 +28,8 @@ public:
     OrderDetails(DBOps& db_ops, QWidget *parent = nullptr);
     ~OrderDetails();
     void  Init(DBOps& db_ops);
+    void refresh();
+
 
 signals:
     void AllowOperation();

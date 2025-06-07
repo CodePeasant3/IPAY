@@ -7,17 +7,27 @@ namespace ipay {
 
 // 录制类型
 enum KeyboardMouseType{
-  LIFTMOUSE,
+  LIFTMOUSE = 0,
   RIGHTMOUSE,
   KETBOARD
 };
 
 //录制场景功能
 enum ScenePlaybackType{
-  CALLBACKCLEANTABLE, // clean_table
+  CALLBACKCLEANTABLE = 0, // clean_table
   CALLBACKPAYDONE // pay_done
 };
 
+enum QRPaymentType{
+  ALIPLAY = 0, // 支付宝
+  WECHAT // 微信
+};
+
+
+enum KeyboardOperationType{
+    COLLECTION = 0,
+    MODIAY
+};
 
 
 struct KeyboardMouseRecordStruct{
@@ -88,6 +98,13 @@ struct IdentifyResults{
 
 
 };
+
+struct QRDetailStruct
+{
+  std::string qr_detail;
+  QRPaymentType qr_type;
+};
+
 
 
 }

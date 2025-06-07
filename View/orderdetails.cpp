@@ -96,12 +96,12 @@ void OrderDetails::Init(DBOps& db_ops)
     ui->tableView_order->setColumnHidden(0, true);
     ui->tableView_order->setColumnHidden(6, true);
 
+}
 
-
-    // 备用
-    // 刷新数据
-    // model->select();
-    // tableView->resizeColumnsToContents();
+void OrderDetails::refresh()
+{
+    model->select();
+    ui ->tableView_order->resizeColumnsToContents();
 }
 
 

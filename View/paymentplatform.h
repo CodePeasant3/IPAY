@@ -23,6 +23,7 @@ public:
     void exit();
 signals:
     void ShowCashKeyboard();
+    void ShowCashKeyboardModify();
     void ShowCollecton();
     void ShowSetting();
     void ClickExit();

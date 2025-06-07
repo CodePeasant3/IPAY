@@ -1,4 +1,4 @@
-// globalenterhook.cpp
+﻿// globalenterhook.cpp
 #include "globalkeyfilter.h"
 
 #include "logging.h"
@@ -129,15 +129,20 @@ bool GlobalEnterHook::isPaymentCode() {
     if(numbers.size() >= 16) {
         std::string sign_code = numbers.substr(0, 2);
         qDebug(IPAY) << "sign code: " << sign_code.c_str();
-
+        ipay::QRDetailStruct qrDetail;
+        qrDetail.qr_detail = numbers;
         if(sign_code == "25" || sign_code == "26" || sign_code == "27" || sign_code == "28" ||
             sign_code == "29" || sign_code == "30") {
             qDebug(IPAY) << "支付宝付款码";
+            qrDetail.qr_type = ipay::QRPaymentType::ALIPLAY;
+            emit paymentQR(qrDetail);
             return true;
         }
         else if(sign_code == "10" || sign_code == "11" || sign_code == "12" || sign_code == "13"
                    || sign_code == "14" || sign_code == "15") {
             qDebug(IPAY) << "微信付款码";
+            qrDetail.qr_type = ipay::QRPaymentType::WECHAT;
+            emit paymentQR(qrDetail);
             return true;
         }
         else if( sign_code == "56" ) {

@@ -124,7 +124,7 @@ std::string GlobalStatusCommon::PictureProcess() {
 void GlobalStatusCommon::WhileDetect()
 {
     while(this->ok) {
-        qDebug(IPAY) << "One second has passed.";
+//        qDebug(IPAY) << "One second has passed.";
         cv::Mat screenCaptureData;
         GetPictureData(screenCaptureData);
         if(!screenCaptureData.empty()) {

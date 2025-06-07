@@ -2,17 +2,20 @@
 #include "qdebug.h"
 #include "ui_cashregisterkeyboard.h"
 #include <QTimer>
-std::vector<std::string> CashRegisterKeyboard::money_vector_;
+//std::vector<std::string> CashRegisterKeyboard::money_vector_;
 CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CashRegisterKeyboard)
 {
     ui->setupUi(this);
-    Init();
+//    Init();
 }
 
 CashRegisterKeyboard::~CashRegisterKeyboard()
 {
+//    if(type == ipay::KeyboardOperationType::COLLECTION ){
+
+//    }
     future_thread.get();
     if(process_timer_){
         process_timer_->stop();
@@ -22,8 +25,11 @@ CashRegisterKeyboard::~CashRegisterKeyboard()
     delete ui;
 }
 
-void CashRegisterKeyboard::Init()
+void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
 {
+    QRect rect = ipay::GlobalStatusCommon::instance()->GetScreenScope();
+    this->resize(rect.width() * 0.2,rect.height() *0.2);
+
     this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
     ui->widget_3->hide();
     connect(ui ->label_keyboard,&ClickableLabel::clicked,this,&CashRegisterKeyboard::KeyboardShow);
@@ -33,19 +39,26 @@ void CashRegisterKeyboard::Init()
     connect(ui->pushButton_cash1,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
     connect(ui->pushButton_cash2,&QPushButton::clicked,this,&CashRegisterKeyboard::ClickReceive);
 
-    if(!process_timer_){
-        process_timer_ = new QTimer();
-        process_timer_->setInterval(1000);
-        QObject::connect(process_timer_, &QTimer::timeout, [this]() {
-            if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 1){
-                return;
-            }
-            std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
-            std::cerr << "PictreProcess ret: " << result << std::endl;
-        });
-        process_timer_->start();
-    }
+    if(type == ipay::KeyboardOperationType::COLLECTION ){
+        if(!process_timer_){
+            process_timer_ = new QTimer();
+            process_timer_->setInterval(1000);
+            QObject::connect(process_timer_, &QTimer::timeout, [this]() {
+                if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 1){
+                    return;
+                }
+                std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+                //正则判断 result
+//                emit FinalMoney(result);
+            });
+            process_timer_->start();
+        }
+        future_thread =
+            std::async(std::launch::async, &ipay::GlobalStatusCommon::WhileDetect, ipay::GlobalStatusCommon::instance()) ;
 
+    }else if(type == ipay::KeyboardOperationType::MODIAY){
+
+    }
     connect(ui->pushButton_0, &QPushButton::clicked, this, [=]() { ModifyMoney("0"); });
     connect(ui->pushButton_1, &QPushButton::clicked, this, [=]() { ModifyMoney("1"); });
     connect(ui->pushButton_2, &QPushButton::clicked, this, [=]() { ModifyMoney("2"); });
@@ -59,14 +72,12 @@ void CashRegisterKeyboard::Init()
     connect(ui->pushButton_point, &QPushButton::clicked, this, [=]() { ModifyMoney("."); });
     connect(ui->pushButton_X, &QPushButton::clicked, this, [=]() { DeleteMoney(); });
 
-    future_thread =
-        std::async(std::launch::async, &ipay::GlobalStatusCommon::WhileDetect, ipay::GlobalStatusCommon::instance()) ;
+
 }
 
-int CashRegisterKeyboard::MoneyBack(QString qrStr)
+int CashRegisterKeyboard::MoneyBack()
 {
-    qrStr; // QR 条码
-    money_result_; // 金额
+    qrStr_; // QR 条码  需要数据库拿到对应金额
 
     return 0;
 }
@@ -155,8 +166,7 @@ void CashRegisterKeyboard::ClickReceive()
         emit ShowCollection();
         return;
     }
-
-    MoneyBack(qrStr_);
+    MoneyBack();
 }
 
 void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
@@ -169,7 +179,11 @@ void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {
-    if(isDecimalPoint_ && number == "."){
+    point_bit +=1;
+    if(!isDecimalPoint_){
+        point_bit = 0;
+    }
+    if((isDecimalPoint_ && number == ".") || point_bit > 2){
         return;
     }
     if(number == "."){
@@ -203,5 +217,21 @@ void CashRegisterKeyboard::DeleteMoney()
 
 void CashRegisterKeyboard::killAlgoThread() {
     ipay::GlobalStatusCommon::instance()->unsetOK();
+}
+
+void CashRegisterKeyboard::saveLastQR(const ipay::QRDetailStruct &qr_struct)
+{
+    lastQRDetail_ = qr_struct;
+}
+
+void CashRegisterKeyboard::modifyMoneySlot()
+{
+    money_vector_.clear();
+    std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
+    for (char c : result) {
+        // 把每个字符转为string后添加到vector
+        money_vector_.push_back(std::string(1, c));
+    }
+    ChangeMonet();
 }
 

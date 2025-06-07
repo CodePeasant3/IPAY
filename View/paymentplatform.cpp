@@ -43,8 +43,8 @@ void PaymentPlatform::init()
     });
 
     connect(receiptAction_, &QAction::triggered, this, [=]() {
-//        emit ShowCashKeyboard();
-        emit ShowCollecton();
+        emit ShowCashKeyboard();
+//        emit ShowCollecton();
         emit StartModel(1);
         this->setEnabled(false);
         std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
@@ -61,12 +61,8 @@ void PaymentPlatform::init()
         ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     });
     connect(modifyMoney_, &QAction::triggered, this, [=]() {
-        emit ShowCashKeyboard();
-        emit StartModel(1);
+        emit ShowCashKeyboardModify();
         this->setEnabled(false);
-        std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
-        settingConfig.get()->cash_register_setting.recognition_type = 1;
-        ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     });
 
     connect(detailAction_, &QAction::triggered, this, [=]() {
