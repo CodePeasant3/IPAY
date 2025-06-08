@@ -43,7 +43,7 @@ private:
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> finsh_keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
-//    PredictionClient client;
+    PredictionClient client;
 
     std::mutex mtx_;
     std::string ret_amount;
