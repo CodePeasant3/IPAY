@@ -163,6 +163,10 @@ int main(int argc, char *argv[])
     collectionMoney.hide();
     paymentPlatform.show();
 
+    // 识别到收款码
+    QWidget::connect(&enterHook,&GlobalEnterHook::paymentQR,&cashRegisterKeyboard,&CashRegisterKeyboard::saveLastQR);
+    QWidget::connect(&enterHook,&GlobalEnterHook::paymentQR,&cashKeyboardModiay,&CashRegisterKeyboard::saveLastQR);
+
 
     QWidget::connect(&collectionMoney,&CollectionMoney::receiveFlags,&cashRegisterKeyboard,&CashRegisterKeyboard::ReceiveQRInfo);
     QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::SendMoneyNum,&collectionMoney,&CollectionMoney::transferMoney);
@@ -179,6 +183,7 @@ int main(int argc, char *argv[])
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboard,&collectionMoney,&CollectionMoney::hide);
 
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboardModify,&cashKeyboardModiay,&CashRegisterKeyboard::show);
+    QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowCashKeyboardModify,&cashKeyboardModiay,&CashRegisterKeyboard::modifyMoneySlot);
 
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&collectionMoney,&CollectionMoney::operationShow);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&cashRegisterKeyboard,&CashRegisterKeyboard::operationShow);

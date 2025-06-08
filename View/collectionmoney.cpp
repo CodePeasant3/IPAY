@@ -41,10 +41,10 @@ void CollectionMoney::Init()
     FuncationShow("收款","录入顾客手机支付凭证条码","收款");
 
     // 这里new一下, 会有溢出的问题吗? 无所谓了
-    QRegExp regex("^[0-9]+$");
+    QRegExp regex("^[a-zA-Z0-9]+$");
     QRegExpValidator *validator = new QRegExpValidator(regex, ui->lineEdit_qr);
     ui ->lineEdit_qr->setValidator(validator);
-    ui ->lineEdit_qr->setPlaceholderText("请输入数字");
+    ui ->lineEdit_qr->setPlaceholderText("请输入订单编号");
 
     this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
     this->setWindowFlags(this->windowFlags() &~ Qt::WindowMinMaxButtonsHint);//禁止最大和最小化
@@ -111,9 +111,10 @@ void CollectionMoney::on_pushButton_qr_clicked()
 
 
 void CollectionMoney::closeEvent(QCloseEvent *event) {
+    ui ->lineEdit_qr->clear();
     event->accept();
     std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
-    settingConfig.get()->cash_register_setting.recognition_type = 0;
+    settingConfig.get()->cash_register_setting.is_hide = true;
     ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     emit AllowOperation();
 }

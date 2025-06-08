@@ -47,8 +47,6 @@ void GlobalStatusCommon::ConfigInit()
     int ret = 0;
     auto infer_server = settings->value(QString("Infer/Server")).toString();
     qWarning() << "read from ini file, server: " << infer_server;
-
-
 //   ret = client.Init(infer_server.toStdString(),
 //                     std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
 //   if(ret) {

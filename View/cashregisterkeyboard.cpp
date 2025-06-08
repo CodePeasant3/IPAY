@@ -44,11 +44,13 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
             process_timer_ = new QTimer();
             process_timer_->setInterval(1000);
             QObject::connect(process_timer_, &QTimer::timeout, [this]() {
-                if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 1){
+                if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.is_hide){
                     return;
                 }
-                std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
-                modifyMoneySlot();
+                if(ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting.recognition_type == 0){
+                    modifyMoneySlot();
+                }
+
             });
             process_timer_->start();
         }
@@ -137,7 +139,9 @@ void CashRegisterKeyboard::ChangeMonet()
     for (const auto& str : money_vector_) {
         money_result_ += str;
     }
+
     ui->label_money ->setText(QString::fromStdString("¥"+money_result_));
+    ui->label_money->setStyleSheet("color: rgb(255, 255, 255);");
     emit FinalMoney(money_result_);
 }
 
@@ -180,13 +184,16 @@ void CashRegisterKeyboard::ClickReceive()
 void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
     event->accept();
     std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
-    settingConfig.get()->cash_register_setting.recognition_type = 0;
+    settingConfig.get()->cash_register_setting.is_hide = true;
     ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     emit AllowOperation();
 }
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {
+    if(money_vector_.size() >= 8){
+        return;
+    }
     point_bit +=1;
     if(!isDecimalPoint_){
         point_bit = 0;
@@ -235,7 +242,6 @@ void CashRegisterKeyboard::saveLastQR(const ipay::QRDetailStruct &qr_struct)
 
 void CashRegisterKeyboard::modifyMoneySlot()
 {
-
     std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
     if(result.empty()){
         return;
@@ -247,7 +253,8 @@ void CashRegisterKeyboard::modifyMoneySlot()
     money_vector_.clear();
     for (char c : result) {
         // 把每个字符转为string后添加到vector
-        money_vector_.push_back(std::string(1, c));
+        ModifyMoney(std::string(1, c));
+//        money_vector_.push_back();
     }
     ChangeMonet();
 }

@@ -26,6 +26,10 @@ border: 0px;
 #CashRegisterKeyboard{
 border: 0px;
 	background-color: rgb(243, 243, 243);
+}
+
+#label_money{
+color: rgb(255, 255, 255);
 }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="2,1,6,1">

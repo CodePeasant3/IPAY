@@ -58,6 +58,7 @@ struct CashRegisterSettingStruct{
     QPixmap screen_pixmap;
     int screen_pixmap_w = 0;
     int screen_pixmap_h = 0;
+    bool is_hide = false;
     //=============清台设置===============
     int automatic_amount_entry = 0; // 0 自动， 1 手动
     int interaval_entry_ms = 0;

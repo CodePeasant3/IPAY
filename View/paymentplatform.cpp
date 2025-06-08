@@ -48,7 +48,7 @@ void PaymentPlatform::init()
         emit StartModel(1);
         this->setEnabled(false);
         std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
-        settingConfig.get()->cash_register_setting.recognition_type = 1;
+        settingConfig.get()->cash_register_setting.is_hide = true;
         ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     });
 
@@ -57,7 +57,7 @@ void PaymentPlatform::init()
         emit StartModel(0);
         this->setEnabled(false);
         std::shared_ptr<ipay::AllSettingConfig> settingConfig  = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig();
-        settingConfig.get()->cash_register_setting.recognition_type = 1;
+        settingConfig.get()->cash_register_setting.is_hide = true;
         ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     });
     connect(modifyMoney_, &QAction::triggered, this, [=]() {
@@ -129,6 +129,7 @@ void PaymentPlatform::mouseReleaseEvent(QMouseEvent *event)
 void PaymentPlatform::ReceiveMoney(std::string moneyNumber)
 {
     ui->label_money->setText(QString::fromStdString("¥" + moneyNumber));
+    ui->label_money->setStyleSheet("color: rgb(255, 255, 255);");
 }
 
 void PaymentPlatform::EnableOperation()

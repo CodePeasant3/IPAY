@@ -18,7 +18,12 @@
 #label_money,
 #PaymentPlatform{
 	background-color: rgb(100,149,237);
-}</string>
+}
+
+#label_money{
+color: rgb(255, 255, 255);
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -90,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>333</width>
-     <height>25</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
