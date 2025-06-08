@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QSslConfiguration>
+#include <string>
 
 #define DEFAULT_URL_PAY "https://pay.zhuceyiyou.com/api/pay/unifiedOrder"
 #define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
@@ -101,8 +102,8 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
 
-
-    body_data["amount"] = amount; //金额
+    std::string strip_str = this->stripZero(amount);
+    body_data["amount"] = strip_str; //金额
     body_data["mchNo"] = m_mchNo.toStdString();
     body_data["appId"] = m_appId.toStdString();
 
@@ -136,7 +137,9 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
     std::string sign_str = generateMD5(source_str);
     postData.addQueryItem("sign", sign_str.c_str());
 
-    return this->postRequest(request_pay, std::move(postData));
+    std::string final_str = addPoint(amount);
+    qInfo(IPAY) << "fianl_str: " << final_str.c_str();
+    return this->postRequest(request_pay, final_str, std::move(postData));
 }
 
 int HttpsRequest::refund(const std::string& refundAmount) {
@@ -212,7 +215,7 @@ int HttpsRequest::query_refund() {
 }
 
 
-int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post_data) {
+int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amount, const QUrlQuery&& post_data) {
     QNetworkReply *reply = managerPost.post(request_pay, post_data.toString(QUrl::FullyEncoded).toUtf8());
     // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
     QEventLoop loop;
@@ -239,7 +242,7 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
         qInfo(IPAY) << "REPLAY >>> orderState: " << jsonDoc["data"]["orderState"].toInt();
 
         // INFO: insert db;
-        this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, pay_order_id, order_type);
+        this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), order_type);
         return 0;
     } else {
         qWarning(IPAY) << "请求错误:" << reply->errorString();
@@ -250,3 +253,20 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const QUrlQuery&& post
     return -2;
 }
 
+std::string HttpsRequest::stripZero(const std::string& str) {
+    size_t firstNonZero = str.find_first_not_of('0');
+    if (firstNonZero == std::string::npos) {
+        return "0";
+    }
+    return str.substr(firstNonZero);
+}
+
+
+std::string HttpsRequest::addPoint(const std::string& str) {
+    if (str.length() < 3) {
+        return str;
+    }
+
+    size_t insertPos = str.length() - 2;
+    return str.substr(0, insertPos) + "." + str.substr(insertPos);
+}

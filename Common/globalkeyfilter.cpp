@@ -109,15 +109,7 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
                 emit m_instance->enterPressed();
                 if(m_instance->isPaymentCode()) {
                     std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
-                    std::string strip_str = m_instance->stripZero(result);
-                    if(strip_str == "0"){
-                        m_instance->numbers.clear();
-                        break;
-                    }
-                    else {
-                        m_instance->m_request->pay(m_instance->numbers, strip_str);
-                    }
-
+                    m_instance->m_request->pay(m_instance->numbers, result);
                 }
                 m_instance->numbers.clear();
             }
@@ -144,25 +136,25 @@ bool GlobalEnterHook::isPaymentCode() {
     // 云闪付: 有 16 个，前两个数字固定为 56
     if(numbers.size() >= 16) {
         std::string sign_code = numbers.substr(0, 2);
-        qDebug(IPAY) << "sign code: " << sign_code.c_str();
+        qInfo(IPAY) << "sign code: " << sign_code.c_str();
         ipay::QRDetailStruct qrDetail;
         qrDetail.qr_detail = numbers;
         if(sign_code == "25" || sign_code == "26" || sign_code == "27" || sign_code == "28" ||
             sign_code == "29" || sign_code == "30") {
-            qDebug(IPAY) << "支付宝付款码";
+            qInfo(IPAY) << "支付宝付款码";
             qrDetail.qr_type = ipay::QRPaymentType::ALIPLAY;
             emit paymentQR(qrDetail);
             return true;
         }
         else if(sign_code == "10" || sign_code == "11" || sign_code == "12" || sign_code == "13"
                    || sign_code == "14" || sign_code == "15") {
-            qDebug(IPAY) << "微信付款码";
+            qInfo(IPAY) << "微信付款码";
             qrDetail.qr_type = ipay::QRPaymentType::WECHAT;
             emit paymentQR(qrDetail);
             return true;
         }
         else if( sign_code == "56" ) {
-            qDebug(IPAY) << "云闪付付款码";
+            qInfo(IPAY) << "云闪付付款码";
             return true;
         }
         else {

@@ -38,7 +38,9 @@ private:
     DBOps* m_db_ops;
 
 private:
-    int postRequest(const QNetworkRequest& req, const QUrlQuery&& post_data);
+    int postRequest(const QNetworkRequest& req, const std::string& amount, const QUrlQuery&& post_data);
+    std::string stripZero(const std::string& str);
+    std::string addPoint(const std::string& str);
 };
 
 #endif // HTTPSREQUEST_H
