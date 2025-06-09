@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QSslConfiguration>
 #include <string>
+#include "snowflake.hpp"
 
 #define DEFAULT_URL_PAY "https://pay.zhuceyiyou.com/api/pay/unifiedOrder"
 #define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
@@ -77,25 +78,23 @@ std::string HttpsRequest::generateAuthCode(const std::string& text) {
     return doc.toJson(QJsonDocument::Compact).toStdString();
 }
 
+ // 生成退款编号 M 27210 63210 0491
+std::string HttpsRequest::generateRefundNo() {
+    QString id1 = Snowflake::instance().nextId();
+    return id1.toStdString();
+}
+
 
 // 生成商户订单号
 std::string HttpsRequest::generateOrderNo() {
-    // 20位
-    // 2016 0427 21-06-04 000 490 // 精确到了微秒
-    // 2025 0509 16-29-17 595 249
-    // 2025 0510 00-46-53 538 538
-    QDateTime currentUtcTime = QDateTime::currentDateTimeUtc();
-    QTimeZone beijingTimeZone("Asia/Shanghai");
-    QDateTime beijingTime = currentUtcTime.toTimeZone(beijingTimeZone);
-    auto time_ret = beijingTime.toString("yyyyMMddHHmmsszzzzzz"); // 修复：使用HH表示24小时制
-    qDebug() << "北京时间:" << time_ret;
-    return time_ret.toStdString();
+    QString id1 = Snowflake::instance().nextId();
+    return id1.toStdString();
 }
 
 
 int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) {
     if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_pay.isEmpty()) {
-        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_pay.isEmpty()";
+        qWarning(IPAY) << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_pay.isEmpty()";
         return -1;
     }
 
@@ -142,9 +141,10 @@ int HttpsRequest::pay(const std::string& auth_code , const std::string& amount) 
     return this->postRequest(request_pay, final_str, std::move(postData));
 }
 
-int HttpsRequest::refund(const std::string& refundAmount) {
+int HttpsRequest::refund(const std::string& pay_order_id, const std::string& refundAmount) {
+    qInfo(IPAY) << "-------> refund";
     if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_refund.isEmpty()) {
-        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_refund.isEmpty()";
+        qWarning(IPAY) << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_refund.isEmpty()";
         return -1;
     }
 
@@ -154,28 +154,34 @@ int HttpsRequest::refund(const std::string& refundAmount) {
     body_data["appId"] = m_appId.toStdString();
     body_data["refundAmount"] = refundAmount;
 
-    body_data["mchOrderNo"] = "TODO";
-    body_data["payOrderId"] = "TODO";
-    body_data["mchRefundNo"] = "TODO";
-    body_data["channelExtra"] = "TODO";
+    body_data["payOrderId"] = pay_order_id;
+    body_data["mchRefundNo"] = this->generateRefundNo();
     body_data["reqTime"] = get_utc_timestamp();
 
 
     // 固定
     body_data["currency"] = "cny"; // 人民币
-    body_data["refundReason"] = "CUSTOMER"; // 退款原因
+    body_data["refundReason"] = "NO_REASON"; // 退款原因
     body_data["version"] = "1.0"; // 固定版本
     body_data["signType"] = "MD5"; // 摘要算法
 
+
+    std::string source_str = {};
     for(const auto& ele : body_data) {
         postData.addQueryItem(ele.first.c_str(), ele.second.c_str());
+        if(source_str.size() != 0) {
+            source_str += "&";
+        }
+        source_str += ele.first;
+        source_str += "=";
+        source_str += ele.second;
     }
-    const QString& body_str = postData.toString(QUrl::FullyEncoded).toUtf8();
-    body_data["sign"] = generateMD5(body_str.toStdString());
 
-    const auto& replay = managerPost.post(request_refund, postData.toString(QUrl::FullyEncoded).toUtf8());
-    qWarning(IPAY) << ">>>>> READAll:";
-    qWarning(IPAY) << replay->readAll();
+    source_str += "&key=";
+    source_str += m_key.toStdString();
+    qDebug(IPAY) << "退款原始字符串: " << source_str.c_str();
+    std::string sign_str = generateMD5(source_str);
+    postData.addQueryItem("sign", sign_str.c_str());
 
     return 0;
 }

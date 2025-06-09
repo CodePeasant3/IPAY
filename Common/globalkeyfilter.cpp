@@ -111,8 +111,20 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
                     std::string result = ipay::GlobalStatusCommon::instance()->PictureProcess();
                     m_instance->m_request->pay(m_instance->numbers, result);
                 }
+                else if(m_instance->isRefundCode()) {
+                    // TODO: 我可以在这里获取 退款窗口是否存在吗?
+                    m_instance->m_request->refund(m_instance->numbers, m_instance->numbers);
+                }
+                else {
+                    qCritical(IPAY) << "无法解析该条形码";
+                }
                 m_instance->numbers.clear();
             }
+
+            break;
+        case VK_P:
+            if(wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                m_instance->numbers.append("P");
             break;
         }
     }
@@ -164,5 +176,19 @@ bool GlobalEnterHook::isPaymentCode() {
     else {
         return false;
     }
+    return false;
+}
+
+
+bool GlobalEnterHook::isRefundCode() {
+    qInfo(IPAY) << "code: " << numbers.c_str();
+    if(numbers.size() >= 15) {
+        std::string sign_code = numbers.substr(0, 1);
+        qInfo(IPAY) << "sign code: " << sign_code.c_str();
+        if(sign_code == "P") {
+            return true;
+        }
+    }
+
     return false;
 }

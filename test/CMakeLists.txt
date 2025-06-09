@@ -1,8 +1,8 @@
 add_executable(test_opencv test_opencv.cpp)
 target_link_libraries(test_opencv opencv_world4110)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Core)
 
 include_directories(
     ${Qt${QT_VERSION_MAJOR}Network_INCLUDE_DIRS}
@@ -14,15 +14,8 @@ target_link_libraries(test_md5
     Qt${QT_VERSION_MAJOR}::Network
 )
 
-add_executable(test_request
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_request.cpp
-    ${CMAKE_SOURCE_DIR}/Common/httpsrequest.cpp
-    ${CMAKE_SOURCE_DIR}/Common/logging.cpp
-)
-
-target_link_libraries(test_request
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::Network
+add_executable(test_snowflake test_snowflake.cpp)
+target_link_libraries(test_snowflake
     Qt${QT_VERSION_MAJOR}::Core
 )
 
@@ -47,7 +40,7 @@ target_link_libraries(test_json
 )
 
 # Install
-install(TARGETS test_opencv test_md5 test_request test_tf test_log test_json DESTINATION .)
+install(TARGETS test_opencv test_md5 test_tf test_log test_json DESTINATION .)
 install(DIRECTORY data DESTINATION .)
 install(DIRECTORY ${OPENCV_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
 install(DIRECTORY ${GRPC_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")

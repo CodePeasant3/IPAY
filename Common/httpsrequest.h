@@ -12,7 +12,7 @@ class HttpsRequest
 public:
     int init(const QSettings& settings, DBOps*);
     int pay(const std::string& auth_code, const std::string& amount); // 收款
-    int refund(const std::string& refundAmount); // 退款
+    int refund(const std::string& pay_order_id, const std::string& refundAmount); // 退款
     int query_pay(); // 查询付款订单状态
     int query_refund(); // 查询退款订单状态
 
@@ -27,7 +27,8 @@ private:
     std::string generateMD5(const std::string& text);
     std::string generateAuthCode(const std::string& text);
     std::string get_utc_timestamp();
-    std::string generateOrderNo();
+    std::string generateOrderNo(); // 生成订单编号
+    std::string generateRefundNo(); // 生成退款编号
     QString m_mchNo; // 商户号
     QString m_appId; // 应用ID
     QString url_pay;

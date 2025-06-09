@@ -2,6 +2,8 @@
 #include "qdebug.h"
 #include "ui_cashregisterkeyboard.h"
 #include <QTimer>
+#include <Common/logging.h>
+
 //std::vector<std::string> CashRegisterKeyboard::money_vector_;
 CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
     QWidget(parent),
@@ -147,6 +149,9 @@ void CashRegisterKeyboard::ChangeMonet()
 
 void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
 {
+    qInfo(IPAY) << ">>>>> refund code: " << qrStr;
+    // TODO: 查询数据库
+    // TODO: 弹出密码框
 
     qrStr_ = qrStr;
 }
