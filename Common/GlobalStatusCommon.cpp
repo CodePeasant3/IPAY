@@ -47,22 +47,6 @@ void GlobalStatusCommon::ConfigInit()
     int ret = 0;
     auto infer_server = settings->value(QString("Infer/Server")).toString();
     qWarning() << "read from ini file, server: " << infer_server;
-<<<<<<< HEAD
-//   ret = client.Init(infer_server.toStdString(),
-//                     std::move(tensor_input), std::move(tensor_output), "num_1-on-featurize");
-//   if(ret) {
-//       qCritical(IPAY) << "Link remote server Failed" << infer_server;
-//       return;
-//   }
-//   else{
-//       qCritical(IPAY) << "Link remote server Success" << infer_server;
-//       ::tensorflow::serving::GetModelMetadataResponse response_meta;
-//       client.GetModelMetadata(&response_meta);
-//       qInfo(IPAY) << "model.name: " << response_meta.model_spec().name().c_str();
-//       qInfo(IPAY) << "model.version: " << response_meta.model_spec().version().value();
-//       qInfo(IPAY) << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
-//   }
-=======
 
 
   ret = client.Init(infer_server.toStdString(),
@@ -79,8 +63,6 @@ void GlobalStatusCommon::ConfigInit()
       qInfo(IPAY) << "model.version: " << response_meta.model_spec().version().value();
       qInfo(IPAY) << "model.signature_name: " << response_meta.model_spec().signature_name().c_str();
   }
->>>>>>> ba47ad72feed13f2514d19877ea112fed79bb13c
-
 
 
 

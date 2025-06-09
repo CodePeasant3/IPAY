@@ -152,7 +152,7 @@ void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
     qInfo(IPAY) << ">>>>> refund code: " << qrStr;
     // TODO: 查询数据库
     // TODO: 弹出密码框
-
+    // http request
     qrStr_ = qrStr;
 }
 

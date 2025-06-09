@@ -113,7 +113,8 @@ LRESULT CALLBACK GlobalEnterHook::keyboardProc(int nCode, WPARAM wParam, LPARAM 
                 }
                 else if(m_instance->isRefundCode()) {
                     // TODO: 我可以在这里获取 退款窗口是否存在吗?
-                    m_instance->m_request->refund(m_instance->numbers, m_instance->numbers);
+                    // m_instance->m_request->refund(m_instance->numbers, m_instance->numbers);
+
                 }
                 else {
                     qCritical(IPAY) << "无法解析该条形码";
