@@ -146,8 +146,8 @@ int main(int argc, char *argv[])
     PaymentPlatform paymentPlatform;
     KeyboardRecordOperation keyboardRecordOperation;
 
-    cashRegisterKeyboard.Init(ipay::KeyboardOperationType::COLLECTION);
-    cashKeyboardModiay.Init(ipay::KeyboardOperationType::MODIAY);
+    cashRegisterKeyboard.Init(ipay::KeyboardOperationType::COLLECTION, &db_ops, &request);
+    cashKeyboardModiay.Init(ipay::KeyboardOperationType::MODIAY, &db_ops, &request);
 
     paymentPlatform.resize(rect.width() * 0.2,rect.height() *0.1);
     keyboardRecordOperation.resize(rect.width() * 0.4,rect.height() *0.2);

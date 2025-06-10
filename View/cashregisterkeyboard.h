@@ -8,6 +8,8 @@
 #include "../Common/globalstatuscommon.h"
 #include <future>
 #include <thread>
+class DBOps;
+class HttpsRequest;
 
 namespace Ui {
 class CashRegisterKeyboard;
@@ -20,7 +22,7 @@ class CashRegisterKeyboard : public QWidget
 public:
     explicit CashRegisterKeyboard(QWidget *parent = nullptr);
     ~CashRegisterKeyboard();
-    void Init(const ipay::KeyboardOperationType type);
+    void Init(const ipay::KeyboardOperationType type, DBOps*, HttpsRequest*);
     int MoneyBack(); //金额退款
     bool isValidNumber(const QString &str);
 protected:
@@ -59,6 +61,8 @@ private:
     std::future<void> future_thread;
     ipay::QRDetailStruct lastQRDetail_;
     ipay::KeyboardOperationType self_type_;
+    DBOps* m_db_ops;
+    HttpsRequest* m_request;
 
 };
 

@@ -1,6 +1,10 @@
 #ifndef DBOPS_H
 #define DBOPS_H
 #include <QtSql/QSqlDatabase>
+#include <QString>
+#include <QRegularExpression>
+
+
 class DBOps
 {
 public:
@@ -15,7 +19,11 @@ public:
                     QString time,
                     QString amount,
                     int status);
+    bool queryPayOrderID(const QString& pay_order_id, QString& amount);
     bool cleanOldData(QSqlQuery& query);
+
+private:
+    QString convertYuanToFen(const QString &yuanStr);
 };
 
 #endif // DBOPS_H

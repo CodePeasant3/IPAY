@@ -164,6 +164,9 @@ int HttpsRequest::refund(const std::string& pay_order_id, const std::string& ref
     body_data["refundReason"] = "NO_REASON"; // 退款原因
     body_data["version"] = "1.0"; // 固定版本
     body_data["signType"] = "MD5"; // 摘要算法
+    body_data["subject"] = "GOODS_TITLE"; // 商品标题
+    body_data["body"] = "GOODS_DESCRIPTION"; // 商品描述
+    // body_data["channelExtra"] = "";
 
 
     std::string source_str = {};
@@ -181,7 +184,10 @@ int HttpsRequest::refund(const std::string& pay_order_id, const std::string& ref
     source_str += m_key.toStdString();
     qDebug(IPAY) << "退款原始字符串: " << source_str.c_str();
     std::string sign_str = generateMD5(source_str);
+    qDebug(IPAY) << "退款sign: " << sign_str.c_str();
     postData.addQueryItem("sign", sign_str.c_str());
+
+    return this->refundPostRequest(request_refund, refundAmount, std::move(postData));
 
     return 0;
 }
@@ -222,7 +228,7 @@ int HttpsRequest::query_refund() {
 
 
 int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amount, const QUrlQuery&& post_data) {
-    QNetworkReply *reply = managerPost.post(request_pay, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    QNetworkReply *reply = managerPost.post(req, post_data.toString(QUrl::FullyEncoded).toUtf8());
     // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
     QEventLoop loop;
     QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
@@ -259,6 +265,34 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
     return -2;
 }
 
+int HttpsRequest::refundPostRequest(const QNetworkRequest& req,const std::string& amount, const QUrlQuery&& post_data) {
+    QNetworkReply *reply = managerPost.post(req, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &parseError);
+        if (jsonDoc.isNull()) {
+            qWarning(IPAY) << "JSON解析错误:" << parseError.errorString();
+            qWarning(IPAY) << "原始数据:" << responseData;
+            return -1;
+        }
+        qWarning(IPAY) << "原始数据:" << responseData;
+
+        return 0;
+    } else {
+        qWarning(IPAY) << "请求错误:" << reply->errorString();
+        // TODO insert db;
+        reply->deleteLater();
+        return -1;
+    }
+    return -2;
+
+    return 0;
+}
 std::string HttpsRequest::stripZero(const std::string& str) {
     size_t firstNonZero = str.find_first_not_of('0');
     if (firstNonZero == std::string::npos) {

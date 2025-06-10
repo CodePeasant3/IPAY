@@ -40,6 +40,7 @@ private:
 
 private:
     int postRequest(const QNetworkRequest& req, const std::string& amount, const QUrlQuery&& post_data);
+    int refundPostRequest(const QNetworkRequest& req,const std::string& amount, const QUrlQuery&& post_data);
     std::string stripZero(const std::string& str);
     std::string addPoint(const std::string& str);
 };

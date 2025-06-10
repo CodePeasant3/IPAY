@@ -1,8 +1,10 @@
-﻿    #include "cashregisterkeyboard.h"
+﻿#include "cashregisterkeyboard.h"
 #include "qdebug.h"
 #include "ui_cashregisterkeyboard.h"
 #include <QTimer>
 #include <Common/logging.h>
+#include <Common/dbops.h>
+#include <Common/httpsrequest.h>
 
 //std::vector<std::string> CashRegisterKeyboard::money_vector_;
 CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
@@ -27,8 +29,11 @@ CashRegisterKeyboard::~CashRegisterKeyboard()
     delete ui;
 }
 
-void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type)
+void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type,  DBOps* db_ptr, HttpsRequest* request_ptr)
 {
+    this->m_db_ops = db_ptr;
+    this->m_request = request_ptr;
+
     QRect rect = ipay::GlobalStatusCommon::instance()->GetScreenScope();
     this->resize(rect.width() * 0.2,rect.height() *0.2);
     self_type_ = type;
@@ -150,9 +155,17 @@ void CashRegisterKeyboard::ChangeMonet()
 void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
 {
     qInfo(IPAY) << ">>>>> refund code: " << qrStr;
-    // TODO: 查询数据库
-    // TODO: 弹出密码框
-    // http request
+    QString refund_amount; // 订单金额, 单位 分
+    bool exists = m_db_ops->queryPayOrderID(qrStr, refund_amount);
+    if(exists) {
+        // 存在, 进入退款流程(
+        // TODO: 弹出密码框
+        m_request->refund(qrStr.toStdString(), refund_amount.toStdString());
+    }
+    else {
+        // 不存在该订单, 报出错误提示
+    }
+
     qrStr_ = qrStr;
 }
 

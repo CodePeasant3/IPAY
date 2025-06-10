@@ -64,7 +64,7 @@ bool DBOps::insertData(QString pay_order_id,
                        QString amount,
                        int status) {
     QSqlQuery query(m_db);
-    QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");    
+    QString localTimeStr = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     QString sql_cmd_str =
         "INSERT OR IGNORE INTO users (orderid, type, amount, status, created_at, time) "\
         "VALUES (:orderid, :type, :amount, :status, :created_at, :time)";
@@ -91,5 +91,64 @@ bool DBOps::cleanOldData(QSqlQuery& query) {
     int deletedCount = query.numRowsAffected();
     qInfo(IPAY) << "Has delete item: " << deletedCount;
     return true;
+}
+
+
+bool DBOps::queryPayOrderID(const QString& pay_order_id, QString& amount) {
+    qInfo(IPAY) << "queryPayOrderID: " << pay_order_id;
+    QSqlQuery query(m_db);
+        query.prepare("SELECT amount FROM users WHERE orderid = :orderid");
+    query.bindValue(":orderid", pay_order_id); // 替换为实际变量
+    if (query.exec() && query.next()) {
+        QString raw_amount = query.value(0).toString();
+        amount = convertYuanToFen(raw_amount);
+        qInfo(IPAY) << "订单存在，处理amount值(单位: 分): " << amount;
+
+        return true;
+    }
+    amount = "0";
+    return false;
+}
+
+
+QString DBOps::convertYuanToFen(const QString &yuanStr) {
+    // 去除前导零和符号（如果有）
+    QString normalized = yuanStr.trimmed();
+    if (normalized.startsWith('+')) {
+        normalized = normalized.mid(1);
+    }
+
+    // 正则表达式验证金额格式
+    QRegularExpression re("^0*([1-9]\\d*|0)(\\.\\d{0,2})?$");
+    QRegularExpressionMatch match = re.match(normalized);
+
+    if (!match.hasMatch()) {
+        return QString(); // 无效格式，返回空字符串
+    }
+
+    // 提取整数部分和小数部分
+    QString intPart = match.captured(1);
+    QString decimalPart = match.captured(2);
+
+    // 处理小数部分（如果有）
+    if (!decimalPart.isEmpty()) {
+        decimalPart = decimalPart.mid(1); // 去掉小数点
+        // 补零到两位
+        while (decimalPart.length() < 2) {
+            decimalPart.append('0');
+        }
+        // 截断超过两位的小数
+        decimalPart = decimalPart.left(2);
+    } else {
+        // 没有小数部分，补两个零
+        decimalPart = "00";
+    }
+
+    // 合并结果并移除前导零
+    QString result = intPart + decimalPart;
+    result = result.remove(0, result.indexOf(QRegularExpression("[1-9]")));
+
+    // 处理全零的情况
+    return result.isEmpty() ? "0" : result;
 }
 
