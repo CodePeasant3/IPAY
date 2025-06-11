@@ -164,8 +164,8 @@ int HttpsRequest::refund(const std::string& pay_order_id, const std::string& ref
     body_data["refundReason"] = "NO_REASON"; // 退款原因
     body_data["version"] = "1.0"; // 固定版本
     body_data["signType"] = "MD5"; // 摘要算法
-    body_data["subject"] = "GOODS_TITLE"; // 商品标题
-    body_data["body"] = "GOODS_DESCRIPTION"; // 商品描述
+    // body_data["subject"] = "GOODS_TITLE"; // 商品标题
+    // body_data["body"] = "GOODS_DESCRIPTION"; // 商品描述
     // body_data["channelExtra"] = "";
 
 
