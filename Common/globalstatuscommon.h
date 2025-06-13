@@ -7,7 +7,7 @@
 #include <QSettings>
 #include "primaryscreen.h"
 #include <mutex>
-#include "PredictionClient.h"
+//#include "PredictionClient.h"
 #include <opencv2/opencv.hpp>
 
 namespace ipay{
@@ -31,6 +31,8 @@ public:
     std::vector<KeyboardMouseRecordStruct>& GetFinshKeyboardMouseList(ipay::ScenePlaybackType type);
     QRect GetScreenScope();
     void unsetOK();
+    void SetCollectionMoneyStatus(bool status);
+    boll GetCollectionMoneyStatus();
 
 public:
     std::shared_ptr<QSettings> settings;
@@ -43,11 +45,12 @@ private:
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> keyboard_playback_map_;
     std::unordered_map<ipay::ScenePlaybackType,std::vector<KeyboardMouseRecordStruct>> finsh_keyboard_playback_map_;
     ipay::ScenePlaybackType current_type_;
-    PredictionClient client;
+//    PredictionClient client;
 
     std::mutex mtx_;
     std::string ret_amount;
     std::atomic<bool> ok = true;
+    bool pageStatus_ = false;
 
 
 

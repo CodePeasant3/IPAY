@@ -101,6 +101,7 @@ void CollectionMoney::on_pushButton_qr_clicked()
     }
     if(funcationFlags_ == 0){
         emit receiveFlags(qtStr);
+        ui ->lineEdit_qr->clear();
         emit showKeyboard();
         return;
     }
@@ -117,4 +118,14 @@ void CollectionMoney::closeEvent(QCloseEvent *event) {
     settingConfig.get()->cash_register_setting.is_hide = true;
     ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSettingNotWrite(settingConfig.get()->cash_register_setting);
     emit AllowOperation();
+}
+
+void CollectionMoney::showEvent(QShowEvent *event)
+{
+    ipay::GlobalStatusCommon::instance()->SetCollectionMoneyStatus(true);
+}
+
+void CollectionMoney::hideEvent(QHideEvent *event)
+{
+    ipay::GlobalStatusCommon::instance()->SetCollectionMoneyStatus(false);
 }

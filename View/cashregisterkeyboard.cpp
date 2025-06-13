@@ -157,14 +157,19 @@ void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
     qInfo(IPAY) << ">>>>> refund code: " << qrStr;
     QString refund_amount; // 订单金额, 单位 分
     bool exists = m_db_ops->queryPayOrderID(qrStr, refund_amount);
-    if(exists) {
-        // 存在, 进入退款流程(
-        // TODO: 弹出密码框
-        m_request->refund(qrStr.toStdString(), refund_amount.toStdString());
+    if(!exists) {
+        QMessageBox::warning(this,"错误","未找到相应支付订单!");
+        return;
     }
-    else {
-        // 不存在该订单, 报出错误提示
+    if(refund_amount.isEmpty()){
+        QMessageBox::warning(this,"错误","支付订单消息错误,请联系运维!");
+        return;
     }
+    releiveMoneyStr(QString::number(refund_amount.toInt() / 100.0).toStdString());
+    // 存在, 进入退款流程
+    // TODO: 弹出密码框
+    m_request->refund(qrStr.toStdString(), refund_amount.toStdString());
+
 
     qrStr_ = qrStr;
 }
@@ -274,6 +279,18 @@ void CashRegisterKeyboard::modifyMoneySlot()
         ModifyMoney(std::string(1, c));
 //        money_vector_.push_back();
     }
+    releiveMoneyStr(result);
     ChangeMonet();
 }
+
+void CashRegisterKeyboard::releiveMoneyStr(const std::string &moneyStr)
+{
+    for (char c : moneyStr) {
+        ModifyMoney(std::string(1, c));
+    }
+
+}
+
+
+
 

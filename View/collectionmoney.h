@@ -20,9 +20,12 @@ public:
     void FuncationShow(std::string titleStr,std::string remindStr,std::string functionStr);
     void ReceiveMoney(); // 金额收款
 
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 public slots:
     void operationShow(int flags);

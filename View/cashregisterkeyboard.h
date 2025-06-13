@@ -47,6 +47,7 @@ public slots:
     void killAlgoThread();
     void saveLastQR(const ipay::QRDetailStruct& qr_struct);
     void modifyMoneySlot();
+    void releiveMoneyStr(const std::string& moneyStr);
 
 private:
     Ui::CashRegisterKeyboard *ui;
