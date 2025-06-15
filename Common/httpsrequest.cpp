@@ -15,6 +15,7 @@
 #define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
 #define DEFAULT_URL_QUERY_PAY "https://pay.zhuceyiyou.com/api/pay/query"
 #define DEFAULT_URL_QUERY_REFUND "https://pay.zhuceyiyou.com/api/refund/query"
+#define DEFAULT_URL_CLOSE_ORDER "http://pay.zhuceyiyou.com/api/pay/close"
 #define DEFAULT_MCHNO "00000001"
 #define DEFAULT_APPID "00000002"
 #define DEFAULT_KEY "000000"
@@ -30,6 +31,8 @@ int HttpsRequest::init(const QSettings& settings, DBOps* ops_ptr) {
         settings.value("Payment/UrlQueryPay", DEFAULT_URL_QUERY_PAY).toString();
     this->url_query_refund =
         settings.value("Payment/UrlQueryRefund", DEFAULT_URL_QUERY_REFUND).toString();
+    this->url_close_order =
+        settings.value("Payment/UrlCloseOrder", DEFAULT_URL_CLOSE_ORDER).toString();
     this->m_mchNo =
         settings.value("Business/mchNo", DEFAULT_MCHNO).toString();
     this->m_appId =
@@ -44,12 +47,14 @@ int HttpsRequest::init(const QSettings& settings, DBOps* ops_ptr) {
     qInfo(IPAY) << "url_refund: " << url_refund;
     qInfo(IPAY) << "url_query_pay: " << url_query_pay;
     qInfo(IPAY) << "url_query_refund: " << url_query_refund;
+    qInfo(IPAY) << "url_close_order: " << url_close_order;
     qInfo(IPAY) << "m_key: " << m_key;
 
     request_pay.setUrl(url_pay);
     request_refund.setUrl(url_refund);
     request_query_pay.setUrl(url_query_pay);
     request_query_refund.setUrl(url_query_refund);
+    request_close_order.setUrl(url_close_order);
     return 0;
 }
 
@@ -254,12 +259,13 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
 
         qInfo(IPAY) << "REPLAY >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
 
-        const int timeoutMs = 10000; // 超时时间，单位为毫秒
+        const int timeoutMs = 15000; // 超时时间，单位为毫秒 15s
         QDateTime startTime = QDateTime::currentDateTime();
         while(true) {
             int elapsedMs = startTime.msecsTo(QDateTime::currentDateTime());
             if (elapsedMs >= timeoutMs) {
-                qDebug(IPAY) << "Timeout reached";
+                qDebug(IPAY) << "超时, 关闭订单";
+                this->close_order(pay_order_id);
                 return -1;
             }
 
@@ -389,3 +395,57 @@ int HttpsRequest::queryRefundPostRequest(const QNetworkRequest& req, const std::
     }
     return 0;
 }
+
+int HttpsRequest::close_order(const QString& pay_order_id) {
+    // 构建请求体
+    QUrlQuery postData;
+    std::map<std::string, std::string> body_data;
+    body_data["payOrderId"] = pay_order_id.toStdString();
+    body_data["mchNo"] = m_mchNo.toStdString();
+    body_data["appId"] = m_appId.toStdString();
+    body_data["reqTime"] = get_utc_timestamp();
+    body_data["version"] = "1.0";
+    body_data["signType"] = "MD5";
+
+    std::string source_str = {};
+    for(const auto& ele : body_data) {
+        postData.addQueryItem(ele.first.c_str(), ele.second.c_str());
+        if(source_str.size() != 0) {
+            source_str += "&";
+        }
+        source_str += ele.first;
+        source_str += "=";
+        source_str += ele.second;
+    }
+    source_str += "&key=";
+    source_str += m_key.toStdString();
+    std::string sign_str = generateMD5(source_str);
+    postData.addQueryItem("sign", sign_str.c_str());
+
+    return this->closePostRequest(request_close_order, pay_order_id.toStdString(), std::move(postData));
+}
+
+int HttpsRequest::closePostRequest(const QNetworkRequest& req, const std::string& pay_order_id, const QUrlQuery&& post_data) {
+    QNetworkReply *reply = managerPost.post(req, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &parseError);
+        if (jsonDoc.isNull()) {
+            qWarning(IPAY) << "JSON解析错误:" << parseError.errorString();
+            qWarning(IPAY) << "原始数据:" << responseData;
+            return -1;
+        }
+        qWarning(IPAY) << "原始数据:" << responseData;
+        return 0;
+    } else {
+        qWarning(IPAY) << "请求错误:" << reply->errorString();
+        reply->deleteLater();
+        return -1;
+    }
+}
+
