@@ -192,37 +192,42 @@ int HttpsRequest::refund(const std::string& pay_order_id, const std::string& ref
     return 0;
 }
 
-int HttpsRequest::query_pay() {
-    if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_query_pay.isEmpty()) {
-        qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_query_pay.isEmpty()";
-        return -1;
-    }
-
+int HttpsRequest::query_pay(const QString& pay_order_id) {
     QUrlQuery postData;
     std::map<std::string, std::string> body_data;
+    body_data["payOrderId"] = pay_order_id.toStdString();
+    body_data["mchNo"] = m_mchNo.toStdString();
+    body_data["appId"] = m_appId.toStdString();
+    body_data["reqTime"] = get_utc_timestamp();
+    body_data["version"] = "1.0";
+    body_data["signType"] = "MD5";
+
+    std::string source_str = {};
     for(const auto& ele : body_data) {
         postData.addQueryItem(ele.first.c_str(), ele.second.c_str());
+        if(source_str.size() != 0) {
+            source_str += "&";
+        }
+        source_str += ele.first;
+        source_str += "=";
+        source_str += ele.second;
     }
-    // const auto& replay = managerPost.post(request_query_pay, postData.toString(QUrl::FullyEncoded).toUtf8());
-    // qDebug() << replay->readAll();
-    return 0;
+    source_str += "&key=";
+    source_str += m_key.toStdString();
+    std::string sign_str = generateMD5(source_str);
+    postData.addQueryItem("sign", sign_str.c_str());
+
+    return this->queryPayPostRequest(request_query_pay, pay_order_id.toStdString(), std::move(postData));
 }
 
 
-int HttpsRequest::query_refund() {
+int HttpsRequest::query_refund(const QString& pay_order_id) {
     if(m_mchNo.isEmpty() || m_appId.isEmpty() || url_query_refund.isEmpty()) {
         qWarning() << "m_mchNo.isEmpty() or m_appId.isEmpty() or url_query_refund.isEmpty()";
         return -1;
     }
 
-    QUrlQuery postData;
-    std::map<std::string, std::string> body_data;
-    for(const auto& ele : body_data) {
-        postData.addQueryItem(ele.first.c_str(), ele.second.c_str());
-    }
-
-    // const auto& replay = managerPost.post(request_query_refund, postData.toString(QUrl::FullyEncoded).toUtf8());
-    // qDebug() << replay->readAll();
+    // TODO: 查询退款订单状态
     return 0;
 }
 
@@ -246,15 +251,38 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
         }
         const auto& pay_order_id =
             jsonDoc["data"]["payOrderId"].toString();
-        int order_type =
-            jsonDoc["data"]["orderState"].toInt();
-        qInfo(IPAY) << "replay >>> code: " << jsonDoc["code"].toInt();
-        qInfo(IPAY) << "replay >>> mchOrderNo: " << jsonDoc["data"]["mchOrderNo"].toString();
-        qInfo(IPAY) << "REPLAY >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
-        qInfo(IPAY) << "REPLAY >>> orderState: " << jsonDoc["data"]["orderState"].toInt();
 
-        // INFO: insert db;
-        this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), order_type);
+        qInfo(IPAY) << "REPLAY >>> payOrderId: " << jsonDoc["data"]["payOrderId"].toString();
+
+        const int timeoutMs = 10000; // 超时时间，单位为毫秒
+        QDateTime startTime = QDateTime::currentDateTime();
+        while(true) {
+            int elapsedMs = startTime.msecsTo(QDateTime::currentDateTime());
+            if (elapsedMs >= timeoutMs) {
+                qDebug(IPAY) << "Timeout reached";
+                return -1;
+            }
+
+
+            int order_state = this->query_pay(pay_order_id);
+            qInfo(IPAY) << "order state: " << order_state;
+            switch(order_state) {
+                case 2: // 支付成功
+                    // TODO: 语音提示
+                    qInfo(IPAY) << "查询支付成功, 插入数据库";
+                    this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), 2);
+                    return 0;
+                case 0: // 订单生成
+                case 1: // 支付中
+                    qInfo(IPAY) << "订单金额支付中";
+                    continue;
+                default: // 3:支付失败 4:已撤销 5:已退款 6:订单关闭
+                    //
+                    // TODO: 语音提示
+                    qInfo(IPAY) << "订单取消";
+                    return -4;
+            }
+        }
         return 0;
     } else {
         qWarning(IPAY) << "请求错误:" << reply->errorString();
@@ -289,8 +317,6 @@ int HttpsRequest::refundPostRequest(const QNetworkRequest& req,const std::string
         reply->deleteLater();
         return -1;
     }
-    return -2;
-
     return 0;
 }
 std::string HttpsRequest::stripZero(const std::string& str) {
@@ -309,4 +335,57 @@ std::string HttpsRequest::addPoint(const std::string& str) {
 
     size_t insertPos = str.length() - 2;
     return str.substr(0, insertPos) + "." + str.substr(insertPos);
+}
+
+
+int HttpsRequest::queryPayPostRequest(const QNetworkRequest& req, const std::string& pay_order_id, const QUrlQuery&& post_data) {
+    QNetworkReply *reply = managerPost.post(req, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &parseError);
+        if (jsonDoc.isNull()) {
+            qWarning(IPAY) << "JSON解析错误:" << parseError.errorString();
+            qWarning(IPAY) << "原始数据:" << responseData;
+            return -1;
+        }
+        qWarning(IPAY) << "查询, 原始数据:" << responseData;
+        const auto& state =
+            jsonDoc["data"]["state"].toInt();
+        return state;
+    } else {
+        qWarning(IPAY) << "请求错误:" << reply->errorString();
+        reply->deleteLater();
+        return -1;
+    }
+    return -1;
+}
+
+int HttpsRequest::queryRefundPostRequest(const QNetworkRequest& req, const std::string& pay_order_id, const QUrlQuery&& post_data) {
+    QNetworkReply *reply = managerPost.post(req, post_data.toString(QUrl::FullyEncoded).toUtf8());
+    // 同步等待请求完成（阻塞当前线程, 但是缺直接返回）
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+    if (reply->error() == QNetworkReply::NoError) {
+        QByteArray responseData = reply->readAll();
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData, &parseError);
+        if (jsonDoc.isNull()) {
+            qWarning(IPAY) << "JSON解析错误:" << parseError.errorString();
+            qWarning(IPAY) << "原始数据:" << responseData;
+            return -1;
+        }
+        qWarning(IPAY) << "原始数据:" << responseData;
+        return 0;
+    } else {
+        qWarning(IPAY) << "请求错误:" << reply->errorString();
+        reply->deleteLater();
+        return -1;
+    }
+    return 0;
 }
