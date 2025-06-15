@@ -13,8 +13,8 @@ public:
     int init(const QSettings& settings, DBOps*);
     int pay(const std::string& auth_code, const std::string& amount); // 收款
     int refund(const std::string& pay_order_id, const std::string& refundAmount); // 退款
-    int query_pay(); // 查询付款订单状态
-    int query_refund(); // 查询退款订单状态
+    int query_pay(const QString& pay_order_id); // 查询付款订单状态
+    int query_refund(const QString& pay_order_id); // 查询退款订单状态
 
 private:
     QNetworkAccessManager managerPost;
@@ -43,6 +43,10 @@ private:
     int refundPostRequest(const QNetworkRequest& req,const std::string& amount, const QUrlQuery&& post_data);
     std::string stripZero(const std::string& str);
     std::string addPoint(const std::string& str);
+    int queryPayPostRequest(const QNetworkRequest& req, const std::string& pay_order_id, const QUrlQuery&& post_data);
+    int queryRefundPostRequest(const QNetworkRequest& req, const std::string& pay_order_id, const QUrlQuery&& post_data);
+
+
 };
 
 #endif // HTTPSREQUEST_H
