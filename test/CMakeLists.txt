@@ -39,8 +39,17 @@ target_link_libraries(test_json
     Qt${QT_VERSION_MAJOR}::Core
 )
 
+add_executable(test_text_speaker
+    test_text_speaker.cpp
+    ${CMAKE_SOURCE_DIR}/Common/mp3player.cpp
+)
+target_link_libraries(test_text_speaker
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Multimedia
+)
+
 # Install
-install(TARGETS test_opencv test_md5 test_tf test_log test_json DESTINATION .)
+install(TARGETS test_opencv test_md5 test_tf test_log test_json test_text_speaker DESTINATION .)
 install(DIRECTORY data DESTINATION .)
 install(DIRECTORY ${OPENCV_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
 install(DIRECTORY ${GRPC_SOURCE_DIR}/bin/ DESTINATION . FILES_MATCHING PATTERN "*.dll")
