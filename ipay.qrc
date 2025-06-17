@@ -18,5 +18,8 @@
         <file>Resources/image/km_close.png</file>
         <file>Resources/image/QRCode.png</file>
         <file>Resources/image/modifyMoney.png</file>
+        <file>Resources/audio/pay_success.mp3</file>
+        <file>Resources/audio/refund_success.mp3</file>
+        <file>Resources/audio/pay_failed.mp3</file>
     </qresource>
 </RCC>
