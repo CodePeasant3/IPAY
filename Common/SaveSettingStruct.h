@@ -15,7 +15,8 @@ enum KeyboardMouseType{
 //录制场景功能
 enum ScenePlaybackType{
   CALLBACKCLEANTABLE = 0, // clean_table
-  CALLBACKPAYDONE // pay_done
+  CALLBACKPAYDONE, // pay_done
+  CALLTOTAL
 };
 
 enum QRPaymentType{
@@ -59,10 +60,14 @@ struct CashRegisterSettingStruct{
     int screen_pixmap_w = 0;
     int screen_pixmap_h = 0;
     bool is_hide = false;
-    //=============清台设置===============
+    //=============收款完成清台设置===============
     int automatic_amount_entry = 0; // 0 自动， 1 手动
-    int interaval_entry_ms = 0;
+    int interaval_entry_ms = 0;  // 输入间隔
     int enable_money_playback = 0; // 0 不回填 ,1 回填
+    //=============退款完成清台设置===============
+    int interaval_refund_done_ms = 0;
+    int refund_amount_entry = 0;
+    int enable_money_refund = 0;
 
 
 

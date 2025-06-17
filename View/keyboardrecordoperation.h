@@ -39,6 +39,7 @@ private:
     Ui::KeyboardRecordOperation *ui;
     bool recordFlags_ = false;
     bool modify_record_flag_ = false;
+    ipay::ScenePlaybackType current_type_;
 protected:
     void closeEvent(QCloseEvent *event) override;
 };

@@ -18,6 +18,7 @@
 #include <QMapIterator>
 #include "../Common/primaryscreen.h"
 #include <QLayout>
+#include "Common/savesettingstruct.h"
 
 namespace Ui {
 class PlaySetting;

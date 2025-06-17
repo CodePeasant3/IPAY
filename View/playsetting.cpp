@@ -28,16 +28,16 @@ void PlaySetting::init()
     cashRegisterSetting_= new QListWidgetItem(QIcon(":/Resources/image/cashRegisterSetting.png"),"收银设置");
     reminderSetting_= new QListWidgetItem(QIcon(":/Resources/image/reminderSetting.png"),"提醒设置");
     scanCodeSetting_= new QListWidgetItem(QIcon(":/Resources/image/scanCodeSetting.png"),"扫码设置");
-    commonSetting_= new QListWidgetItem(QIcon(":/Resources/image/commonSetting.png"),"常用功能");
-    miscellaneousFunction_= new QListWidgetItem(QIcon(":/Resources/image/miscellaneousFunction.png"),"辅助功能");
-    advancedFunction_= new QListWidgetItem(QIcon(":/Resources/image/advancedFunction.png"),"高级功能");
+//    commonSetting_= new QListWidgetItem(QIcon(":/Resources/image/commonSetting.png"),"常用功能");
+//    miscellaneousFunction_= new QListWidgetItem(QIcon(":/Resources/image/miscellaneousFunction.png"),"辅助功能");
+//    advancedFunction_= new QListWidgetItem(QIcon(":/Resources/image/advancedFunction.png"),"高级功能");
 
     ui ->listWidget_toolbar ->addItem(cashRegisterSetting_);
     ui ->listWidget_toolbar ->addItem(reminderSetting_);
     ui ->listWidget_toolbar ->addItem(scanCodeSetting_);
-    ui ->listWidget_toolbar ->addItem(commonSetting_);
-    ui ->listWidget_toolbar ->addItem(miscellaneousFunction_);
-    ui ->listWidget_toolbar ->addItem(advancedFunction_);
+//    ui ->listWidget_toolbar ->addItem(commonSetting_);
+//    ui ->listWidget_toolbar ->addItem(miscellaneousFunction_);
+//    ui ->listWidget_toolbar ->addItem(advancedFunction_);
     ui ->listWidget_toolbar ->setSpacing(20);
 
 //    CustomDelegate* delegate = new CustomDelegate(ui->listWidget_toolbar);
@@ -53,9 +53,9 @@ void PlaySetting::init()
     mapWidgetItem_.insert(0,ui ->widget_cashRegisterSetting);
     mapWidgetItem_.insert(1,ui ->widget_reminderSetting);
     mapWidgetItem_.insert(2,ui ->widget_scanCodeSetting);
-    mapWidgetItem_.insert(3,ui ->widget_commonSetting);
-    mapWidgetItem_.insert(4,ui ->widget_miscellaneousFunction);
-    mapWidgetItem_.insert(5,ui ->widget_advancedFunction);
+//    mapWidgetItem_.insert(3,ui ->widget_commonSetting);
+//    mapWidgetItem_.insert(4,ui ->widget_miscellaneousFunction);
+//    mapWidgetItem_.insert(5,ui ->widget_advancedFunction);
 
     ui->listWidget_toolbar->setStyleSheet("QListWidget::item { color: #bfbfbf; }");
     connect(ui ->listWidget_toolbar, &QListWidget::itemSelectionChanged, this, &PlaySetting::OnItemSelectionChanged);

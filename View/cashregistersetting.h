@@ -33,7 +33,8 @@ signals:
 public slots:
     void save_keyboard_operation();
     void delete_record_keyboard(ipay::ScenePlaybackType type,int index);
-    void init_show();
+    void play_table();
+    void clean_table();
 
 private slots:
     void on_pushButton_recognition_clicked();
@@ -52,12 +53,15 @@ private slots:
     void save_picture();
 
 
+    void on_refund_pushButton_record_clicked();
+
 private:
     Ui::CashRegisterSetting *ui;
     Screen  *scr_ = nullptr;
     ipay::CashRegisterSettingStruct cash_register_setting_struct_;
     int keyboard_ui_w = -1;
     int keyboard_ui_h = -1;
+    ipay::ScenePlaybackType keyboard_type_;
 
 };
 

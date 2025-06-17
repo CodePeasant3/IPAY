@@ -18,7 +18,6 @@ CashRegisterKeyboard::CashRegisterKeyboard(QWidget *parent) :
 CashRegisterKeyboard::~CashRegisterKeyboard()
 {
 //    if(type == ipay::KeyboardOperationType::COLLECTION ){
-
 //    }
     future_thread.get();
     if(process_timer_){
@@ -63,7 +62,6 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type,  DBOps* 
         }
         future_thread =
             std::async(std::launch::async, &ipay::GlobalStatusCommon::WhileDetect, ipay::GlobalStatusCommon::instance()) ;
-
     }
     connect(ui->pushButton_0, &QPushButton::clicked, this, [=]() { ModifyMoney("0"); });
     connect(ui->pushButton_1, &QPushButton::clicked, this, [=]() { ModifyMoney("1"); });
@@ -273,18 +271,13 @@ void CashRegisterKeyboard::modifyMoneySlot()
         QMessageBox::warning(this,"错误","识别金额错误!");
         return;
     }
-    money_vector_.clear();
-    for (char c : result) {
-        // 把每个字符转为string后添加到vector
-        ModifyMoney(std::string(1, c));
-//        money_vector_.push_back();
-    }
     releiveMoneyStr(result);
     ChangeMonet();
 }
 
 void CashRegisterKeyboard::releiveMoneyStr(const std::string &moneyStr)
 {
+    money_vector_.clear();
     for (char c : moneyStr) {
         ModifyMoney(std::string(1, c));
     }

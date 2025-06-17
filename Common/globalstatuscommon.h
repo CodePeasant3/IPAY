@@ -32,7 +32,7 @@ public:
     QRect GetScreenScope();
     void unsetOK();
     void SetCollectionMoneyStatus(bool status);
-    boll GetCollectionMoneyStatus();
+    bool GetCollectionMoneyStatus();
 
 public:
     std::shared_ptr<QSettings> settings;

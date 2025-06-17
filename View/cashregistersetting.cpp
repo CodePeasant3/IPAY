@@ -16,7 +16,6 @@ CashRegisterSetting::~CashRegisterSetting()
 
 void CashRegisterSetting::Init()
 {
-
 //ui ->pushButton_save ->setStyleSheet("QPushButton {border-radius: 3%;}");
     UIStatus();
     QIntValidator *intValidator = new QIntValidator(this);
@@ -34,13 +33,44 @@ void CashRegisterSetting::Init()
     // 设置项之间的间距
     ui->listWidget_keyboard->setSpacing(10);
 
+
+    ui->refund_listWidget_keyboard->setViewMode(QListView::IconMode);
+    ui->refund_listWidget_keyboard->setFlow(QListView::LeftToRight);
+    ui->refund_listWidget_keyboard->setWrapping(true);
+    ui->refund_listWidget_keyboard->setResizeMode(QListView::Adjust);
+    ui->refund_listWidget_keyboard->setSpacing(10);
+
     connect(ui->tabWidget,&QTabWidget::currentChanged,[=](int index){
         if(index == 1){
-            init_show();
+            keyboard_type_ = ipay::ScenePlaybackType::CALLBACKPAYDONE;
+            play_table();
+        }
+        if(index == 2){
+            keyboard_type_ = ipay::ScenePlaybackType::CALLBACKCLEANTABLE;
+            clean_table();
         }
     });
 
+    QIntValidator *validator = new QIntValidator(0, 9999, this);
+    ui->refund_lineEdit_interval->setValidator(validator);
+    ui->lineEdit->setValidator(validator);
+    connect(ui->refund_lineEdit_interval, &QLineEdit::textChanged, this, [=](const QString &text) {
+        bool ok;
+        int value = text.toInt(&ok);
+        if (!ok) {
 
+        }
+
+    });
+
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, [=](const QString &text) {
+        bool ok;
+        int value = text.toInt(&ok);
+        if (!ok) {
+
+        }
+
+    });
 }
 
 void CashRegisterSetting::UIStatus()
@@ -65,29 +95,32 @@ void CashRegisterSetting::CreateWidgetItem()
 {
     QListWidgetItem *KM_EVENT = new QListWidgetItem(ui->listWidget_keyboard);
 
-
-
 }
 
 QListWidgetItem *CashRegisterSetting::GetQListWidget(ipay::ScenePlaybackType type, int index)
 {
-    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+    if(type == ipay::ScenePlaybackType::CALLBACKPAYDONE){
         return ui->listWidget_keyboard->takeItem(index);
+    }else if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->refund_listWidget_keyboard->takeItem(index);
     }
 }
 
 QWidget *CashRegisterSetting::GetQListItemWidget(ipay::ScenePlaybackType type, QListWidgetItem* item)
 {
-    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+    if(type == ipay::ScenePlaybackType::CALLBACKPAYDONE){
         return ui->listWidget_keyboard->itemWidget(item);
+    }else if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->refund_listWidget_keyboard->itemWidget(item);
     }
-
 }
 
 int CashRegisterSetting::GetQListItemSize(ipay::ScenePlaybackType type)
 {
-    if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+    if(type == ipay::ScenePlaybackType::CALLBACKPAYDONE){
         return ui->listWidget_keyboard->count();
+    }else if(type == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        return ui->refund_listWidget_keyboard->count();
     }
     return 0;
 }
@@ -97,7 +130,7 @@ void CashRegisterSetting::delete_record_keyboard_by_type( const std::vector<ipay
                                                          ipay::ScenePlaybackType type)
 {
     int total_size = GetQListItemSize(type);
-    for (int i = 0; i < total_size; ++i) {
+    for (int i = total_size; i >= 0 ; --i) {
         QListWidgetItem* item = GetQListWidget(type,i);
         if (item) {
             QWidget* widget = GetQListItemWidget(type,item);
@@ -123,14 +156,13 @@ void CashRegisterSetting::on_pushButton_recognition_clicked()
         connect(controlUi,&ControlScreen::finish_save_screen,this, &CashRegisterSetting::save_picture);
         scr_->show();
     }
-
-
 }
 
 
 void CashRegisterSetting::on_pushButton_save_clicked()
 {
     cash_register_setting_struct_.interaval_entry_ms = ui->lineEdit->text().toInt();
+    cash_register_setting_struct_.interaval_refund_done_ms = ui->refund_lineEdit_interval->text().toInt();
     ipay::GlobalStatusCommon::instance()->ModifyCashRegisterSetting(cash_register_setting_struct_);
     emit hideSettingPage();
 }
@@ -156,9 +188,9 @@ void CashRegisterSetting::RegisterArea()
 //开始录制
 void CashRegisterSetting::on_pushButton_record_clicked()
 {
-    ipay::GlobalStatusCommon::instance()->StartRecordKeyboard(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+    keyboard_type_ = ipay::ScenePlaybackType::CALLBACKPAYDONE;
+    ipay::GlobalStatusCommon::instance()->StartRecordKeyboard(keyboard_type_);
     emit start_keyboard_record();
-
 }
 
 //自动录入软件
@@ -182,7 +214,6 @@ void CashRegisterSetting::close_screen()
         delete scr_;
         scr_ = nullptr;
     }
-
 }
 
 void CashRegisterSetting::save_picture()
@@ -204,25 +235,29 @@ void CashRegisterSetting::save_picture()
 
 void CashRegisterSetting::save_keyboard_operation()
 {
+    QListWidget *listWidget = ui->listWidget_keyboard;
+    if(keyboard_type_ == ipay::ScenePlaybackType::CALLBACKCLEANTABLE){
+        listWidget = ui->refund_listWidget_keyboard;
+    }
     std::vector<ipay::KeyboardMouseRecordStruct>& recordVector = ipay::GlobalStatusCommon::instance()
-            ->GetKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+            ->GetKeyboardMouseList(keyboard_type_);
     if(recordVector.empty()){
         return;
     }
-    delete_record_keyboard_by_type(recordVector,ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
-    int itemWidth = (ui->listWidget_keyboard->width() - 30) / 4;
-    int itemHeight = (ui->listWidget_keyboard->height() - 30) / 4;
+    delete_record_keyboard_by_type(recordVector,keyboard_type_);
+    int itemWidth = (listWidget->width() - 30) / 4;
+    int itemHeight = (listWidget->height() - 30) / 4;
     if(keyboard_ui_w == -1){
         keyboard_ui_w = itemWidth;
         keyboard_ui_h = itemHeight;
     }
     for (int i = 0; i < recordVector.size(); i++) {
         ipay::KeyboardMouseRecordStruct recordStruct = recordVector.at(i);
-        QListWidgetItem *item = new QListWidgetItem(ui->listWidget_keyboard);
+        QListWidgetItem *item = new QListWidgetItem(listWidget);
         KeyboardMouseTemplate *template_keyboard = new KeyboardMouseTemplate(this);
-        template_keyboard->Init(recordStruct.record_index, recordStruct.value,ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+        template_keyboard->Init(recordStruct.record_index, recordStruct.value,keyboard_type_);
         item->setSizeHint(QSize(itemWidth, itemHeight));
-        ui->listWidget_keyboard->setItemWidget(item, template_keyboard);
+        listWidget->setItemWidget(item, template_keyboard);
         connect(template_keyboard,&KeyboardMouseTemplate::clickClose,this,&CashRegisterSetting::delete_record_keyboard);
     }
 }
@@ -249,20 +284,24 @@ void CashRegisterSetting::delete_record_keyboard(ipay::ScenePlaybackType type, i
 
 }
 
-void CashRegisterSetting::init_show()
+void CashRegisterSetting::play_table()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    std::vector<ipay::KeyboardMouseRecordStruct>& recordVector = ipay::GlobalStatusCommon::instance()
-            ->GetFinshKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+//    std::this_thread::sleep_for(std::chrono::milliseconds(50));
     save_keyboard_operation();
-
 }
 
+void CashRegisterSetting::clean_table()
+{
+//    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    save_keyboard_operation();
+}
 
-
-
-
-
+void CashRegisterSetting::on_refund_pushButton_record_clicked()
+{
+    keyboard_type_ = ipay::ScenePlaybackType::CALLBACKCLEANTABLE;
+    ipay::GlobalStatusCommon::instance()->StartRecordKeyboard(keyboard_type_);
+    emit start_keyboard_record();
+}
 
 
 

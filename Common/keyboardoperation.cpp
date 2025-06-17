@@ -1,5 +1,6 @@
 ﻿#include "keyboardoperation.h"
 
+namespace ipay {
 KeyboardOperation::KeyboardOperation()
 {
 
@@ -9,6 +10,7 @@ void KeyboardOperation::OperationKeyboard(std::vector<ipay::KeyboardMouseRecordS
 {
 
     for (auto keyboardOperation :  recordKeyboardVector) {
+        QThread::msleep(100);
         if(keyboardOperation.type == ipay::KeyboardMouseType::LIFTMOUSE){
             MouseOperation(keyboardOperation.mouse_x,keyboardOperation.mouse_y,true);
         }
@@ -55,5 +57,7 @@ void KeyboardOperation::KeyOperation(const ipay::KeyboardMouseRecordStruct& keyR
 
 
 
+
+}
 
 }

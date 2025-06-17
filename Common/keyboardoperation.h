@@ -4,8 +4,13 @@
 #include <windows.h>
 #include <iostream>
 #include <thread>
+#include <QThread>
 
 #include "savesettingstruct.h"
+
+namespace ipay {
+
+
 class KeyboardOperation
 {
 public:
@@ -14,5 +19,8 @@ public:
     void MouseOperation(int x , int y, bool flags);
     void KeyOperation(const ipay::KeyboardMouseRecordStruct& keyRecord);
 };
+
+}
+
 
 #endif // KEYBOARDOPERATION_H

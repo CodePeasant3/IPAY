@@ -193,7 +193,7 @@ bool JsonOperationCommon::ReadKeyboarfRrcordConfig(std::unordered_map<ScenePlayb
             continue;
         }
 
-        if (sceneTypeInt < 0 || sceneTypeInt > static_cast<int>(ipay::ScenePlaybackType::CALLBACKPAYDONE)) {
+        if (sceneTypeInt < 0 || sceneTypeInt > static_cast<int>(ipay::ScenePlaybackType::CALLTOTAL)) {
             qDebug() << "无效的场景类型:" << sceneTypeInt;
             continue;
         }

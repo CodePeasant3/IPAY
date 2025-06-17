@@ -21,7 +21,7 @@
 #include <Common/globalkeyfilter.h>
 #include <Common/dbops.h>
 #include <Common/httpsrequest.h>
-
+#include "Common/keyboardoperation.h"
 
 // 互斥锁，用于线程安全
 static QMutex logMutex;
@@ -81,6 +81,8 @@ void loadLoggingRulesFromFile(const QString& filePath) {
 
 int main(int argc, char *argv[])
 {
+
+
     // 检查命令行参数，是否需要显示控制台
     bool showConsole = false;
     for (int i = 0; i < argc; ++i) {
@@ -137,6 +139,16 @@ int main(int argc, char *argv[])
     }
 
     ipay::GlobalStatusCommon::instance()->ConfigInit();
+//    std::vector<ipay::KeyboardMouseRecordStruct> aaaa = ipay::GlobalStatusCommon::instance()
+//            ->GetFinshKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKPAYDONE);
+//    ipay::KeyboardOperation  operationTest;
+//    operationTest.OperationKeyboard(aaaa);
+//    if(1 == 1){
+//        return -1;
+//    }
+
+
+
     QRect rect =  ipay::GlobalStatusCommon::instance()->GetScreenScope();
     PlaySetting playSetting;
     CashRegisterKeyboard cashRegisterKeyboard;
@@ -187,14 +199,11 @@ int main(int argc, char *argv[])
 
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&collectionMoney,&CollectionMoney::operationShow);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::StartModel,&cashRegisterKeyboard,&CashRegisterKeyboard::operationShow);
-
-
     QWidget::connect(&cashRegisterKeyboard,&CashRegisterKeyboard::FinalMoney,&paymentPlatform,&PaymentPlatform::ReceiveMoney);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowSetting,&playSetting,&PlaySetting::show);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ClickExit,&a,&QApplication::quit);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowDetails,&orderDetails,&OrderDetails::show);
     QWidget::connect(&paymentPlatform,&PaymentPlatform::ShowDetails,&orderDetails,&OrderDetails::refresh);
-
     QWidget::connect(&playSetting,&PlaySetting::start_keyboard_record,&playSetting,&PlaySetting::hide);
     QWidget::connect(&playSetting,&PlaySetting::start_keyboard_record,&keyboardRecordOperation,&KeyboardRecordOperation::show);
     QWidget::connect(&playSetting,&PlaySetting::start_keyboard_record,
