@@ -23,8 +23,9 @@ QVariant CustomProxyModel::data(const QModelIndex &index, int role) const{
     if (role == Qt::DisplayRole && index.column() == 4) { // 第5列
         int status = sourceModel()->data(index, Qt::EditRole).toInt();
         switch (status) {
-        case 1: return "完成";
-        case 2: return "取消";
+        case 1: return "取消";
+        case 2: return "完成";
+        case 3: return "退款";
         }
     }
     return QIdentityProxyModel::data(index, role);
