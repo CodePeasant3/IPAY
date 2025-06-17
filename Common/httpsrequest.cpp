@@ -10,6 +10,7 @@
 #include <QSslConfiguration>
 #include <string>
 #include "snowflake.hpp"
+#include "mp3player.h"
 
 #define DEFAULT_URL_PAY "https://pay.zhuceyiyou.com/api/pay/unifiedOrder"
 #define DEFAULT_URL_REFUND "https://pay.zhuceyiyou.com/api/refund/refundOrder"
@@ -55,9 +56,10 @@ int HttpsRequest::init(const QSettings& settings, DBOps* ops_ptr) {
     request_query_pay.setUrl(url_query_pay);
     request_query_refund.setUrl(url_query_refund);
     request_close_order.setUrl(url_close_order);
+
+    m_mp3_player = std::make_shared<MP3Player>();
     return 0;
 }
-
 
 // 获取13位UTC时间戳（毫秒级）
 std::string HttpsRequest::get_utc_timestamp() {
@@ -274,7 +276,7 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
             qInfo(IPAY) << "order state: " << order_state;
             switch(order_state) {
                 case 2: // 支付成功
-                    // TODO: 语音提示
+                    m_mp3_player->play("1");
                     qInfo(IPAY) << "查询支付成功, 插入数据库";
                     this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), 2);
                     return 0;
@@ -285,6 +287,7 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
                 default: // 3:支付失败 4:已撤销 5:已退款 6:订单关闭
                     //
                     // TODO: 语音提示
+                    m_mp3_player->play("2");
                     qInfo(IPAY) << "订单取消";
                     return -4;
             }
@@ -292,7 +295,7 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
         return 0;
     } else {
         qWarning(IPAY) << "请求错误:" << reply->errorString();
-        // TODO insert db;
+        m_mp3_player->play("2");
         reply->deleteLater();
         return -1;
     }
@@ -315,6 +318,7 @@ int HttpsRequest::refundPostRequest(const QNetworkRequest& req,const std::string
             return -1;
         }
         qWarning(IPAY) << "原始数据:" << responseData;
+        m_mp3_player->play("3");
 
         return 0;
     } else {

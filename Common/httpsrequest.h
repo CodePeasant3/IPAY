@@ -4,8 +4,9 @@
 #include <QtNetwork/QtNetwork>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtCore/QCryptographicHash>
-class DBOps;
 
+class DBOps;
+class MP3Player;
 
 class HttpsRequest
 {
@@ -40,6 +41,7 @@ private:
     QString url_close_order;
     QString m_key;
     DBOps* m_db_ops;
+    std::shared_ptr<MP3Player> m_mp3_player;
 
 private:
     int postRequest(const QNetworkRequest& req, const std::string& amount, const QUrlQuery&& post_data);

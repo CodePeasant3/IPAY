@@ -84,6 +84,7 @@ install(TARGETS IPAY
     DESTINATION .)
 
 install(FILES config.ini DESTINATION .)
+install(DIRECTORY Resources DESTINATION .)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(IPAY)

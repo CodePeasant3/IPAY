@@ -15,6 +15,10 @@ MP3Player::MP3Player(QObject *parent) : QObject(parent),
     // 默认音量
     m_player->setVolume(100); // 75% 音量
 
+    this->preloadMultiple({
+                      {"1", "Resources/audio/pay_success.mp3"},
+                      {"2", "Resources/audio/pay_failed.mp3"},
+                      {"3", "Resources/audio/refund_success.mp3"}});
 }
 
 MP3Player::~MP3Player()
