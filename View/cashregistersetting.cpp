@@ -51,26 +51,9 @@ void CashRegisterSetting::Init()
         }
     });
 
-    QIntValidator *validator = new QIntValidator(0, 9999, this);
+    QIntValidator *validator = new QIntValidator(0, 99999, this);
     ui->refund_lineEdit_interval->setValidator(validator);
     ui->lineEdit->setValidator(validator);
-    connect(ui->refund_lineEdit_interval, &QLineEdit::textChanged, this, [=](const QString &text) {
-        bool ok;
-        int value = text.toInt(&ok);
-        if (!ok) {
-
-        }
-
-    });
-
-    connect(ui->lineEdit, &QLineEdit::textChanged, this, [=](const QString &text) {
-        bool ok;
-        int value = text.toInt(&ok);
-        if (!ok) {
-
-        }
-
-    });
 }
 
 void CashRegisterSetting::UIStatus()
@@ -78,10 +61,17 @@ void CashRegisterSetting::UIStatus()
     cash_register_setting_struct_ = ipay::GlobalStatusCommon::instance()->GetAllSettingConfig()->cash_register_setting;
     ui->radioButton_cycle->setChecked(cash_register_setting_struct_.recognition_type == 0);
     ui->radioButton_once->setChecked(cash_register_setting_struct_.recognition_type == 1);
+
     ui->radioButton_money_back->setChecked(cash_register_setting_struct_.enable_money_playback == 1);
+    ui->refund_radioButton_money_back->setChecked(cash_register_setting_struct_.enable_money_refund == 1);
     cash_register_setting_struct_.automatic_amount_entry == 0 ?
                 ui ->pushButton_auto_clean->setText("手动"):ui ->pushButton_auto_clean->setText("自动");
+    cash_register_setting_struct_.refund_amount_entry == 0 ?
+    ui ->refund_pushButton_auto_clean->setText("手动"):ui ->pushButton_auto_clean->setText("自动");
+
     ui->lineEdit->setText(QString::number(cash_register_setting_struct_.interaval_entry_ms));
+    ui->refund_lineEdit_interval->setText(QString::number(cash_register_setting_struct_.interaval_refund_done_ms));
+
     if(cash_register_setting_struct_.screen_pixmap.isNull()){
         ui->recognition_label->clear();
         return;
@@ -304,19 +294,16 @@ void CashRegisterSetting::on_refund_pushButton_record_clicked()
 }
 
 
+void CashRegisterSetting::on_refund_radioButton_money_back_clicked()
+{
+    cash_register_setting_struct_.enable_money_refund = !cash_register_setting_struct_.enable_money_refund;
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+void CashRegisterSetting::on_refund_pushButton_auto_clean_clicked()
+{
+    cash_register_setting_struct_.refund_amount_entry = !cash_register_setting_struct_.refund_amount_entry;
+    cash_register_setting_struct_.refund_amount_entry == 0 ?
+                ui ->refund_pushButton_auto_clean->setText("手动") :ui ->refund_pushButton_auto_clean->setText("自动");
+}
 

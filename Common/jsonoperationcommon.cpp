@@ -16,6 +16,9 @@ QJsonObject CashRegisterSettingToJson(const CashRegisterSettingStruct& setting) 
     obj["automatic_amount_entry"] = setting.automatic_amount_entry;
     obj["interaval_entry_ms"] = setting.interaval_entry_ms;
     obj["enable_money_playback"] = setting.enable_money_playback;
+    obj["interaval_refund_done_ms"] = setting.interaval_refund_done_ms;
+    obj["refund_amount_entry"] = setting.refund_amount_entry;
+    obj["enable_money_refund"] = setting.enable_money_refund;
     return obj;
 }
 
@@ -55,6 +58,15 @@ void JsonToCashRegisterSetting(const QJsonObject& json, CashRegisterSettingStruc
     }
     if (json.contains("enable_money_playback") && json["enable_money_playback"].isDouble()) {
         setting.enable_money_playback = json["enable_money_playback"].toInt();
+    }
+    if (json.contains("interaval_refund_done_ms") && json["interaval_refund_done_ms"].isDouble()) {
+        setting.interaval_refund_done_ms = json["interaval_refund_done_ms"].toInt();
+    }
+    if (json.contains("refund_amount_entry") && json["refund_amount_entry"].isDouble()) {
+        setting.refund_amount_entry = json["refund_amount_entry"].toInt();
+    }
+    if (json.contains("enable_money_refund") && json["enable_money_refund"].isDouble()) {
+        setting.enable_money_refund = json["enable_money_refund"].toInt();
     }
     if (json.contains("screen_pixmap_w") && json["screen_pixmap_w"].isDouble()) {
         setting.screen_pixmap_w = json["screen_pixmap_w"].toInt();

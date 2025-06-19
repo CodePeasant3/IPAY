@@ -1,4 +1,4 @@
-#include "httpsrequest.h"
+﻿#include "httpsrequest.h"
 #include <chrono>
 #include <sstream>
 #include <iomanip>
@@ -275,8 +275,18 @@ int HttpsRequest::postRequest(const QNetworkRequest& req, const std::string& amo
             switch(order_state) {
                 case 2: // 支付成功
                     // TODO: 语音提示
-                    qInfo(IPAY) << "查询支付成功, 插入数据库";
-                    this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), 2);
+                qInfo(IPAY) << "查询支付成功, 插入数据库";
+                this->m_db_ops->insertData(pay_order_id, 1, pay_order_id, amount.c_str(), 2);
+                {
+                    ipay::CashRegisterSettingStruct  cashRegisterSettingStruct = ipay::GlobalStatusCommon::instance()->GetSettingConfig()->cash_register_setting;
+                    if(cashRegisterSettingStruct.automatic_amount_entry == 0){
+
+                        std::vector<ipay::KeyboardMouseRecordStruct>  keyboardOperation =
+                                ipay::GlobalStatusCommon::instance()->GetFinshKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKPAYDONE);
+                        ipay::KeyboardOperation  keyboardClass;
+                        keyboardClass.OperationKeyboard(keyboardOperation,cashRegisterSettingStruct.interaval_entry_ms);
+                    }
+                }
                     return 0;
                 case 0: // 订单生成
                 case 1: // 支付中

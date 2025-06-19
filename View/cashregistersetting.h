@@ -55,6 +55,10 @@ private slots:
 
     void on_refund_pushButton_record_clicked();
 
+    void on_refund_radioButton_money_back_clicked();
+
+    void on_refund_pushButton_auto_clean_clicked();
+
 private:
     Ui::CashRegisterSetting *ui;
     Screen  *scr_ = nullptr;

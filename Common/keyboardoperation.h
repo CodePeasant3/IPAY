@@ -15,9 +15,9 @@ class KeyboardOperation
 {
 public:
     KeyboardOperation();
-    void OperationKeyboard(std::vector<ipay::KeyboardMouseRecordStruct>& recordKeyboardVector);
-    void MouseOperation(int x , int y, bool flags);
-    void KeyOperation(const ipay::KeyboardMouseRecordStruct& keyRecord);
+    void OperationKeyboard(std::vector<ipay::KeyboardMouseRecordStruct>& recordKeyboardVector,int interaval);
+    void MouseOperation(int x , int y, bool flags,int interaval);
+    void KeyOperation(const ipay::KeyboardMouseRecordStruct& keyRecord,int interaval);
 };
 
 }

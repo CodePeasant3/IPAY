@@ -1,9 +1,11 @@
-#ifndef HTTPSREQUEST_H
+﻿#ifndef HTTPSREQUEST_H
 #define HTTPSREQUEST_H
 
 #include <QtNetwork/QtNetwork>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtCore/QCryptographicHash>
+#include "globalstatuscommon.h"
+#include "keyboardoperation.h"
 class DBOps;
 
 
