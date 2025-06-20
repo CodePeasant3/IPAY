@@ -81,8 +81,17 @@ void CashRegisterKeyboard::Init(const ipay::KeyboardOperationType type,  DBOps* 
 
 int CashRegisterKeyboard::MoneyBack()
 {
-    qrStr_; // QR 条码  需要数据库拿到对应金额
+    //qrStr_; // QR 条码  需要数据库拿到对应金额
+    std::string moneyBackStr;
+    for (auto m : money_vector_) {
+        moneyBackStr += m;
+    }
 
+    std::string total_money = QString::number(QString::fromStdString(moneyBackStr).toDouble() * 100).toStdString();
+    qInfo(IPAY) << "退款: total_money: " << total_money.c_str();
+    m_request->refund(qrStr_.toStdString(), total_money);
+
+    // this ->hide();
     return 0;
 }
 
@@ -168,7 +177,6 @@ void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
     releiveMoneyStr(QString::number(refund_amount.toInt() / 100.0).toStdString());
     // 存在, 进入退款流程
     // TODO: 弹出密码框
-    m_request->refund(qrStr.toStdString(), refund_amount.toStdString());
 
 
     qrStr_ = qrStr;

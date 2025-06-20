@@ -57,6 +57,7 @@ private:
     bool isDecimalPoint_ = false;
     std::vector<std::string> money_vector_;
     QString qrStr_;
+
     int flags_;
     int point_bit = 0;
     std::future<void> future_thread;

@@ -124,15 +124,15 @@ void KeyboardRecordOperation::ModifyRecordInfo()
     ui ->label_keyboard_info ->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     while (!over_modify_thread_) {
         if(!modify_record_flag_){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
             continue;
         }
         if(keyboard_vector_.size() == 0){
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
             continue;
         }
         ui ->label_keyboard_info -> setText(QString::fromStdString(record_info_str_));
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
