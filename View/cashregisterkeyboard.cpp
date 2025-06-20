@@ -163,6 +163,8 @@ void CashRegisterKeyboard::ReceiveQRInfo(QString qrStr)
         QMessageBox::warning(this,"错误","支付订单消息错误,请联系运维!");
         return;
     }
+
+    // qInfo(IPAY) << "0620 debug: " << refund_amount.toInt();
     releiveMoneyStr(QString::number(refund_amount.toInt() / 100.0).toStdString());
     // 存在, 进入退款流程
     // TODO: 弹出密码框
@@ -212,7 +214,9 @@ void CashRegisterKeyboard::closeEvent(QCloseEvent *event){
 
 void CashRegisterKeyboard::ModifyMoney(std::string number)
 {
+    qInfo(IPAY) << "ModifyMoney in";
     if(money_vector_.size() >= 8){
+        qInfo(IPAY) << "ModifyMoney: money_vector size >= 8";
         return;
     }
     point_bit +=1;
@@ -220,6 +224,7 @@ void CashRegisterKeyboard::ModifyMoney(std::string number)
         point_bit = 0;
     }
     if((isDecimalPoint_ && number == ".") || point_bit > 2){
+        qInfo(IPAY) << "ModifyMoney: number == . || point_bit > 8";
         return;
     }
     if(number == "."){
@@ -271,14 +276,20 @@ void CashRegisterKeyboard::modifyMoneySlot()
         QMessageBox::warning(this,"错误","识别金额错误!");
         return;
     }
-    releiveMoneyStr(result);
+    QString q_result(result.c_str());
+    releiveMoneyStr(QString::number(q_result.toInt() / 100.0).toStdString());
+
     ChangeMonet();
 }
 
 void CashRegisterKeyboard::releiveMoneyStr(const std::string &moneyStr)
 {
     money_vector_.clear();
+    qInfo(IPAY) << "moneyStr: " << moneyStr.c_str();
+    point_bit = 0;
+    isDecimalPoint_ = false;
     for (char c : moneyStr) {
+        qInfo(IPAY) << "monyStr for: " << c;
         ModifyMoney(std::string(1, c));
     }
 
