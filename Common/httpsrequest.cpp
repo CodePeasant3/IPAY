@@ -332,9 +332,12 @@ int HttpsRequest::refundPostRequest(const QNetworkRequest& req,const std::string
         m_mp3_player->play("3");
 
         ipay::CashRegisterSettingStruct  cashRegisterSettingStruct = ipay::GlobalStatusCommon::instance()->GetSettingConfig()->cash_register_setting;
+        qWarning(IPAY) << "0620 退款回调: refund_amount_entry: " << cashRegisterSettingStruct.refund_amount_entry;
+
         if(cashRegisterSettingStruct.refund_amount_entry == 0){
-            std::vector<ipay::KeyboardMouseRecordStruct>  keyboardOperation =
+            std::vector<ipay::KeyboardMouseRecordStruct> keyboardOperation =
                 ipay::GlobalStatusCommon::instance()->GetFinshKeyboardMouseList(ipay::ScenePlaybackType::CALLBACKCLEANTABLE);
+            qWarning(IPAY) << "0620 退款回调: keyboardOperation.size: " << keyboardOperation.size();
             ipay::KeyboardOperation  keyboardClass;
             keyboardClass.OperationKeyboard(keyboardOperation,cashRegisterSettingStruct.interaval_entry_ms);
         }
